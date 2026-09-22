@@ -1,0 +1,27 @@
+---
+// LEGACY URL — KD-era pattern. The canonical service hub lives at /bath-{service}/.
+// This stub exists so the dev server and any host without redirect rules still
+// land correctly; Netlify _redirects 301s it for production. Do not add content.
+import { SERVICES } from '../../../lib/services';
+
+export function getStaticPaths() {
+  return SERVICES.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+const { service } = Astro.props;
+const target = `/bath-${service.slug}/`;
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, follow" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    <p>This page has moved. <a href={target}>Continue to {service.shortName} in Bath</a>.</p>
+  </body>
+</html>

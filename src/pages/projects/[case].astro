@@ -1,0 +1,163 @@
+---
+// Case study page — James's ten real projects, full narrative.
+// Replaces the old live /projects/{case}/ pages at the same URLs (no 301s
+// needed); the our-work gallery links every photo set here.
+
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Logo from '../../components/Logo.astro';
+import { getServiceForCase } from '../../lib/caseServiceMap';
+
+export async function getStaticPaths() {
+  const studies = await getCollection('caseStudies');
+  return studies.map((entry) => ({ params: { case: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const service = getServiceForCase(entry.id);
+const serviceUrl = service ? `/bath-${service.slug}/` : '/our-work/';
+
+const caseSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.brief,
+  image: d.gallery[0],
+  author: { '@type': 'Organization', name: 'Aspect Builds & Maintenance Ltd' },
+  publisher: { '@type': 'Organization', name: 'Aspect Builds & Maintenance Ltd' },
+};
+---
+
+<PageLayout
+  title={`${d.title} | Case Study | Aspect Builds`}
+  description={d.brief}
+  preloadImage={d.image}
+  canonical={`/projects/${entry.id}/`}
+  schema={caseSchema}
+  breadcrumbs={[{ name: 'Our Work', href: '/our-work/' }, { name: d.title, href: `/projects/${entry.id}/` }]}
+  ctaHeading="Start a similar project"
+  ctaText="Tell us what you're planning — free site visit, fixed written quote within 48 hours."
+>
+  <Hero
+    size="compact"
+    eyebrow={['Case study', d.location]}
+    title={d.title}
+    lede={d.brief}
+    primaryCta={{ label: 'Start a similar project', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+447498158747', display: '07498 158747' }}
+    image={d.image}
+    imageAlt={`${d.title} — completed project by Aspect Builds in ${d.location}`}
+    trust={[d.categoryLabel, 'Real Aspect Builds project', 'Fixed-price contract']}
+  />
+
+  <section class="section">
+    <div class="container container--reading">
+      {d.meta && d.meta.length > 0 && (
+        <dl class="case-meta">
+          {d.meta.map((m) => (
+            <div class="case-meta__row">
+              <dt>{m.label}</dt>
+              <dd>{m.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      <h2>The brief</h2>
+      <p>{d.brief}</p>
+
+      <h2>The challenge</h2>
+      <p>{d.challenge}</p>
+
+      <h2>How we executed it</h2>
+      <p>{d.execution}</p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow">The work</span>
+        <h2>Photographs from {d.location}</h2>
+        <p class="lede">{d.gallery.length} photos from this project — every one taken on site.</p>
+      </header>
+      <div class="case-gallery">
+        {d.gallery.map((src, i) => (
+          <figure class="case-gallery__item">
+            <img
+              src={src}
+              alt={`${d.title} in ${d.location} by Aspect Builds — photo ${i + 1} of ${d.gallery.length}`}
+              width="920" height="613" loading={i < 4 ? 'eager' : 'lazy'} decoding="async"
+            />
+            <figcaption>{i + 1} / {d.gallery.length}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--reading">
+      <h2>Planning something similar?</h2>
+      <p>
+        This was a {d.categoryLabel.toLowerCase()} project in {d.location}. The
+        same crew, the same fixed-price process and the same standard apply to
+        your project — see the
+        {service && <> <a href={serviceUrl}>{service.shortName} service page</a>,</>}
+        or book a free site visit and get a written quote within 48 hours.
+      </p>
+      <p style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+        <a class="btn btn--primary" href="/contact/#lead-form-heading">Get a free quote</a>
+        {service && <a class="btn btn--secondary" href={serviceUrl}>About this service</a>}
+        <a class="btn btn--secondary" href="/our-work/">More of our work</a>
+      </p>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .case-meta {
+    margin: 0 0 var(--sp-6);
+    padding: var(--sp-5);
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+  }
+  .case-meta__row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: var(--sp-3);
+    padding: 0.4rem 0;
+  }
+  .case-meta__row + .case-meta__row { border-top: 1px solid var(--border); }
+  .case-meta dt {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding-top: 0.15rem;
+  }
+  .case-meta dd { margin: 0; font-size: 0.92rem; color: var(--text); }
+
+  .case-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--sp-3);
+  }
+  .case-gallery__item { margin: 0; }
+  .case-gallery__item img {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+  }
+  .case-gallery__item figcaption {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 0.5rem 0.15rem;
+  }
+  @media (max-width: 600px) {
+    .case-gallery { grid-template-columns: 1fr; }
+  }
+</style>

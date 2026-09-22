@@ -1,0 +1,349 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { PROFILES, COMPANY } from '../../lib/contact';
+import Hero from '../../components/Hero.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { SERVICES, getService } from '../../lib/services';
+import { AREAS, getBathAreas } from '../../lib/areas';
+
+const bathAreas = getBathAreas();
+
+const localBusiness = {
+  '@context': 'https://schema.org',
+  '@type': ['LocalBusiness', 'GeneralContractor'],
+  name: 'Aspect Builds & Maintenance Ltd',
+  url: 'https://www.aspectbuilds.co.uk',
+  telephone: '+441174094116',
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        telephone: '+441174094116',
+        contactType: 'customer service',
+        areaServed: 'GB',
+        availableLanguage: 'English',
+      },
+      {
+        '@type': 'ContactPoint',
+        telephone: '+447961114662',
+        contactType: 'customer service',
+        areaServed: 'GB',
+        availableLanguage: 'English',
+      },
+    ],
+    // Consolidates this site with the same business elsewhere.
+    sameAs: PROFILES,
+    // Google reads these on the LocalBusiness for the knowledge panel.
+    // image: real work, not the logo. logo: the square brand mark.
+    // hasMap ties the entity to the Business Profile listing itself.
+    image: [
+    'https://www.aspectbuilds.co.uk/projects/midford-garden-extension-1.webp',
+    'https://www.aspectbuilds.co.uk/projects/custom-kitchen-refit-1.webp',
+    'https://www.aspectbuilds.co.uk/projects/bath-loft-extension-1.webp',
+    ],
+    logo: 'https://www.aspectbuilds.co.uk/icon-512.png',
+    description:
+    'Building, renovation and property maintenance across Bath and BANES — extensions, loft conversions, kitchens, bathrooms, plastering and decorating. Free site visits, fixed written quotes within 48 hours.',
+    hasMap: 'https://maps.google.com/?cid=4018445236727357871',
+    // The registered entity (Companies House 16033975).
+    legalName: COMPANY.legalName,
+    foundingDate: COMPANY.incorporated,
+    identifier: {
+      '@type': 'PropertyValue',
+      name: 'Company number',
+      value: COMPANY.number,
+    },
+      email: 'james.aspectbuilds@gmail.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '2 Fir Tree Cottages, Dunkerton',
+    addressLocality: 'Bath',
+    postalCode: 'BA2 8BS',
+    addressCountry: 'GB',
+  },
+  // The same entity described three times must describe its service area
+  // the same way. Cities plus every named neighbourhood — more useful to
+  // Google than two city names, and it stays in step with lib/areas.
+  areaServed: [
+    { '@type': 'City', name: 'Bath' },
+    ...AREAS.map((a) => ({ '@type': 'Place', name: a.name })),
+  ],
+  priceRange: '££',
+  geo: {
+    '@type': 'GeoCoordinates',
+    // Taken from the Google Business Profile itself. The previous values
+    // were 655m out, which undercuts the NAP match Google is checking.
+    latitude: 51.3562,
+    longitude: -2.3661,
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+      opens: '08:00',
+      closes: '17:00',
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: 'Friday',
+      opens: '07:00',
+      closes: '17:00',
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: 'Saturday',
+      opens: '08:00',
+      closes: '13:00',
+    },
+  ],
+};
+
+// Same card-sized WebP the homepage grid uses — the icons here were the
+// only place on the site showing a service without a photograph of it.
+const serviceImages: Record<string, string> = {
+  'builders-bath':          '/images/hero-james-bath-property-1.webp',
+  'kitchen-fitters':        '/projects/custom-kitchen-refit-1.webp',
+  'extension-builders':     '/projects/midford-garden-extension-1.webp',
+  'loft-conversion':        '/projects/bath-loft-extension-1.webp',
+  'renovation':             '/images/hero-home-loft.webp',
+  'heritage-restoration':   '/images/hero-james-bath-property-8.webp',
+  'new-build':              '/projects/frome-garage-conversion-1.webp',
+  'stone-walling':          '/projects/garden-wall-landscaping-1.webp',
+  'landscaping':            '/projects/bath-landscaping-1.webp',
+  'plastering-rendering':   '/projects/chilcompton-rendering-1.webp',
+  'painting-decorating':    '/images/hero-james-bath-property-3.webp',
+  'property-maintenance':   '/projects/greenhouse-base-build-1.webp',
+  'windows-doors':          '/images/hero-james-bath-property-6.webp',
+  'bathroom-installers':    '/projects/luxury-bathroom-refit-1.webp',
+};
+
+
+// Price hints per service (subset)
+---
+
+<PageLayout
+  title="Our Services | Builders in Bath & BANES | Aspect Builds"
+  description="Builders across Bath and BANES — extensions, loft conversions, renovations, kitchens and bathrooms, plastering and decorating. Free site visits, fixed written quotes."
+  preloadImage="/images/hero-james-bath-property-2.webp"
+  canonical="/our-services/"
+  schema={localBusiness}
+  breadcrumbs={[{ name: 'Our Services', href: '/our-services/' }]}
+  ctaHeading="Not sure which service you need?"
+  ctaText="Tell us about your property and we'll recommend the right approach. Free site visit, free written quote, no pressure."
+  ctaLabel="Get a Free Recommendation"
+>
+  <Hero
+    size="compact"
+    eyebrow={['Our services']}
+    title="Our building services in"
+    titleAccent="Bath & BANES"
+    lede={`Fourteen services covering extensions, loft conversions, renovations, kitchens and bathrooms, plastering and decorating across ${AREAS.length} Bath & BANES neighbourhoods.`}
+    primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+441174094116', display: '07498 158747' }}
+    image="/images/hero-james-bath-property-2.webp"
+    imageAlt="Modern extension with timber cladding and steel-look glazing on a period Bath cottage by Aspect Builds"
+    rotateWith={[
+      '/projects/midford-garden-extension-2.webp',
+      '/projects/bath-loft-extension-2.webp',
+      '/projects/custom-kitchen-refit-2.webp',
+      '/projects/luxury-bathroom-refit-2.webp',
+      '/projects/bath-landscaping-2.webp',
+    ]}
+    trust={['Fourteen services', `${AREAS.length} neighbourhoods`, '£10M+ public liability', 'Free site visits']}
+  />
+
+  
+  <section class="section" id="services-grid">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow eyebrow--clay">What we do</span>
+        <h2>What we do</h2>
+        <p class="lede">Extensions, loft conversions, renovations, kitchens and bathrooms, plastering and decorating — every service run to the same fixed-price, one-project-manager standard across Bath &amp; BANES.</p>
+      </header>
+
+      <div class="service-grid-3">
+        {SERVICES.map((service, i) => (
+          <ServiceCard
+            slug={service.slug}
+            shortName={service.shortName}
+            tagline={service.tagline}
+            imageSrc={serviceImages[service.slug]}
+            number={String(i + 1).padStart(2, '0')}
+            variant="default"
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Coverage: two hubs, not twenty chips. The service cards above already
+       carry the "what"; this is the "where", and the city hubs are the pages
+       that should hold that authority. -->
+  <section class="section section--alt">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow">Coverage</span>
+        <h2>Where we work</h2>
+        <p class="lede">
+          Based in Dunkerton, five minutes south of Bath — covering the city,
+          its villages, and out to Keynsham, Bradford on Avon, Trowbridge,
+          Melksham, Chippenham, Corsham, Frome and the Somer Valley.
+        </p>
+      </header>
+
+      <ul class="city-hubs">
+        <li>
+          <a href="/bath/">
+            <span class="city-hubs__media">
+              <img
+                src="/projects/midford-garden-extension-1.webp"
+                alt="Garden extension in Midford by Aspect Builds with full-width glazing"
+                width="920" height="613" loading="lazy" decoding="async"
+              />
+            </span>
+            <span class="city-hubs__body">
+              <span class="city-hubs__count">{bathAreas.length} neighbourhoods &middot; BA &amp; surrounding postcodes</span>
+              <span class="city-hubs__name">Bath &amp; BANES</span>
+              <span class="city-hubs__blurb">
+                Every neighbourhood has its own page covering the local housing
+                stock, access and recent work — from Georgian Bathwick to the
+                Somer Valley villages.
+              </span>
+              <span class="city-hubs__go">
+                See Bath areas
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </span>
+            </span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="city-hubs__note">
+        Localised notes apply for listed buildings, conservation areas and
+        access-restricted streets — we cover those at the site visit.
+      </p>
+    </div>
+  </section>
+
+</PageLayout>
+
+<style>
+  .city-hubs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sp-4);
+  }
+  .city-hubs a {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: border-color var(--dur-fast) var(--ease),
+                box-shadow var(--dur-fast) var(--ease),
+                transform var(--dur-fast) var(--ease);
+  }
+  .city-hubs a:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+  .city-hubs__media {
+    display: block;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+  }
+  .city-hubs__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--dur-slow) var(--ease);
+  }
+  .city-hubs a:hover .city-hubs__media img { transform: scale(1.04); }
+  .city-hubs__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    flex: 1;
+    padding: var(--sp-5);
+  }
+  .city-hubs__count {
+    font-size: var(--fs-xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-text);
+  }
+  .city-hubs__name {
+    font-size: var(--fs-xl);
+    font-weight: var(--weight-bold);
+    line-height: 1.1;
+    color: var(--text);
+  }
+  .city-hubs__blurb {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--text-muted);
+    flex: 1;
+  }
+  .city-hubs__go {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-top: var(--sp-3);
+    font-size: var(--fs-sm);
+    font-weight: var(--weight-semi);
+    color: var(--accent-text);
+  }
+  .city-hubs a:hover .city-hubs__go svg { transform: translateX(3px); }
+  .city-hubs__go svg { transition: transform var(--dur-fast) var(--ease); }
+  @media (max-width: 700px) {
+    .city-hubs { grid-template-columns: 1fr; }
+  }
+  .city-hubs__note {
+    max-width: 640px;
+    margin: var(--sp-5) auto 0;
+    text-align: center;
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  /* Section header */
+  .section-header {
+    margin-bottom: var(--sp-7);
+  }
+  .section-header--center {
+    text-align: center;
+  }
+  .section-header--center .lede {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Service grid */
+
+  @media (max-width: 640px) {
+    .service-grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* Areas by city */
+
+  @media (max-width: 800px) {
+  }
+
+  /* Recommendation card */
+
+  @media (max-width: 700px) {
+  }
+
+</style>

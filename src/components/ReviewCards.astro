@@ -1,0 +1,115 @@
+---
+// ReviewCards — renders an array of testimonial cards with
+// 5-star ratings, name, location, date, and quote.
+
+export type Review = {
+  name: string;
+  area: string;
+  rating: number;       // 1-5
+  date: string;         // human-readable
+  service: string;
+  quote: string;
+};
+
+type Props = {
+  eyebrow?: string;
+  reviews: Review[];
+  heading?: string;
+  lede?: string;
+};
+
+const { eyebrow, reviews, heading = 'What Our Customers Say', lede } = Astro.props as Props;
+---
+
+<section class="reviews-section" aria-labelledby="reviews-heading">
+  <div class="container">
+    <header class="section-header section-header--center">
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      {heading && <h2 id="reviews-heading">{heading}</h2>}
+      {lede && <p class="lede">{lede}</p>}
+    </header>
+    <div class="reviews-grid">
+      {reviews.map((r) => (
+        <article class="review-card">
+          <div class="review-stars" aria-label={`${r.rating} out of 5 stars`}>
+            {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+          </div>
+          <blockquote class="review-quote">
+            <p>{r.quote}</p>
+          </blockquote>
+          <div class="review-meta">
+            <p class="review-name">— {r.name}</p>
+            <p class="review-area">{r.area} · {r.service}</p>
+            <p class="review-date">{r.date}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .reviews-section {
+    padding: var(--section-y-tight) 0;
+    background: var(--surface-raised);
+  }
+  .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+  .reviews-section h2 {
+    text-align: center;
+    margin-bottom: var(--sp-2);
+  }
+  .lede {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--fs-md);
+    max-width: 60ch;
+    margin: 0 auto var(--sp-6);
+  }
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .review-card {
+    background: var(--surface-raised);
+    border-left: 4px solid var(--accent);
+    padding: 1.5rem;
+    border-radius: 0 6px 6px 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .review-stars {
+    color: var(--accent-text);
+    font-size: 1.25rem;
+    letter-spacing: 0.1rem;
+    margin-bottom: 0.75rem;
+  }
+  .review-quote {
+    margin: 0 0 1rem;
+    padding: 0;
+  }
+  .review-quote p {
+    margin: 0;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .review-meta {
+    border-top: 1px solid var(--border);
+    padding-top: 0.75rem;
+  }
+  .review-name {
+    margin: 0;
+    font-weight: 700;
+    color: #0b0c0c;
+  }
+  .review-area,
+  .review-date {
+    margin: 0.2rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+</style>

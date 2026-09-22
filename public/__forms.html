@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Form definition — not a page</title>
+</head>
+<body>
+  <!--
+    Netlify detects forms by parsing static HTML at deploy time. Framework
+    builds sometimes trip that up, so this file is the belt-and-braces
+    version documented for exactly this case: a plain HTML form carrying the
+    same name and the same field names as the real one in LeadForm.astro.
+
+    Nothing links here and it is noindex. Its only job is to guarantee that
+    "kd-quote" appears in the Netlify Forms dashboard, so submissions from
+    the real form on /contact/ are attributed rather than dropped.
+
+    If a field is added to LeadForm.astro, add it here too or that field
+    will be missing from the submission notification.
+
+    action="/thanks/" here too: Astro strips data-netlify / action off the
+    real form during the build, so Netlify falls back to THIS registered
+    definition for the post-submit redirect. Without it a no-JS submission
+    lands on Netlify's default success page.
+  -->
+  <form name="kd-quote" action="/thanks/" method="POST" data-netlify="true" netlify-honeypot="_gotcha" hidden>
+    <input type="hidden" name="form-name" value="kd-quote" />
+    <input name="_gotcha" />
+    <input type="hidden" name="page_source" />
+    <input type="text" name="name" />
+    <input type="tel" name="phone" />
+    <input type="email" name="email" />
+    <input type="text" name="postcode" />
+    <select name="service"><option value=""></option></select>
+    <textarea name="notes"></textarea>
+    <input type="checkbox" name="consent" />
+  </form>
+</body>
+</html>

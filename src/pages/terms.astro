@@ -1,0 +1,65 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const lastUpdated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<PageLayout
+  title="Terms & Conditions | Aspect Builds"
+  description="Terms and conditions for engaging Aspect Builds for plastering, rendering or insulation work."
+  canonical="/terms/"
+  showLeadForm={false}
+  breadcrumbs={[{ name: 'Terms & Conditions', href: '/terms/' }]}
+>
+  <section class="section">
+    <div class="container container--reading">
+      <h1>Terms &amp; Conditions</h1>
+      <p style="color: var(--text-muted);">Last updated: {lastUpdated}</p>
+
+      <h2>1. Who we are</h2>
+      <p>These terms govern your use of aspectbuilds.co.uk and any contract you enter into with Aspect Builds &amp; Maintenance Ltd for building, renovation and property maintenance works. Aspect Builds &amp; Maintenance Ltd is based at 2 Fir Tree Cottages, Dunkerton, Bath BA2 8BS.</p>
+
+      <h2>2. Quotes</h2>
+      <p>All quotes are free and provided in writing following a site visit. Quotes are valid for 30 days from the date of issue unless otherwise stated. A quote becomes a contract once you confirm acceptance in writing (email is fine) and we confirm a start date.</p>
+
+      <h2>3. Pricing and payment</h2>
+      <p>Prices are fixed for the scope described in the quote. Variations must be agreed in writing before additional work is carried out. Payment terms:</p>
+      <ul>
+        <li>Jobs under £1,000: due on completion</li>
+        <li>Jobs over £1,000: 30% deposit on booking, balance on completion</li>
+        <li>Larger projects (extensions, renovations, new builds): staged payments as agreed in your contract</li>
+      </ul>
+      <p>We accept bank transfer, debit card and cheque. We do not accept cash for any amount over £500.</p>
+
+      <h2>4. Insurance and warranty</h2>
+      <p>We carry £10m public liability insurance. Defects in our workmanship are put right: tell us within 12 months of completion and we will return to make it good at no cost. Manufacturer warranties on materials and systems (for example paint systems, windows or bathroom fittings) pass through to you — your quote will state which apply.</p>
+
+      <h2>5. Cancellations</h2>
+      <p>You may cancel a booked job up to 7 working days before the agreed start date without charge. Cancellations within 7 working days may incur a charge to cover committed materials and scaffold costs. We will always try to be reasonable — talk to us first.</p>
+
+      <h2>6. Access and site</h2>
+      <p>You agree to provide reasonable access to the property during working hours (typically 8am–5pm, Mon–Fri). You are responsible for clearing the work area of personal items, vehicles and pets before our arrival. We will confirm any specific access requirements at quote stage.</p>
+
+      <h2>7. Planning and building regulations</h2>
+      <p>For most Bath and BANES homes, a single-storey rear extension or loft conversion falls under permitted development and does not need planning permission. Exceptions include listed buildings, properties in conservation areas, and some flats and new-builds — where permitted development rights are removed. We handle the checks and applications, and will advise at the site visit. Where Building Regulations approval is required, we manage the applications and inspections as part of the job.</p>
+
+      <h2>8. Subcontracting</h2>
+      <p>We sometimes use trusted subcontractors for scaffold, steelwork, or specialist heritage work. All subcontractors are vetted, insured and work to our specifications. We remain your point of contact throughout.</p>
+
+      <h2>9. Complaints</h2>
+      <p>If something goes wrong, please call us first — most issues are resolved on the same day. If we can’t resolve it, we’ll put it in writing with a clear plan to put it right. We are TrustATrader members, and TrustATrader’s dispute resolution service is available to you.</p>
+
+      <h2>10. Intellectual property</h2>
+      <p>The Aspect Builds &amp; Rendering Services name, logo and website content are owned by us. You may not copy or reproduce them without permission.</p>
+
+      <h2>11. Liability</h2>
+      <p>To the maximum extent permitted by law, our liability to you in respect of any contract is limited to the contract value. Nothing in these terms excludes liability for death or personal injury caused by our negligence, or for fraud.</p>
+
+      <h2>12. Governing law</h2>
+      <p>These terms are governed by the law of England and Wales. Any disputes are subject to the exclusive jurisdiction of the English courts.</p>
+
+      <h2>13. Contact</h2>
+      <p>Questions about these terms? Email <a href="mailto:james.aspectbuilds@gmail.com">james.aspectbuilds@gmail.com</a> or call 07498 158747.</p>
+    </div>
+  </section>
+</PageLayout>

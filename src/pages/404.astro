@@ -1,0 +1,98 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SERVICES } from '../lib/services';
+
+// Netlify serves dist/404.html for any unmatched path. Without this page it
+// serves its own generic one, which drops the visitor out of the site entirely
+// — no nav, no phone number, no way back. Anyone landing here has usually
+// followed a stale link, so the job is to get them to the thing they wanted.
+//
+// noindex and excluded from the sitemap: a 404 that ranks is worse than no 404.
+const services = SERVICES.slice(0, 6);
+---
+
+<PageLayout
+  title="Page not found | Aspect Builds"
+  description="That page has moved or no longer exists. Here are the plastering and rendering services we cover across Bath and BANES."
+  canonical="/404/"
+  noindex={true}
+  showLeadForm={false}
+>
+  <section class="nf">
+    <div class="container">
+      <span class="nf__code">404</span>
+      <h1 class="nf__heading">That page has moved</h1>
+      <p class="nf__lede">
+        The link you followed is out of date or the address has a typo. Nothing is
+        broken — the work is all still here.
+      </p>
+
+      <div class="nf__actions">
+        <a class="btn btn--primary" href="/">Back to the homepage</a>
+        <a class="btn btn--secondary" href="tel:+447498158747">Call 07498 158747</a>
+      </div>
+
+      <p class="nf__sub">Or pick up where you were going:</p>
+      <ul class="nf__links">
+        {services.map((s) => (
+          <li><a href={`/bath-${s.slug}/`}>{s.shortName}</a></li>
+        ))}
+        <li><a href="/our-work/">Recent work</a></li>
+        <li><a href="/contact/">Get a quote</a></li>
+      </ul>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .nf { padding: var(--sp-8) 0 var(--sp-7); text-align: center; }
+  .nf__code {
+    display: block;
+    font-size: clamp(3.5rem, 12vw, 6rem);
+    font-weight: var(--weight-bold);
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+  }
+  .nf__heading { margin: var(--sp-3) 0 var(--sp-2); }
+  .nf__lede {
+    margin: 0 auto var(--sp-5);
+    max-width: 46ch;
+    color: var(--text-muted);
+    font-size: var(--fs-md);
+    line-height: 1.65;
+  }
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    justify-content: center;
+    margin-bottom: var(--sp-7);
+  }
+  .nf__sub {
+    margin: 0 0 var(--sp-3);
+    font-size: var(--fs-xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+  .nf__links {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 640px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sp-2) var(--sp-4);
+  }
+  .nf__links a {
+    font-size: var(--fs-sm);
+    color: var(--accent-text);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .nf__links a:hover { border-bottom-color: currentColor; }
+  .nf__links a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+</style>

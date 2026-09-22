@@ -1,0 +1,110 @@
+---
+// ProblemList — premium card layout for "Common Problems We Solve"
+// Each problem gets a rust-red icon + headline + description.
+
+type Props = {
+  eyebrow?: string;
+  problems: string[];
+  heading?: string;
+  lede?: string;
+};
+
+const { eyebrow, problems, heading, lede } = Astro.props as Props;
+
+// Problem icons
+const problemIcons = [
+  'crack', 'moss', 'paint', 'damp', 'pebble', 'frost', 'broken',
+];
+
+const iconPaths: Record<string, string> = {
+  crack: '<path d="M12 2v6M12 22v-6M2 12h6M22 12h-6M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M4.93 19.07l4.24-4.24M14.83 9.17l4.24-4.24"/>',
+  moss: '<path d="M3 21h18M5 21V8c0-1 1-2 2-2h10c1 0 2 1 2 2v13M9 21V13h6v8"/>',
+  paint: '<path d="M19 11h2v8h-2zM9 2v8H7V2h2zm0 0V0h2v2H9zm12 0V0h2v2h-2zM2 9h8v2H2V9zm0 0V7h2v2H2zm6-7v8H6V2h2zm0 0V0h2v2H8z"/>',
+  damp: '<path d="M12 2C8 6 5 11 5 15a7 7 0 0 0 14 0c0-4-3-9-7-13z"/>',
+  pebble: '<circle cx="6" cy="6" r="3"/><circle cx="14" cy="14" r="3"/><circle cx="18" cy="8" r="2"/><circle cx="9" cy="17" r="2"/>',
+  frost: '<path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/>',
+  broken: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
+};
+---
+
+{heading && (
+  <header class="problems-header section-header section-header--center">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h2>{heading}</h2>
+    {lede && <p class="lede">{lede}</p>}
+  </header>
+)}
+
+<div class="problems-grid">
+  {problems.map((problem, i) => {
+    const iconName = problemIcons[i % problemIcons.length];
+    const path = iconPaths[iconName] ?? iconPaths.crack;
+    return (
+      <div class="problem-card">
+        <div class="problem-card__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={path} />
+        </div>
+        <p class="problem-card__text">{problem}</p>
+      </div>
+    );
+  })}
+</div>
+
+<style>
+  .problems-header {
+    margin-bottom: var(--sp-6);
+    text-align: center;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .problems-header .lede {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .problems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--sp-3);
+  }
+
+  .problem-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: var(--sp-4);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+
+  .problem-card:hover {
+    border-left-color: var(--accent);
+    transform: translateX(2px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .problem-card__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: var(--accent-tint);
+    color: var(--accent-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .problem-card__text {
+    margin: 0;
+    padding-top: var(--sp-1);
+    font-size: var(--fs-sm);
+    line-height: 1.55;
+    color: var(--text);
+    font-weight: 500;
+  }
+</style>

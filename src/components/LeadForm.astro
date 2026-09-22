@@ -1,0 +1,330 @@
+---
+// LeadForm — quote request form for Aspect Builds.
+// Netlify Forms with honeypot spam protection.
+// Form fields: name, phone, email, postcode, service, project notes.
+
+const services = [
+  { value: 'builders-bath', label: 'General building work' },
+  { value: 'extension-builders', label: 'House extension' },
+  { value: 'loft-conversion', label: 'Loft conversion' },
+  { value: 'renovation', label: 'Full house refurbishment' },
+  { value: 'kitchen-fitters', label: 'Kitchen' },
+  { value: 'bathroom-installers', label: 'Bathroom' },
+  { value: 'heritage-restoration', label: 'Heritage / listed building' },
+  { value: 'new-build', label: 'New build' },
+  { value: 'stone-walling', label: 'Stone walling' },
+  { value: 'landscaping', label: 'Landscaping' },
+  { value: 'plastering-rendering', label: 'Plastering & rendering' },
+  { value: 'painting-decorating', label: 'Painting & decorating' },
+  { value: 'property-maintenance', label: 'Property maintenance' },
+  { value: 'windows-doors', label: 'Windows & doors' },
+  { value: 'other', label: 'Other / not sure yet' },
+];
+---
+
+<div class="lead-form">
+  <form
+    name="aspect-quote"
+    method="POST"
+    action="/thanks/"
+    data-netlify="true"
+    netlify-honeypot="_gotcha"
+    class="lead-form__form"
+  >
+    {/* Netlify attributes the submission to a form by this hidden field.
+        Without it the POST is accepted but nothing lands in the Forms
+        dashboard. */}
+    <input type="hidden" name="form-name" value="aspect-quote" />
+
+    <!-- Honeypot — hidden from users, visible to bots -->
+    <p class="lead-form__honeypot" aria-hidden="true">
+      <label>Don't fill this out: <input name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+    </p>
+
+    <input type="hidden" name="page_source" value={Astro.url.pathname} />
+
+    {/* Full name is its own full-width row: sat next to another text input,
+        browser autofill (and people) split "First Last" across the two,
+        which is how a surname once landed in the phone field. */}
+    <div class="lead-form__field">
+      <label for="kd-name">Full name <span class="lead-form__required" aria-hidden="true">*</span></label>
+      <input id="kd-name" name="name" type="text" required autocomplete="name" />
+    </div>
+
+    <div class="lead-form__row">
+      <div class="lead-form__field">
+        <label for="kd-phone">Phone <span class="lead-form__required" aria-hidden="true">*</span></label>
+        <input
+          id="kd-phone"
+          name="phone"
+          type="tel"
+          required
+          autocomplete="tel"
+          inputmode="tel"
+          pattern="[\d\s+\-\(\)]{10,20}"
+          placeholder="e.g. 07700 900123"
+          title="Enter a phone number we can call you back on — digits, spaces and + only."
+          aria-describedby="kd-phone-hint"
+        />
+        <span id="kd-phone-hint" class="lead-form__hint">Best number to reach you on — mobile or landline.</span>
+      </div>
+
+      <div class="lead-form__field">
+        <label for="kd-email">Email <span class="lead-form__required" aria-hidden="true">*</span></label>
+        <input id="kd-email" name="email" type="email" required autocomplete="email" />
+      </div>
+    </div>
+
+    <div class="lead-form__row">
+      <div class="lead-form__field">
+        <label for="ab-postcode">Postcode <span class="lead-form__required" aria-hidden="true">*</span></label>
+        <input id="ab-postcode" name="postcode" type="text" required autocomplete="postal-code" placeholder="e.g. BA2 8BS" />
+      </div>
+
+      <div class="lead-form__field">
+        <label for="kd-service">Service <span class="lead-form__required" aria-hidden="true">*</span></label>
+        <select id="kd-service" name="service" required>
+          <option value="">Choose one</option>
+          {services.map(s => <option value={s.value}>{s.label}</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="lead-form__field">
+      <label for="kd-notes">Project details</label>
+      <textarea id="kd-notes" name="notes" rows="3" placeholder="Tell us about your property &mdash; type of home, what needs doing, timing, anything specific..."></textarea>
+    </div>
+
+    <label class="lead-form__consent">
+      <input type="checkbox" name="consent" value="yes" required />
+      <span>I&rsquo;m happy for Aspect Builds to contact me about this quote. We&rsquo;ll never share your details with anyone else.</span>
+    </label>
+
+    <button type="submit" class="btn btn--primary btn--lg lead-form__submit">
+      <span>Get my free quote</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+
+    <p class="lead-form__reassurance">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="11" width="18" height="11" rx="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      Your details are encrypted and never passed to third parties.
+    </p>
+  </form>
+</div>
+
+<script>
+  // Astro's build strips `data-netlify` / `action` off the rendered form,
+  // so a native submit ends up on Netlify's default success page instead
+  // of /thanks/. Submit over fetch and redirect ourselves — this also
+  // avoids the full-page reload. No-JS still works: the native POST is
+  // caught by Netlify and redirected via the __forms.html definition.
+  const form = document.querySelector<HTMLFormElement>('.lead-form__form');
+  if (form) {
+    // Belt-and-braces phone check. type="tel" + required only rejects an
+    // empty box, so a mistyped surname ("Baker") sails through. Require a
+    // realistic count of actual digits (UK: 10-11, allow a little slack
+    // for +44 / country-code forms).
+    const phone = form.querySelector<HTMLInputElement>('#kd-phone');
+    if (phone) {
+      const checkPhone = () => {
+        const digits = phone.value.replace(/\D/g, '');
+        phone.setCustomValidity(
+          !phone.value || (digits.length >= 10 && digits.length <= 13)
+            ? ''
+            : 'Please enter a phone number we can call you back on.'
+        );
+      };
+      phone.addEventListener('input', checkPhone);
+      phone.addEventListener('blur', checkPhone);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (phone) phone.dispatchEvent(new Event('input'));
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      try {
+        const body = new URLSearchParams(new FormData(form) as unknown as Record<string, string>).toString();
+        const res = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body,
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        window.location.assign('/thanks/');
+      } catch {
+        // Let the browser do a normal submit as a last resort.
+        if (submit) submit.disabled = false;
+        form.submit();
+      }
+    });
+  }
+</script>
+
+<style>
+  /* Container */
+  .lead-form {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-6);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Form */
+  .lead-form__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+
+  /* Honeypot */
+  .lead-form__honeypot {
+    position: absolute;
+    left: -9999px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* Row of 2 fields */
+  .lead-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+  }
+
+  @media (max-width: 480px) {
+    .lead-form__row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Field */
+  .lead-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+
+  .lead-form__field label {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .lead-form__required {
+    color: var(--accent-text);
+  }
+
+  .lead-form__hint {
+    font-size: var(--fs-xs);
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .lead-form__field input,
+  .lead-form__field select,
+  .lead-form__field textarea {
+    width: 100%;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--fs-base);
+    color: var(--text);
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+  }
+
+  .lead-form__field textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+  }
+
+  .lead-form__field input::placeholder,
+  .lead-form__field textarea::placeholder {
+    color: var(--text-muted);
+  }
+
+  .lead-form__field input:hover,
+  .lead-form__field select:hover,
+  .lead-form__field textarea:hover {
+    border-color: var(--border-strong);
+  }
+
+  .lead-form__field input:focus,
+  .lead-form__field select:focus,
+  .lead-form__field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 107, 26, 0.12);
+  }
+
+  .lead-form__field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 24' fill='none' stroke='%236a594a' stroke-width='1.6'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--sp-3) center;
+    background-size: 12px;
+    padding-right: var(--sp-7);
+  }
+
+  /* Consent */
+  .lead-form__consent {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    font-size: var(--fs-sm);
+    line-height: 1.5;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .lead-form__consent input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0;
+    flex-shrink: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .lead-form__consent span {
+    user-select: none;
+  }
+
+  /* Submit button */
+  .lead-form__submit {
+    width: 100%;
+    margin-top: var(--sp-2);
+  }
+
+  /* Reassurance */
+  .lead-form__reassurance {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    margin: 0;
+    padding-top: var(--sp-3);
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+  }
+
+  .lead-form__reassurance svg {
+    color: var(--accent-text);
+  }
+</style>

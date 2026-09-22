@@ -1,0 +1,131 @@
+---
+// AreaCoverage — the single treatment for "where we work".
+//
+// Areas are grouped by REGION so coverage is presented honestly: Trowbridge,
+// Chippenham and Frome are not Bath neighbourhoods. Four rings, Bath first.
+// serviceSlug (when present) points each chip at the tiered service × area
+// page where one exists; without it chips go to the area hubs.
+
+import { getAreasByRegion, KEY_SERVICES } from '../lib/areas';
+
+type Props = {
+  serviceSlug?: string;
+  eyebrow?: string;
+  heading?: string;
+  lede?: string;
+  note?: string;
+};
+
+const { serviceSlug, eyebrow, heading, lede, note } = Astro.props as Props;
+const groups = getAreasByRegion();
+---
+
+{(heading || lede) && (
+  <header class="section-header section-header--center">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    {heading && <h2>{heading}</h2>}
+    {lede && <p class="lede">{lede}</p>}
+  </header>
+)}
+
+<div class="area-coverage">
+  {groups.map((g) => (
+    <div class="area-coverage__group">
+      <h3 class="area-coverage__city">
+        {g.region}
+        <span class="area-coverage__count">{g.areas.length} {g.areas.length === 1 ? 'area' : 'areas'}</span>
+      </h3>
+      <ul class="area-coverage__list">
+        {g.areas.map((a) => (
+          <li>
+            {/* On a service page, primary/secondary areas have their own
+                service × area page under the /bath-{service}/{area}/ matrix;
+                all areas have a neighbourhood hub at /bath/{area}/. */}
+            <a
+              class="area-coverage__area area-coverage__area--link"
+              href={serviceSlug
+                ? (a.tier === 'primary' || (a.tier === 'secondary' && KEY_SERVICES.has(serviceSlug))
+                    ? `/bath-${serviceSlug}/${a.slug}/`
+                    : `/bath/${a.slug}/`)
+                : `/bath/${a.slug}/`}
+            >
+              {a.name}
+              <span class="area-coverage__pcode">{a.postcode}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</div>
+
+{note && <p class="area-coverage__note">{note}</p>}
+
+<style>
+  .area-coverage {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+  .area-coverage__group {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-5);
+  }
+  .area-coverage__city {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 var(--sp-4);
+  }
+  .area-coverage__city::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .area-coverage__count {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--accent-text);
+    border: 1px solid var(--accent-text);
+    padding: 1px 8px;
+    white-space: nowrap;
+  }
+  .area-coverage__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .area-coverage__area {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    padding: 0.45rem 0.85rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .area-coverage__area:hover { border-color: var(--accent); color: var(--text); }
+  .area-coverage__pcode { font-size: 0.72rem; color: var(--text-muted); }
+  .area-coverage__note {
+    text-align: center;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    margin: var(--sp-4) 0 0;
+  }
+</style>

@@ -1,0 +1,12 @@
+---
+import AreaHub from '../../components/AreaHub.astro';
+import { getBathAreas } from '../../lib/areas';
+
+export function getStaticPaths() {
+  return getBathAreas().map((area) => ({ params: { slug: area.slug }, props: { area } }));
+}
+
+const { area } = Astro.props;
+---
+
+<AreaHub area={area} />

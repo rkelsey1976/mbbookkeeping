@@ -1,0 +1,124 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import { getService } from '../../lib/services';
+
+// Linked from the footer, the homepage body, and the service pages whose
+// buyers these posts help — but NOT the header nav.
+//
+// Measured against the real graph: a sitewide footer link costs the money
+// pages 0.96 points and takes this page from 0.30% to 3.43%. That is a fair
+// price. A blog nobody can find earns no external links, which was the whole
+// argument for having one. The expensive patterns are tag archives and
+// post-to-post cross-linking, not the link itself — see content.config.ts.
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf()
+);
+
+const prose = (slug: string) =>
+  getService(slug)!.shortName.replace(/\s+Services$/i, '');
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Builder guides for Bath & BANES',
+  url: 'https://www.aspectbuilds.co.uk/blog/',
+  hasPart: posts.map((p) => ({
+    '@type': 'Article',
+    headline: p.data.title,
+    url: `https://www.aspectbuilds.co.uk/blog/${p.id}/`,
+  })),
+};
+---
+
+<PageLayout
+  title="Builder Guides | Costs, Timelines & Advice | Aspect Builds"
+  description="Straight answers on extensions, loft conversions, renovation costs, planning rules and hiring a builder — written by the people doing the work across Bath and BANES."
+  canonical="/blog/"
+  preloadImage="/projects/bath-loft-extension-1.webp"
+  schema={schema}
+  breadcrumbs={[{ name: 'Blog', href: '/blog/' }]}
+>
+  <Hero
+    size="compact"
+    eyebrow={['Guides', `${posts.length} article${posts.length === 1 ? '' : 's'}`]}
+    title="Advice from"
+    titleAccent="the tools"
+    lede="Straight answers on extensions, loft conversions, renovation costs, planning rules and hiring a builder in Bath — written from what we find on site, not from a keyword list."
+    primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+441174094116', display: '07498 158747' }}
+    image="/projects/bath-loft-extension-1.webp"
+    imageAlt="Loft conversion in Bath by Aspect Builds — finished bedroom with ensuite"
+    trust={['Free site visit', 'Fixed written quote', 'Since 2004']}
+  />
+
+  <section class="section">
+    <div class="container">
+      {posts.length === 0 ? (
+        <p class="blog-empty">No guides published yet.</p>
+      ) : (
+        <ul class="blog-index">
+          {posts.map((p) => (
+            <li>
+              <a href={`/blog/${p.id}/`}>
+                <span class="blog-index__media">
+                  <img src={p.data.image} alt="" width="920" height="613" loading="lazy" decoding="async" />
+                </span>
+                <span class="blog-index__body">
+                  <span class="blog-index__meta">
+                    {prose(p.data.service)} · {p.data.minutes} min read
+                  </span>
+                  <span class="blog-index__title">{p.data.title}</span>
+                  <span class="blog-index__desc">{p.data.description}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .blog-empty { text-align: center; color: var(--text-muted); }
+  .blog-index {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--sp-4);
+  }
+  .blog-index a {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: border-color var(--dur-fast) var(--ease),
+                box-shadow var(--dur-fast) var(--ease),
+                transform var(--dur-fast) var(--ease);
+  }
+  .blog-index a:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+  .blog-index__media { display: block; aspect-ratio: 3 / 2; overflow: hidden; }
+  .blog-index__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .blog-index__body { display: flex; flex-direction: column; gap: var(--sp-2); padding: var(--sp-5); flex: 1; }
+  .blog-index__meta {
+    font-size: var(--fs-xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--accent-text);
+  }
+  .blog-index__title { font-size: var(--fs-md); font-weight: var(--weight-bold); line-height: 1.25; color: var(--text); }
+  .blog-index__desc { font-size: var(--fs-sm); line-height: 1.6; color: var(--text-muted); flex: 1; }
+</style>

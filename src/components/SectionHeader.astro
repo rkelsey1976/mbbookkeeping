@@ -1,0 +1,58 @@
+---
+// Section header — eyebrow + h2 + lede + optional CTA button
+type Props = {
+  eyebrow?: string;
+  eyebrowVariant?: 'slate' | 'fern' | 'terracotta';
+  heading: string;
+  lede?: string;
+  cta?: { label: string; href: string; variant?: 'primary' | 'ghost' | 'secondary' };
+  align?: 'center' | 'left';
+};
+
+const {
+  eyebrow,
+  eyebrowVariant = 'slate',
+  heading,
+  lede,
+  cta,
+  align = 'center',
+} = Astro.props as Props;
+---
+
+<header class={`section-header section-header--${align}`}>
+  {eyebrow && (
+    <span class={`eyebrow eyebrow--${eyebrowVariant}`}>{eyebrow}</span>
+  )}
+  <h2>{heading}</h2>
+  {lede && <p class="lede">{lede}</p>}
+  {cta && (
+    <a
+      href={cta.href}
+      class:list={['btn', `btn--${cta.variant ?? 'primary'}`]}
+    >
+      {cta.label}
+    </a>
+  )}
+</header>
+
+<style>
+  .section-header {
+    margin-bottom: var(--sp-7);
+  }
+  .section-header--center {
+    text-align: center;
+  }
+  .section-header--center .lede {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .section-header h2 {
+    margin-top: 0;
+  }
+  .section-header .lede {
+    margin-bottom: var(--sp-5);
+  }
+  .section-header .btn {
+    margin-top: var(--sp-2);
+  }
+</style>

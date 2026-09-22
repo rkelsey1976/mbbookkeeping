@@ -1,0 +1,83 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const lastUpdated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<PageLayout
+  title="Cookies | Aspect Builds"
+  description="What cookies this site sets, what only loads if you accept, and how to change your mind. No advertising or retargeting cookies, ever."
+  canonical="/cookies/"
+  showLeadForm={false}
+  breadcrumbs={[{ name: 'Cookies', href: '/cookies/' }]}
+>
+  <section class="section">
+    <div class="container container--reading">
+      <h1>Cookies</h1>
+      <p style="color: var(--text-muted);">Last updated: {lastUpdated}</p>
+
+      <p>
+        This site sets no cookies and loads no third-party scripts until you choose
+        to accept them. If you have not answered the banner, or you chose Reject,
+        nothing on this page applies to you beyond the strictly necessary item below.
+      </p>
+
+      <h2>Strictly necessary</h2>
+      <p>
+        We store a single item in your browser's local storage,
+        <code>kd-cookie-consent</code>, recording your answer and the date you gave it.
+        It is not a tracking cookie, it is never sent to us or to anyone else, and it
+        exists only so we do not ask you again on every page. Your answer stands for
+        six months, after which we ask once more.
+      </p>
+
+      <h2>Only if you accept</h2>
+      <p>Accepting enables two things, and nothing else:</p>
+      <ul>
+        <li>
+          <strong>Google Analytics 4.</strong> Measures which pages are read and how
+          people arrive, so we know which of our services people are actually looking
+          for. It sets its own cookies and your IP address is anonymised. We do not use
+          it for advertising and we do not share the data.
+        </li>
+        <li>
+          <strong>The Google map on our contact page.</strong> Embedding a Google map
+          means Google can set cookies. Without consent the map is replaced by a button,
+          and nothing is requested from Google until you press it. You can always use the
+          "open directions in a new tab" link instead, which takes you to Google on your
+          own terms.
+        </li>
+      </ul>
+
+      <h2>Changing your mind</h2>
+      <p>
+        You can withdraw or change your answer at any time.
+        <button type="button" class="btn btn--secondary" onclick="window.kdResetConsent && window.kdResetConsent()">
+          Change my cookie choice
+        </button>
+      </p>
+      <p>
+        Clearing your browser's site data for this domain has the same effect. If you
+        previously accepted, removing consent stops any further analytics collection;
+        to have data already collected deleted, email us and we will action it.
+      </p>
+
+      <h2>What we never do</h2>
+      <p>
+        We do not use advertising or retargeting cookies, we do not run a Meta Pixel or
+        any similar tracker, and we do not sell or share data with third parties for
+        marketing. We do not profile you or make automated decisions about you.
+      </p>
+
+      <h2>Server logs</h2>
+      <p>
+        Separately from cookies, our hosting provider (Netlify) records standard request
+        logs — IP address, timestamp, page requested — for up to 30 days for security and
+        capacity planning. That happens for every visitor, is required to serve the site
+        securely, and is covered by legitimate interests rather than consent. See our
+        <a href="/privacy/">privacy policy</a> for how we handle personal data generally,
+        including anything you send us through the quote form.
+      </p>
+    </div>
+  </section>
+</PageLayout>

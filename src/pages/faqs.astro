@@ -1,0 +1,67 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/Hero.astro';
+
+// General questions about hiring Aspect Builds. Service-specific questions
+// (costs, timescales, materials per trade) live on the 14 service pages —
+// 111 of them across the site — so this page covers the engagement itself.
+const faqs = [
+  { q: 'What does Aspect Builds actually do?', a: 'Extensions, loft conversions, whole-house renovations, kitchens and bathrooms, heritage and listed-building work, plastering and decorating, landscaping and stonework, and planned property maintenance — fourteen services, all run by the same core team from our base just outside Bath.' },
+  { q: 'Are you a proper company or a man with a van?', a: 'Aspect Builds & Maintenance Ltd, registered in England and Wales, company no. 16033975. James is an MCIOB Chartered Builder through the Chartered Institute of Building, every operative holds a CSCS card, and we carry £10M+ public liability insurance. Companies House listing and insurance documents available on request.' },
+  { q: 'How does quoting work?', a: 'Free site visit, then a fixed written quote within 48 hours — itemised for labour, materials and any statutory fees. What we quote is what you pay. We never price jobs over the phone or give ballpark figures we later move; if something genuinely unforeseeable turns up mid-job, you approve the change in writing before it happens.' },
+  { q: 'How much will my project cost?', a: 'Honestly: it depends on the property and the scope. As a rough guide, like-for-like kitchen refits start around £8,000–£15,000, loft conversions £18,000–£35,000, extensions £30,000–£80,000+. Every service page has a proper cost guide with real Bath ranges. The only number that matters is the fixed quote after the site visit.' },
+  { q: 'How long will my project take?', a: 'Typical guides: a kitchen refit 1–2 weeks, a loft conversion 6–8 weeks, a single extension 8–12 weeks, a whole-house renovation 3–4 months. Dates are fixed at quote stage and we stick to them — if we are ever running late you will know why and when we will recover, not be told to be patient.' },
+  { q: 'Do you work on listed buildings and in conservation areas?', a: 'Yes — it is a specialism, not an exception. Much of Bath is Georgian, so lime mortars, breathable systems and conservation-officer liaison are routine for us. We handle listed building consent and conservation area paperwork as part of the job, not as an extra.' },
+  { q: 'Can I live at home during the work?', a: 'Mostly, yes. We work in phases, seal off the work area with dust barriers, and protect routes through the house. Kitchens and bathrooms are the exception worth planning for — we will tell you honestly at quote stage which days you will be without water or cooking facilities and for how long.' },
+  { q: 'Which areas do you cover?', a: 'Bath and the surrounding villages from our base in Dunkerton — out to Keynsham, Bradford on Avon, Trowbridge, Melksham, Chippenham, Corsham, Frome and the Somer Valley. Free site visits across the whole patch. Every neighbourhood has its own page under Areas We Cover.' },
+  { q: 'What warranty do I get?', a: 'A straightforward one: defects on our workmanship are put right at no cost, and manufacturer warranties on supplied products (windows, boilers, appliances, fit-out systems) are passed to you in full at handover. We will not attach a big number to the side of a building and call it a warranty — the fixed quote, the written spec and the documents at handover are the guarantee.' },
+  { q: 'How do payments work?', a: 'No deposit for most projects. Payments are staged against completed, agreed milestones — not calendar dates — so you never pay ahead of work done. The schedule is in the quote before you commit, and final payment is on completion once you have walked the job with James.' },
+  { q: 'Who will actually be in my house?', a: 'Our own core team plus long-standing regular subcontractors — electricians and plumbers we have used for years. Everyone holds a CSCS card. The same project manager runs your job start to finish, and James is on site regularly — you will know the people working in your home.' },
+  { q: 'How messy will it be?', a: 'Some mess is inevitable during demolition and stripping out — we will not pretend otherwise. What we do promise: dust sheets and floor protection every day, sealed doorways, a tidy-up before we leave each evening, waste removed as we go, and a full professional clean at handover.' },
+  { q: 'What if I change my mind about something mid-project?', a: 'Happens all the time and it is fine. Changes are priced in writing, agreed, and scheduled before they happen — you always know the effect on cost and dates before approving. What we will not do is surprise you with a bigger invoice at the end.' },
+  { q: 'Your question is not here', a: 'It probably is — the fourteen service pages carry 111 more specific questions on costs, timescales, materials and process per trade. Or ask us directly: call 07498 158747 (or WhatsApp the same number), or send the form and we will come back the same day.' },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<PageLayout
+  title="FAQs | Hiring a Builder in Bath | Aspect Builds"
+  description="Straight answers on hiring Aspect Builds: quoting, pricing, timescales, listed buildings, warranties, payments and how the work runs."
+  preloadImage="/projects/custom-kitchen-refit-1.webp"
+  canonical="/faqs/"
+  schema={faqSchema}
+  breadcrumbs={[{ name: 'FAQs', href: '/faqs/' }]}
+  ctaHeading="Got a question we haven't answered?"
+  ctaText="Call 07498 158747 or send a message and we'll get back to you the same day."
+  ctaLabel="Get in touch"
+>
+  <Hero
+    size="compact"
+    eyebrow={['FAQs']}
+    title="Frequently asked"
+    titleAccent="questions."
+    lede="Straight answers about hiring Aspect Builds — quoting, pricing, timescales, listed buildings and how the work actually runs. Service-specific costs live on each service page."
+    primaryCta={{ label: 'Ask us directly', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+447498158747', display: '07498 158747' }}
+    image="/projects/custom-kitchen-refit-1.webp"
+    imageAlt="Custom kitchen refit in Bath by Aspect Builds — shaker units with timber worktop"
+  />
+
+  <section class="section">
+    <div class="container container--reading">
+      <div class="faq-section">
+        {faqs.map(f => (
+          <details>
+            <summary>{f.q}</summary>
+            <div class="faq-answer">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</PageLayout>

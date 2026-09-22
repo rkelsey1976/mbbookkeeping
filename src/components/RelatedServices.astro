@@ -1,0 +1,96 @@
+---
+// RelatedServices — renders cross-links to related services using ServiceCard.
+// Used on service city hubs to encourage cross-service discovery.
+
+import ServiceCard from './ServiceCard.astro';
+
+type Service = {
+  slug: string;
+  shortName: string;
+  tagline: string;
+};
+
+// Card photography, matching the homepage grid, the services index and the
+// mega menu. Without this the cards fell back to a generic icon — the only
+// place left on the site showing a service without a picture of it.
+const cardImages: Record<string, string> = {
+  'builders-bath':          '/images/hero-james-bath-property-1.webp',
+  'kitchen-fitters':        '/projects/custom-kitchen-refit-1.webp',
+  'extension-builders':     '/projects/midford-garden-extension-1.webp',
+  'loft-conversion':        '/projects/bath-loft-extension-1.webp',
+  'renovation':             '/images/hero-home-loft.webp',
+  'heritage-restoration':   '/images/hero-james-bath-property-8.webp',
+  'new-build':              '/projects/frome-garage-conversion-1.webp',
+  'stone-walling':          '/projects/garden-wall-landscaping-1.webp',
+  'landscaping':            '/projects/bath-landscaping-1.webp',
+  'plastering-rendering':   '/projects/chilcompton-rendering-1.webp',
+  'painting-decorating':    '/images/hero-james-bath-property-3.webp',
+  'property-maintenance':   '/projects/greenhouse-base-build-1.webp',
+  'windows-doors':          '/images/hero-james-bath-property-6.webp',
+  'bathroom-installers':    '/projects/luxury-bathroom-refit-1.webp',
+};
+
+type Props = {
+  eyebrow?: string;
+  services: Service[];
+  heading?: string;
+  lede?: string;
+  /** Which city hub the cards link to. Defaults to Bath. */
+  city?: 'bristol' | 'bath';
+};
+
+const { eyebrow, services, heading = 'Related Services', lede = 'Customers who book this service often add one of these.', city = 'bath' } = Astro.props as Props;
+---
+
+<section class="related-services" aria-labelledby="related-services-heading">
+  <div class="container">
+    <header class="section-header section-header--center">
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      {heading && <h2 id="related-services-heading">{heading}</h2>}
+      {lede && <p class="lede">{lede}</p>}
+    </header>
+    <div class="related-services__grid">
+      {services.map((s) => (
+        <ServiceCard
+          slug={s.slug}
+          shortName={s.shortName}
+          tagline={s.tagline}
+          imageSrc={cardImages[s.slug]}
+          href={`/bath-${s.slug}/`}
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .related-services {
+    padding: var(--sp-8) 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--sp-5);
+  }
+
+  .related-services h2 {
+    text-align: center;
+    margin-bottom: var(--sp-3);
+  }
+
+  .related-services .lede {
+    text-align: center;
+    max-width: 60ch;
+    margin: 0 auto var(--sp-6);
+  }
+
+  .related-services__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sp-4);
+  }
+</style>

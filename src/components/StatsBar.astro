@@ -1,0 +1,49 @@
+---
+// Stats bar — horizontal row of stat items with dividers
+export type Stat = {
+  num: string;
+  label: string;
+  accent?: 'slate' | 'fern' | 'terracotta';
+};
+
+type Props = {
+  stats: Stat[];
+  variant?: 'light' | 'dark';
+};
+
+const { stats, variant = 'light' } = Astro.props as Props;
+---
+
+<div class={`stat-bar stat-bar--${variant}`}>
+  {stats.map((s, i) => (
+    <div class="stat-bar__item">
+      <span class:list={['stat-bar__num', s.accent && `stat-bar__num--${s.accent}`]}>
+        {s.num}
+      </span>
+      <span class="stat-bar__label">{s.label}</span>
+    </div>
+  ))}
+</div>
+
+<style>
+  .stat-bar--dark .stat-bar__num,
+  .stat-bar--dark .stat-bar__label {
+    color: var(--text-inverse);
+  }
+  .stat-bar--dark {
+    border-top-color: rgba(255, 255, 255, 0.15);
+    border-bottom-color: rgba(255, 255, 255, 0.15);
+  }
+  .stat-bar__num--fern { color: var(--accent-text); }
+  .stat-bar__num--terracotta { color: var(--accent-text); }
+  .stat-bar__num--slate { color: var(--text); }
+
+  .stat-bar--dark .stat-bar__num--fern,
+  .stat-bar--dark .stat-bar__num--terracotta,
+  .stat-bar--dark .stat-bar__num--slate {
+    color: var(--accent-text);
+  }
+  .stat-bar--dark .stat-bar__label {
+    color: rgba(255, 255, 255, 0.7);
+  }
+</style>

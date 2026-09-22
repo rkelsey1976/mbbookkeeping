@@ -1,0 +1,119 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import AreaIndex from '../../components/AreaIndex.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { SERVICES } from '../../lib/services';
+import { getBathAreas } from '../../lib/areas';
+
+const bath = getBathAreas();
+const bristol = getBathAreas();
+
+const serviceImages: Record<string, string> = {
+  'silicone-rendering':       '/services/cards/silicone-rendering.webp',
+  'house-rendering':          '/services/cards/house-rendering.webp',
+  'external-wall-rendering':  '/services/cards/ewall-rendering.webp',
+  'monocouche-rendering':     '/services/cards/monocouche-rendering.webp',
+  'plastering-services':      '/services/cards/plastering.webp',
+  'external-wall-insulation': '/services/cards/ewi.webp',
+};
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Builders across Bath & BANES',
+  url: 'https://www.aspectbuilds.co.uk/bath/',
+  hasPart: bath.map((a) => ({
+    '@type': 'WebPage',
+    name: `Builders in ${a.name}`,
+    url: `https://www.aspectbuilds.co.uk/bath/${a.slug}/`,
+  })),
+};
+---
+
+<PageLayout
+  title="Builders in Bath | Areas We Cover | Aspect Builds"
+  description="Builders across Bath and the surrounding villages — extensions, loft conversions, Georgian renovation, kitchens and bathrooms. Every neighbourhood has its own page."
+  preloadImage="/projects/midford-garden-extension-4.webp"
+  canonical="/bath/"
+  schema={schema}
+  breadcrumbs={[{ name: 'Bath', href: '/bath/' }]}
+  ctaHeading="Planning a project in Bath?"
+  ctaText="Free site visit across Bath, a fixed written quote within 48 hours, and no pressure either way."
+>
+  <Hero
+    size="compact"
+    eyebrow={['Coverage', 'Bath & BANES']}
+    title="Builders across"
+    titleAccent="Bath & BANES"
+    lede="We cover Bath and its surrounding villages from our base in Dunkerton, just south of the city. Much of the work here is Georgian — lime-compatible construction, conservation area consent and listed building consent are routine rather than exceptional."
+    primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+441174094116', display: '07498 158747' }}
+    image="/projects/midford-garden-extension-4.webp"
+    imageAlt="Garden extension in Midford, Bath by Aspect Builds with full-width glazing"
+    trust={[`${bath.length} neighbourhoods`, 'Listed building experience', 'Free site visits']}
+  />
+
+  <!-- Services first: someone landing on a city page wants to know what we
+       do before which streets we do it on. Neighbourhoods second, the other
+       city last. -->
+  <section class="section">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow">Services</span>
+        <h2>What we do in Bath</h2>
+        <p class="lede">The same services in Bath — with lime-compatible specifications and conservation consent where the property needs them.</p>
+      </header>
+      <div class="service-grid-3">
+        {SERVICES.map((svc, i) => (
+          <ServiceCard
+            slug={svc.slug}
+            shortName={svc.shortName}
+            tagline={svc.tagline}
+            imageSrc={serviceImages[svc.slug]}
+            number={String(i + 1).padStart(2, '0')}
+            variant="default"
+            href={`/bath-${svc.slug}/`}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow">Bath</span>
+        <h2>Where we work in Bath &amp; BANES</h2>
+        <p class="lede">Every area below has its own page with local detail — grouped by where it actually is, because Trowbridge is not Bath.</p>
+      </header>
+
+      <AreaIndex areas={bath} city="bath" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow">Local, not national</span>
+        <h2>Based just outside Bath</h2>
+        <p class="lede">
+          We're based in Dunkerton, five minutes south of the city — so site
+          visits are quick, crews are local, and someone you've met runs the job.
+          James MCIOB signs off every quote personally.
+        </p>
+      </header>
+      <p style="text-align: center; margin: 0; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a class="btn btn--secondary" href="/about-us/">Meet the team</a>
+        <a class="btn btn--secondary" href="/contact/">Book a free site visit</a>
+      </p>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  @media (max-width: 600px) {
+    .service-grid-3 { grid-template-columns: 1fr; }
+  }
+
+</style>

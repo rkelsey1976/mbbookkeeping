@@ -1,0 +1,191 @@
+---
+// AuthorityBio — founder / team bio block with avatar placeholder,
+// name, qualifications, signed byline. For E-E-A-T.
+
+type Props = {
+  name: string;
+  role: string;
+  qualifications: string[];
+  bio: string;
+  /** Compact byline for pages where the full bio would be duplicate
+      content — shows credentials and links to the full version. */
+  compact?: boolean;
+  signed?: boolean;
+};
+
+const { name, role, qualifications, bio, signed = true, compact = false } = Astro.props as Props;
+---
+
+{compact ? (
+  <aside class="authority-compact" aria-label={`About ${name}`}>
+    <span class="authority-compact__avatar" aria-hidden="true">
+      {name.split(' ').map((n) => n[0]).join('')}
+    </span>
+    <div class="authority-compact__body">
+      <p class="authority-compact__name">
+        {name} <span>· {role}</span>
+      </p>
+      <p class="authority-compact__creds">{qualifications.slice(0, 3).join(' · ')}</p>
+    </div>
+    <a href="/about-us/" class="authority-compact__link">
+      More about {name}
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7" />
+      </svg>
+    </a>
+  </aside>
+) : (
+<aside class="authority-bio" aria-label={`About ${name}`}>
+  <div class="authority-avatar" aria-hidden="true">
+    <span class="authority-initial">{name.split(' ').map(n => n[0]).join('')}</span>
+  </div>
+  <div class="authority-content">
+    <p class="authority-role">{role}</p>
+    <h3 class="authority-name">{name}</h3>
+    <p class="authority-text">{bio}</p>
+    {qualifications.length > 0 && (
+      <ul class="authority-qualifications">
+        {qualifications.map((q) => <li>{q}</li>)}
+      </ul>
+    )}
+    {signed && (
+      <p class="authority-signed">— {name}, {role}, Aspect Builds &amp; Maintenance Ltd</p>
+    )}
+  </div>
+</aside>
+)}
+
+<style>
+  /* Compact byline — same credentials, none of the repeated prose. */
+  .authority-compact {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+    padding: var(--sp-4) var(--sp-5);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .authority-compact__avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--surface-inverse);
+    color: var(--text-inverse);
+    font-weight: var(--weight-display);
+    font-size: var(--fs-sm);
+    letter-spacing: 0.02em;
+  }
+  .authority-compact__body { flex: 1; min-width: 180px; }
+  .authority-compact__name {
+    margin: 0;
+    font-size: var(--fs-base);
+    font-weight: var(--weight-semi);
+    color: var(--text);
+  }
+  .authority-compact__name span { font-weight: var(--weight-body); color: var(--text-muted); }
+  .authority-compact__creds {
+    margin: 2px 0 0;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+  .authority-compact__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-sm);
+    font-weight: var(--weight-semi);
+    color: var(--accent-text);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .authority-compact__link:hover { color: var(--accent-hover); }
+
+  .authority-bio {
+    display: flex;
+    gap: var(--sp-5);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-6);
+    margin: 0;
+    max-width: var(--container-narrow);
+    margin-inline: auto;
+  }
+  .authority-avatar {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--surface-inverse) 0%, var(--surface-inverse) 100%);
+    color: var(--text-inverse);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+  .authority-initial {
+    line-height: 1;
+  }
+  .authority-content {
+    flex: 1;
+  }
+  .authority-role {
+    margin: 0 0 0.25rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .authority-name {
+    margin: 0 0 0.75rem;
+    font-size: 1.25rem;
+    color: var(--text);
+  }
+  .authority-text {
+    margin: 0 0 var(--sp-4);
+    color: var(--text-secondary);
+    line-height: var(--lh-body);
+    max-width: var(--measure);
+  }
+  .authority-qualifications {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--sp-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+  .authority-qualifications li {
+    padding: var(--sp-2) var(--sp-3);
+    background: var(--accent-tint);
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--weight-medium);
+    color: var(--accent-text);
+  }
+  .authority-signed {
+    margin: 0.75rem 0 0;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  @media (max-width: 600px) {
+    .authority-bio {
+      flex-direction: column;
+      text-align: center;
+    }
+    .authority-avatar {
+      margin: 0 auto;
+    }
+  }
+</style>

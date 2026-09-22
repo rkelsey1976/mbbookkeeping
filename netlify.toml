@@ -1,0 +1,11 @@
+# Netlify build config, version-controlled instead of living
+# only in the dashboard.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Pretty URLs is left at its default (on): with the directory-style build
+# (/page/index.html) it is what issues the single /page -> /page/ 301, so
+# the slashless form of every URL redirects to the canonical trailing-slash
+# version in one hop instead of serving duplicate 200s.

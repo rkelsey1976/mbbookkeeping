@@ -1,0 +1,795 @@
+---
+import Logo from './Logo.astro';
+import { AREAS } from '../lib/areas';
+
+const pathname = Astro.url.pathname;
+const isActive = (path: string) => {
+  if (path === '/') return pathname === '/';
+  return pathname.startsWith(path);
+};
+
+// Services data for mega menu — kept inline so the menu works without import complexity
+// Thumbnails are pre-generated WebP (560x374, ~25KB each) in
+// /services/thumbs/. The full hero JPEGs are 260KB-1MB — six of those in a
+// dropdown is 2.2MB, which makes the menu feel slow rather than expensive.
+const services = [
+  { slug: 'builders-bath', name: 'Builders Bath', tagline: '22 years trading, zero surprises', image: '/images/hero-james-bath-property-1.webp' },
+  { slug: 'kitchen-fitters', name: 'Kitchen Fitters', tagline: 'Design, supply, expert installation', image: '/projects/custom-kitchen-refit-1.webp' },
+  { slug: 'extension-builders', name: 'House Extensions', tagline: 'Single, double-storey, wraparound', image: '/projects/midford-garden-extension-1.webp' },
+  { slug: 'loft-conversion', name: 'Loft Conversions', tagline: 'Velux, dormer, hip-to-gable', image: '/projects/bath-loft-extension-1.webp' },
+  { slug: 'renovation', name: 'House Renovations', tagline: 'Whole-house, one project manager', image: '/images/hero-home-loft.webp' },
+  { slug: 'heritage-restoration', name: 'Heritage Restoration', tagline: 'Bath stone, lime mortar, listed buildings', image: '/images/hero-james-bath-property-8.webp' },
+  { slug: 'new-build', name: 'New Builds', tagline: 'Foundations to handover', image: '/projects/frome-garage-conversion-1.webp' },
+  { slug: 'stone-walling', name: 'Bath Stone Walling', tagline: 'Retaining, boundary, garden walls', image: '/projects/garden-wall-landscaping-1.webp' },
+  { slug: 'landscaping', name: 'Landscaping', tagline: 'Patios, paving, structural gardens', image: '/projects/bath-landscaping-1.webp' },
+  { slug: 'plastering-rendering', name: 'Plastering & Rendering', tagline: 'Skimming, lime, silicone render systems', image: '/projects/chilcompton-rendering-1.webp' },
+  { slug: 'painting-decorating', name: 'Painting & Decorating', tagline: 'Prepped properly, finished to last', image: '/images/hero-james-bath-property-3.webp' },
+  { slug: 'property-maintenance', name: 'Property Maintenance', tagline: 'Planned and responsive', image: '/projects/greenhouse-base-build-1.webp' },
+  { slug: 'windows-doors', name: 'Windows & Doors', tagline: 'UPVC, aluminium, timber, FENSA', image: '/images/hero-james-bath-property-6.webp' },
+  { slug: 'bathroom-installers', name: 'Bathroom Installers', tagline: 'Luxury refits and wetrooms', image: '/projects/luxury-bathroom-refit-1.webp' },
+];
+---
+
+<header class="site-header" data-scrolled="false">
+  <div class="container site-header__inner">
+    <a href="/" class="logo">
+      <Logo variant="inline" size={28} />
+    </a>
+
+    <button class="nav-toggle" id="nav-toggle" aria-controls="primary-nav" aria-expanded="false" type="button">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="nav-toggle__bars" aria-hidden="true"></span>
+    </button>
+
+    <nav id="primary-nav" class="primary-nav" aria-label="Primary">
+      <ul class="primary-nav__list">
+        <!-- Mega menu trigger -->
+        <li class="has-mega">
+          <button
+            type="button"
+            class="nav-link nav-link--button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            id="services-trigger"
+            aria-controls="services-mega"
+          >
+            <span>Services</span>
+            <svg class="nav-caret" width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="mega-menu" id="services-mega" aria-labelledby="services-trigger">
+            <div class="container mega-menu__container">
+              <div class="mega-menu__header">
+                <p class="eyebrow eyebrow--clay">Our Services</p>
+                <h2 class="mega-menu__title">Fourteen services. {AREAS.length} neighbourhoods.</h2>
+                {/* The category page had no sitewide link — it was reached only by
+                    breadcrumbs, all 102 of them reading "Our Services". */}
+                <a href="/our-services/" class="mega-menu__all">
+                  Compare all Aspect services
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+              <div class="mega-menu__grid">
+                {services.map((s) => (
+                  <a href={`/bath-${s.slug}/`} class="mega-menu__item">
+                    <span class="mega-menu__shot">
+                      {/* data-src, not src: the panel is visibility:hidden but
+                          laid out inside the viewport, so loading="lazy" never
+                          defers it. These twelve thumbnails were fetching ~360KB
+                          at 32ms and starving the LCP image. Swapped in on first
+                          intent, or at idle. */}
+                      <img
+                        data-src={s.image}
+                        alt=""
+                        width="560"
+                        height="374"
+                        decoding="async"
+                      />
+                    </span>
+                    <span class="mega-menu__copy">
+                      <span class="mega-menu__name">{s.name}</span>
+                      <span class="mega-menu__tagline">{s.tagline}</span>
+                    </span>
+                  </a>
+                ))}
+              </div>
+              <div class="mega-menu__footer">
+                <p>Not sure what you need? <a href="/contact/">Get a free site visit &rarr;</a></p>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <a href="/our-work/" class:list={['nav-link', isActive('/our-work') ? 'is-active' : '']}>
+            Gallery
+          </a>
+        </li>
+        <li>
+          <a href="/about-us/" class:list={['nav-link', isActive('/about-us') ? 'is-active' : '']}>
+            About
+          </a>
+        </li>
+        <li>
+          <a href="/contact/" class:list={['nav-link', isActive('/contact') ? 'is-active' : '']}>
+            Contact
+          </a>
+        </li>
+        
+      </ul>
+
+      <a href="tel:+441174094116" class="header-phone">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span class="header-phone__num">07498 158747</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Scroll: shrink header on scroll past 80px
+  const header = document.querySelector('.site-header');
+  if (header) {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          (header as HTMLElement).dataset.scrolled = window.scrollY > 60 ? 'true' : 'false';
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  // Mega menu: open on hover (desktop) or click (touch)
+  const megaTrigger = document.getElementById('services-trigger');
+  const megaMenu = document.getElementById('services-mega');
+  const megaContainer = megaTrigger ? megaTrigger.closest('.has-mega') : null;
+
+  if (megaTrigger && megaMenu && megaContainer) {
+    let hoverTimeout: ReturnType<typeof setTimeout> | undefined;
+
+    const open = () => {
+      megaTrigger.setAttribute('aria-expanded', 'true');
+      megaContainer.classList.add('is-open');
+    };
+    const close = () => {
+      megaTrigger.setAttribute('aria-expanded', 'false');
+      megaContainer.classList.remove('is-open');
+    };
+
+    const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+
+    // Desktop: hover. On mobile the list is permanently shown, so these
+    // would only fight it — a stray mouseleave would collapse it.
+    megaContainer.addEventListener('mouseenter', () => {
+      if (isMobile()) return;
+      clearTimeout(hoverTimeout);
+      open();
+    });
+    megaContainer.addEventListener('mouseleave', () => {
+      if (isMobile()) return;
+      hoverTimeout = setTimeout(close, 200);
+    });
+
+    // Touch / keyboard: click on trigger
+    megaTrigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      megaContainer.classList.contains('is-open') ? close() : open();
+    });
+
+    // Click outside closes — desktop only, or tapping anywhere in the
+    // mobile panel would collapse the services list.
+    document.addEventListener('click', (e) => {
+      if (isMobile()) return;
+      if (!megaContainer.contains(e.target as Node)) close();
+    });
+
+    // Escape closes the dropdown on desktop; on mobile Escape is handled by
+    // the panel itself, which closes the whole thing.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !isMobile()) close();
+    });
+
+    // The six services are the main thing people came for, so on mobile
+    // they are listed outright rather than hidden behind a tap. It stays a
+    // real disclosure — it just starts open.
+    const syncForViewport = () => (isMobile() ? open() : close());
+    syncForViewport();
+    window.matchMedia('(max-width: 900px)').addEventListener('change', syncForViewport);
+  }
+
+  // Mobile nav toggle
+  const toggle = document.getElementById('nav-toggle');
+  const nav = document.getElementById('primary-nav');
+  const siteHeader = document.querySelector('.site-header');
+
+  // The panel hangs from the bottom of the bar, so it needs the bar's real
+  // height — which changes between breakpoints and when the header shrinks
+  // on scroll.
+  if (siteHeader) {
+    const setHeaderHeight = () => {
+      document.documentElement.style.setProperty(
+        '--header-h', `${Math.round(siteHeader.getBoundingClientRect().height)}px`
+      );
+    };
+    setHeaderHeight();
+    // typeof rather than `in window`: the `in` form narrows window to never in
+    // the else branch, since ResizeObserver is declared on Window.
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(setHeaderHeight).observe(siteHeader as Element);
+    else window.addEventListener('resize', setHeaderHeight, { passive: true });
+  }
+
+  if (toggle && nav) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      nav.classList.toggle('is-open', open);
+      // Without this the page scrolls behind the open panel. The class was
+      // already being toggled but nothing in the CSS listened for it.
+      document.body.classList.toggle('nav-is-open', open);
+      // Focus synchronously: visibility flips instantly on open (see the
+      // transition note in the CSS), and rAF never fires in a backgrounded
+      // or throttled tab, which would strand keyboard users outside the panel.
+      if (open) nav.querySelector<HTMLElement>('a, button')?.focus();
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    // Escape closes and returns focus to the button that opened it.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    // Following a link should close the panel — it stays fixed over the
+    // page otherwise, and same-page anchors wouldn't dismiss it at all.
+    nav.addEventListener('click', (e) => {
+      const link = (e.target as HTMLElement).closest('a');
+      if (link && nav.classList.contains('is-open')) setOpen(false);
+    });
+
+    // Leaving mobile with the panel open would strand the scroll lock.
+    const mq = window.matchMedia('(min-width: 901px)');
+    mq.addEventListener('change', (e) => { if (e.matches) setOpen(false); });
+  }
+
+  // Mega-menu thumbnails: fetch on first intent, or at idle once the page
+  // has settled — whichever comes first. Held in data-src because the panel
+  // is laid out inside the viewport, which defeats loading="lazy".
+  {
+    let loaded = false;
+    const fill = () => {
+      if (loaded) return;
+      loaded = true;
+      document
+        .querySelectorAll<HTMLImageElement>('.mega-menu img[data-src]')
+        .forEach((img) => {
+          img.src = img.dataset.src!;
+          img.removeAttribute('data-src');
+        });
+    };
+
+    const mega = document.querySelector('.has-mega');
+    if (mega) {
+      ['pointerenter', 'focusin', 'click'].forEach((evt) =>
+        mega.addEventListener(evt, fill, { once: true })
+      );
+    }
+
+    const idle = () =>
+      'requestIdleCallback' in window
+        ? (window as any).requestIdleCallback(fill, { timeout: 5000 })
+        : setTimeout(fill, 3000);
+    if (document.readyState === 'complete') idle();
+    else window.addEventListener('load', idle, { once: true });
+  }
+
+</script>
+
+<style>
+  /* ============== Base header ============== */
+  .site-header {
+    background: var(--surface-inverse);
+    color: var(--text-inverse);
+    border-bottom: 1px solid var(--border-inverse);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: padding var(--dur-mid) var(--ease), box-shadow var(--dur-mid) var(--ease);
+    padding: 0;
+  }
+
+  .site-header[data-scrolled="true"] {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-5);
+    padding-top: var(--sp-4);
+    padding-bottom: var(--sp-4);
+    transition: padding 0.2s ease;
+  }
+
+  .site-header[data-scrolled="true"] .site-header__inner {
+    padding-top: var(--sp-3);
+    padding-bottom: var(--sp-3);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    flex: none;
+    color: var(--text-inverse);
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+  .logo:hover { opacity: 0.82; }
+  /* The chevron mark carries the bronze accent, wordmark stays white —
+     mirrors the live nav treatment. */
+  .logo :global(.ab__mark) { color: var(--accent); }
+
+
+
+
+
+
+  /* ============== Mobile toggle ============== */
+  .nav-toggle {
+    margin-left: auto;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: var(--sp-3);
+    color: var(--text-inverse);
+    display: none;
+  }
+
+  .nav-toggle__bars {
+    display: block;
+    width: 22px;
+    height: 16px;
+    position: relative;
+  }
+
+  .nav-toggle__bars::before,
+  .nav-toggle__bars::after,
+  .nav-toggle__bars {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-size: 22px 2px;
+    background-position: 0 0;
+  }
+
+  .nav-toggle__bars::before {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 0;
+    width: 22px;
+    height: 2px;
+    background-color: currentColor;
+  }
+
+  .nav-toggle__bars::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 0;
+    width: 22px;
+    height: 2px;
+    background-color: currentColor;
+  }
+
+  /* ============== Primary nav ============== */
+  .primary-nav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+
+  .primary-nav__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--sp-1);
+    align-items: center;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-4);
+    color: var(--text-inverse-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: var(--fs-sm);
+    border-radius: var(--radius-md);
+    transition: color 0.15s, background 0.15s;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1.2;
+  }
+
+  .nav-link:hover,
+  .nav-link.is-active,
+  .has-mega.is-open .nav-link--button {
+    /* --accent-text is the dark orange: correct on white, only 3.5:1 on
+       black. On the inverse bar the bright orange is the readable one. */
+    color: var(--accent-on-dark);
+    background: rgba(255, 107, 26, 0.12);
+  }
+
+  .nav-caret {
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .has-mega.is-open .nav-caret {
+    transform: rotate(180deg);
+  }
+
+  /* ============== Phone CTA ============== */
+  .header-phone {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--accent);
+    color: var(--on-accent) !important;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    text-decoration: none;
+    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    box-shadow: var(--shadow-accent);
+    margin-left: var(--sp-2);
+    white-space: nowrap;
+  }
+
+  .header-phone:hover {
+    background: var(--accent-hover);
+    color: var(--on-accent) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-accent-hover);
+  }
+
+  /* ============== Mega menu ============== */
+  .has-mega {
+    position: static;
+  }
+
+  .mega-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: #fff;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    padding: var(--sp-5) 0 var(--sp-6);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+    z-index: 49;
+  }
+
+  .has-mega.is-open .mega-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mega-menu__container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--sp-5);
+  }
+
+  .mega-menu__all {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-top: var(--sp-3);
+    font-size: var(--fs-sm);
+    font-weight: var(--weight-semi);
+    color: var(--accent-on-dark);
+    text-decoration: none;
+  }
+  .mega-menu__all:hover { text-decoration: underline; }
+  .mega-menu__all svg { transition: transform var(--dur-fast) var(--ease); }
+  .mega-menu__all:hover svg { transform: translateX(3px); }
+
+  .mega-menu__header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-4);
+  }
+
+  .mega-menu__title {
+    font-size: var(--fs-base);
+    font-weight: var(--weight-semi);
+    color: var(--text-muted);
+    margin: 0;
+    letter-spacing: 0;
+  }
+
+  .mega-menu__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-3);
+  }
+
+  .mega-menu__item {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-3);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    transition: border-color var(--dur-fast) var(--ease),
+                box-shadow var(--dur-fast) var(--ease),
+                transform var(--dur-fast) var(--ease);
+  }
+
+  .mega-menu__item:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+
+  /* The photograph is the sell. Fixed aspect so six different source crops
+     still line up as a grid. */
+  .mega-menu__shot {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 84px;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--surface-sunken);
+  }
+  .mega-menu__shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+  .mega-menu__item:hover .mega-menu__shot img { transform: scale(1.05); }
+
+
+
+  .mega-menu__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .mega-menu__name {
+    font-weight: 600;
+    font-size: var(--fs-base);
+    color: var(--text);
+  }
+
+  .mega-menu__tagline {
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    line-height: 1.4;
+    /* Keep every row the same height — a three-line tagline made the grid
+       ragged. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+
+  .mega-menu__footer {
+    margin-top: var(--sp-4);
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+  }
+
+  .mega-menu__footer a {
+    color: var(--accent-text);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .mega-menu__footer a:hover {
+    text-decoration: underline;
+  }
+
+  /* ============== Mobile ============== */
+  @media (max-width: 900px) {
+    .nav-toggle { display: block; order: 2; position: relative; z-index: 2; }
+
+    /* Full-height panel hung under the sticky bar. --header-h is measured
+       in JS so it tracks the bar's real height at any breakpoint. */
+    .primary-nav {
+      position: fixed;
+      top: var(--header-h, 64px);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--surface-inverse);
+      border-top: 1px solid var(--border-inverse);
+      padding: var(--sp-5) 0 calc(var(--sp-6) + env(safe-area-inset-bottom, 0px));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      /* visibility rather than display:none, so it can transition */
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      /* visibility is a discrete property: transitioning it flips the value
+         half way through, leaving the panel hidden for the first 110ms —
+         long enough that focus() into it silently fails. Delay it to the
+         end on close, apply it instantly on open. */
+      transition: opacity var(--dur-mid) var(--ease),
+                  transform var(--dur-mid) var(--ease),
+                  visibility 0s linear var(--dur-mid);
+    }
+    .primary-nav.is-open {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition: opacity var(--dur-mid) var(--ease),
+                  transform var(--dur-mid) var(--ease),
+                  visibility 0s linear 0s;
+    }
+
+    .primary-nav__list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 0 var(--gutter);
+      margin: 0;
+    }
+    /* Inverse hairlines — --border is the light one and was far too hot
+       against the black panel. */
+    .primary-nav__list > li { border-bottom: 1px solid var(--border-inverse); }
+    .primary-nav__list > li:last-child { border-bottom: 0; }
+
+    .nav-link {
+      width: 100%;
+      justify-content: space-between;
+      min-height: 56px;
+      padding: var(--sp-4) 0;
+      border-radius: 0;
+      font-size: var(--fs-md);
+      font-weight: var(--weight-semi);
+      color: var(--text-inverse);
+    }
+    .nav-link:hover,
+    .nav-link.is-active,
+    .has-mega.is-open .nav-link--button {
+      background: transparent;
+      color: var(--accent-on-dark);
+    }
+
+    /* Services opens inline as an indented list. The desktop card grid is
+       a white panel — dropped into a black drawer it read as a pasted-in
+       block with near-black text on it. */
+    .has-mega.is-open .mega-menu {
+      position: static;
+      background: transparent;
+      box-shadow: none;
+      border: 0;
+      padding: 0 0 var(--sp-4);
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+    .mega-menu__container { padding: 0; max-width: none; }
+    .mega-menu__header { display: none; }
+    .mega-menu__grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* Thumbnail beside the copy rather than the desktop card — six stacked
+       3:2 photos would push the CTA a long way down the panel. */
+    .mega-menu__item {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--sp-4);
+      min-height: 48px;
+      padding: var(--sp-3) var(--sp-2);
+      background: transparent;
+      border: 0;
+      border-radius: var(--radius-sm);
+      color: var(--text-inverse);
+    }
+    .mega-menu__item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+    .mega-menu__item:hover .mega-menu__shot img { transform: none; }
+
+    .mega-menu__shot { width: 72px; }
+
+    .mega-menu__copy { padding: 0; gap: 3px; }
+    .mega-menu__name { color: var(--text-inverse); font-size: var(--fs-base); }
+    .mega-menu__tagline { color: var(--text-inverse-muted); }
+
+    .mega-menu__footer {
+      margin-top: var(--sp-4);
+      padding: var(--sp-4) 0 0;
+      text-align: left;
+      border-top: 1px solid var(--border-inverse);
+      color: var(--text-inverse-muted);
+    }
+    .mega-menu__footer a { color: var(--accent-on-dark); }
+
+    /* `margin-top: auto` pins the CTA to the bottom of the full-height
+       panel rather than letting it float under the last link. */
+    .header-phone {
+      margin: auto var(--gutter) 0;
+      width: calc(100% - var(--gutter) * 2);
+      min-height: 56px;
+      justify-content: center;
+      font-size: var(--fs-md);
+    }
+
+    /* Hamburger becomes a cross while the panel is open. */
+    .nav-toggle[aria-expanded="true"] .nav-toggle__bars { background-image: none; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle__bars::before {
+      top: 7px; transform: rotate(45deg);
+    }
+    .nav-toggle[aria-expanded="true"] .nav-toggle__bars::after {
+      top: 7px; transform: rotate(-45deg);
+    }
+    .nav-toggle__bars::before,
+    .nav-toggle__bars::after { transition: transform var(--dur-fast) var(--ease), top var(--dur-fast) var(--ease); }
+  }
+
+
+  /* SR-only helper */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

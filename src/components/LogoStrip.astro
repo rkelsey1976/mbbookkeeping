@@ -1,0 +1,72 @@
+---
+// LogoStrip — row of manufacturer / accreditation logos (text-based for now)
+export type LogoItem = {
+  name: string;
+  subtitle?: string;
+};
+
+type Props = {
+  logos: LogoItem[];
+  heading?: string;
+  variant?: 'light' | 'dark';
+};
+
+const { logos, heading, variant = 'light' } = Astro.props as Props;
+---
+
+<div class={`logo-strip logo-strip--${variant}`}>
+  {heading && <p class="logo-strip__heading">{heading}</p>}
+  <ul class="logo-strip__list">
+    {logos.map((l) => (
+      <li class="logo-strip__item">
+        <strong class="logo-strip__name">{l.name}</strong>
+        {l.subtitle && <span class="logo-strip__sub">{l.subtitle}</span>}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .logo-strip {
+    padding: var(--sp-6) 0;
+    text-align: center;
+  }
+  .logo-strip__heading {
+    margin: 0 0 var(--sp-5);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .logo-strip__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sp-6) var(--sp-7);
+    align-items: center;
+  }
+  .logo-strip__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+  }
+  .logo-strip__name {
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .logo-strip__sub {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .logo-strip--dark .logo-strip__name { color: var(--text-inverse); }
+  .logo-strip--dark .logo-strip__sub { color: rgba(255, 255, 255, 0.7); }
+  .logo-strip--dark .logo-strip__heading { color: rgba(255, 255, 255, 0.6); }
+</style>

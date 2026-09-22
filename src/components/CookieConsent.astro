@@ -1,0 +1,185 @@
+---
+// Cookie consent banner.
+//
+// Consent-first: nothing third-party loads until the visitor accepts.
+// Rejecting, or closing without choosing, leaves the site exactly as it is
+// today — no analytics script, no Google Maps request, no cookies beyond
+// the one localStorage key recording the decision itself.
+//
+// Two things are gated on the decision:
+//   1. GA4 (src/lib/analytics.ts — inert while GA4_ID is empty)
+//   2. The Google Maps embed on /contact/, which sets Google cookies
+//
+// The banner only appears when there is no stored decision, and decisions
+// expire after six months in line with ICO guidance.
+
+import { GA4_ID, CONSENT_KEY, CONSENT_MONTHS } from '../lib/analytics';
+---
+
+<div
+  id="cookie-banner"
+  class="cc"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="cc-title"
+  aria-describedby="cc-body"
+  hidden
+>
+  <div class="cc__inner">
+    <div class="cc__copy">
+      <p id="cc-title" class="cc__title">Cookies on this site</p>
+      <p id="cc-body" class="cc__body">
+        We'd like to set analytics cookies to understand how the site is used, and to load
+        the Google map on our contact page. Neither loads unless you accept. See our
+        <a href="/cookies/">cookie policy</a>.
+      </p>
+    </div>
+    <div class="cc__actions">
+      <button type="button" class="cc__btn cc__btn--accept" data-cc="accept">Accept</button>
+      <button type="button" class="cc__btn cc__btn--reject" data-cc="reject">Reject</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ GA4_ID, CONSENT_KEY, CONSENT_MONTHS }}>
+  (() => {
+    const MS = CONSENT_MONTHS * 30 * 24 * 60 * 60 * 1000;
+
+    const read = () => {
+      try {
+        const raw = localStorage.getItem(CONSENT_KEY);
+        if (!raw) return null;
+        const v = JSON.parse(raw);
+        if (!v || typeof v.at !== 'number') return null;
+        if (Date.now() - v.at > MS) return null;   // expired — ask again
+        return v.state === 'accepted' ? 'accepted' : 'rejected';
+      } catch {
+        return null;
+      }
+    };
+
+    const write = (state) => {
+      try {
+        localStorage.setItem(CONSENT_KEY, JSON.stringify({ state, at: Date.now() }));
+      } catch {}
+    };
+
+    let gaLoaded = false;
+    const loadGA = () => {
+      if (gaLoaded || !GA4_ID) return;
+      gaLoaded = true;
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      // IP anonymisation is the default in GA4; this keeps the config explicit.
+      gtag('config', GA4_ID, { anonymize_ip: true });
+    };
+
+    // Anything gated on consent listens for this rather than reaching into
+    // localStorage itself — the map on /contact/ is the current consumer.
+    const announce = (state) => {
+      document.documentElement.dataset.consent = state;
+      window.dispatchEvent(new CustomEvent('kd:consent', { detail: { state } }));
+    };
+
+    const apply = (state) => {
+      if (state === 'accepted') loadGA();
+      announce(state);
+    };
+
+    const banner = document.getElementById('cookie-banner');
+    const decide = (state) => {
+      write(state);
+      apply(state);
+      if (banner) banner.hidden = true;
+    };
+
+    const existing = read();
+    if (existing) {
+      apply(existing);
+    } else if (banner) {
+      banner.hidden = false;
+    }
+
+    banner?.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-cc]');
+      if (b) decide(b.dataset.cc === 'accept' ? 'accepted' : 'rejected');
+    });
+
+    // Lets the cookie policy page offer "change your mind".
+    window.kdResetConsent = () => {
+      try { localStorage.removeItem(CONSENT_KEY); } catch {}
+      location.reload();
+    };
+  })();
+</script>
+
+<style>
+  .cc {
+    position: fixed;
+    left: var(--sp-4);
+    right: var(--sp-4);
+    bottom: calc(var(--sp-4) + env(safe-area-inset-bottom, 0px));
+    z-index: 80;
+    max-width: 46rem;
+    margin-inline: auto;
+    background: var(--surface-inverse);
+    color: var(--text-inverse);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.4);
+    padding: var(--sp-5);
+  }
+  .cc[hidden] { display: none; }
+
+  .cc__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .cc__copy { flex: 1 1 22rem; }
+  .cc__title {
+    margin: 0 0 var(--sp-1);
+    font-size: var(--fs-sm);
+    font-weight: var(--weight-bold);
+  }
+  .cc__body {
+    margin: 0;
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .cc__body a { color: var(--accent-on-dark); text-underline-offset: 2px; }
+
+  .cc__actions { display: flex; gap: var(--sp-2); flex: 0 0 auto; }
+  .cc__btn {
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-weight: var(--weight-bold);
+    min-height: 44px;
+    padding: 0 var(--sp-5);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .cc__btn--accept { background: var(--accent); color: var(--on-accent); }
+  .cc__btn--reject {
+    background: transparent;
+    color: var(--text-inverse);
+    border-color: rgba(255, 255, 255, 0.34);
+  }
+  .cc__btn:focus-visible { outline: 2px solid var(--accent-on-dark); outline-offset: 2px; }
+
+  /* The WhatsApp button sits bottom-right; lift it while the banner is up. */
+  @media (max-width: 860px) {
+    .cc { padding: var(--sp-4); }
+    .cc__actions { width: 100%; }
+    .cc__btn { flex: 1; }
+  }
+</style>

@@ -1,0 +1,290 @@
+---
+// PricingTable — premium cost-guide card layout with:
+// - Hero price metric
+// - Per-property-type range table
+// - What's included vs excluded
+// - Factors affecting price
+
+type Props = {
+  perSquareMetre: string;
+  perPropertyType: { type: string; range: string; sqft?: string }[];
+  factorsAffectingPrice: string[];
+  includes: string[];
+  excludes: string[];
+  heading?: string;
+  lede?: string;
+};
+
+const {
+  perSquareMetre,
+  perPropertyType,
+  factorsAffectingPrice,
+  includes,
+  excludes,
+  heading,
+  lede,
+} = Astro.props as Props;
+---
+
+{heading && (
+  <header class="pricing-header">
+    <h2>{heading}</h2>
+    {lede && <p class="lede">{lede}</p>}
+  </header>
+)}
+
+<div class="pricing-card">
+  <!-- Hero metric -->
+  <div class="pricing-hero">
+    <span class="pricing-hero__from">From</span>
+    <span class="pricing-hero__price">{perSquareMetre}</span>
+    <span class="pricing-hero__unit">per m² installed</span>
+  </div>
+
+  <!-- Property types -->
+  <div class="pricing-section">
+    <h3 class="pricing-section__heading">Cost by property type</h3>
+    <ul class="pricing-list">
+      {perPropertyType.map((row) => (
+        <li class="pricing-list__item">
+          <span class="pricing-list__type">{row.type}</span>
+          {row.sqft && <span class="pricing-list__size">{row.sqft}</span>}
+          <span class="pricing-list__range">{row.range}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- Factors + Includes -->
+  <div class="pricing-grid">
+    <div class="pricing-section">
+      <h3 class="pricing-section__heading">What affects the cost</h3>
+      <ul class="pricing-factors">
+        {factorsAffectingPrice.map(f => (
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v4M12 16h.01"/>
+            </svg>
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="pricing-section">
+      <h3 class="pricing-section__heading pricing-section__heading--includes">What's included</h3>
+      <ul class="pricing-factors pricing-factors--includes">
+        {includes.map(i => (
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>{i}</span>
+          </li>
+        ))}
+      </ul>
+      {excludes && excludes.length > 0 && (
+        <>
+          <h3 class="pricing-section__heading pricing-section__heading--excludes">Not included</h3>
+          <ul class="pricing-factors pricing-factors--excludes">
+            {excludes.map(e => (
+              <li>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                <span>{e}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  </div>
+</div>
+
+<style>
+  .pricing-header {
+    margin-bottom: var(--sp-7);
+    text-align: center;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .pricing-header .lede {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Card container */
+  .pricing-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Hero metric — top band */
+  .pricing-hero {
+    background: linear-gradient(135deg, var(--surface-inverse) 0%, var(--surface-inverse-raised) 100%);
+    color: var(--text-inverse);
+    padding: var(--sp-7);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 30% 50%, rgba(255, 107, 26, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .pricing-hero__from {
+    display: block;
+    font-size: var(--fs-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent-text);
+    font-weight: 600;
+    margin-bottom: var(--sp-2);
+    position: relative;
+  }
+
+  .pricing-hero__price {
+    display: block;
+    font-size: clamp(2.5rem, 6vw + 1rem, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--text-inverse);
+    font-feature-settings: 'tnum';
+    margin: var(--sp-2) 0;
+    position: relative;
+  }
+
+  .pricing-hero__unit {
+    display: block;
+    font-size: var(--fs-sm);
+    color: var(--text-inverse-muted);
+    position: relative;
+  }
+
+  /* Sections */
+  .pricing-section {
+    padding: var(--sp-5) var(--sp-6);
+    border-bottom: 1px solid var(--border);
+  }
+  .pricing-section:last-child {
+    border-bottom: 0;
+  }
+
+  .pricing-section__heading {
+    margin: 0 0 var(--sp-4);
+    font-size: var(--fs-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .pricing-section__heading--includes { color: var(--accent-text); }
+  .pricing-section__heading--excludes { color: var(--accent-text); margin-top: var(--sp-5); }
+
+  /* Property type list */
+  .pricing-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+
+  .pricing-list__item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: var(--sp-4);
+    align-items: baseline;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    margin: 0;
+  }
+
+  .pricing-list__type {
+    font-weight: 600;
+    color: var(--text);
+    font-size: var(--fs-sm);
+  }
+
+  .pricing-list__size {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    font-family: ui-monospace, 'SF Mono', monospace;
+  }
+
+  .pricing-list__range {
+    font-weight: 700;
+    color: var(--accent-text);
+    font-size: var(--fs-sm);
+    font-feature-settings: 'tnum';
+  }
+
+  /* 2-column factors/included */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .pricing-grid .pricing-section {
+    border-right: 1px solid var(--border);
+  }
+  .pricing-grid .pricing-section:last-child {
+    border-right: 0;
+  }
+
+  @media (max-width: 700px) {
+    .pricing-grid { grid-template-columns: 1fr; }
+    .pricing-grid .pricing-section {
+      border-right: 0;
+      border-bottom: 1px solid var(--border);
+    }
+  }
+
+  /* Factor lists */
+  .pricing-factors {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .pricing-factors li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-2);
+    margin: 0;
+    font-size: var(--fs-sm);
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  .pricing-factors li svg {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: var(--text-muted);
+  }
+
+  .pricing-factors--includes li svg { color: var(--accent-text); }
+  .pricing-factors--excludes li svg { color: var(--accent-text); }
+</style>

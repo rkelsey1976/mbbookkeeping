@@ -1,0 +1,371 @@
+---
+// Shared layout for every page on the site.
+// Sets SEO meta, OG tags, Twitter, JSON-LD, GOV.UK-ish header, footer,
+// and includes the global stylesheet.
+
+import '../styles/global.css';
+// Fonts: Bebas Neue (display) + DM Sans (body) — same pairing as the live
+// aspectbuilds.co.uk, self-hosted via fontsource so no third-party request.
+import '@fontsource/bebas-neue/latin.css';
+import '@fontsource-variable/dm-sans/standard.css';
+import '@fontsource-variable/dm-sans/standard-italic.css';
+import Header from '../components/Header.astro';
+import LeadForm from '../components/LeadForm.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Footer from '../components/Footer.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+
+export type BreadcrumbItem = { name: string; href: string };
+
+type Props = {
+  title: string;
+  description: string;
+  canonical: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  schema?: object | object[];
+  breadcrumbs?: BreadcrumbItem[];
+  /** The hero image, so it can be preloaded. Without this the LCP image is
+      only discovered after the CSS has loaded and the parser reaches it. */
+  preloadImage?: string;
+  prefillService?: string;
+  prefillArea?: string;
+  formHeading?: string;
+  showLeadForm?: boolean;
+  /** Keep the page out of the index (style guide, thank-you pages). */
+  noindex?: boolean;
+  /** Full-bleed CTA band above the footer. Defaults to the opposite of
+      showLeadForm: the quote form lives on /contact, every other page
+      drives there via the band. */
+  showCta?: boolean;
+  ctaHeading?: string;
+  ctaText?: string;
+  ctaLabel?: string;
+};
+
+const {
+  title,
+  description,
+  canonical,
+  ogType = 'website',
+  ogImage = '/og-default.jpg',
+  schema,
+  breadcrumbs = [],
+  preloadImage,
+  prefillService,
+  prefillArea,
+  formHeading,
+  showLeadForm = false,
+  noindex = false,
+  // The band and the form are two asks in the same slot. On a page with a
+  // form the band sits directly beneath it, and its button pointed at that
+  // very form — a call-to-action whose only job was scrolling up one
+  // section. So they are mutually exclusive: the form IS the ask where it
+  // exists, and the band covers the pages that have none.
+  showCta = !showLeadForm,
+  ctaHeading,
+  ctaText,
+  ctaLabel,
+} = Astro.props as Props;
+
+const siteName = 'Aspect Builds'; // display name; legal name lives in contact.ts/schema
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.aspectbuilds.co.uk';
+// Force the trailing slash so a page can't ship a slashless canonical that then
+// 301s on Netlify — matches trailingSlash: 'always' in astro.config.mjs.
+const canonicalPath = canonical === '/' ? '/' : canonical.replace(/\/?$/, '/');
+const canonicalAbsolute = new URL(canonicalPath, siteUrl).toString();
+const ogImageAbsolute = new URL(ogImage, siteUrl).toString();
+// Must match the ladder in Hero.astro.
+const HERO_WIDTHS = [480, 800, 1200, 1600];
+const preloadStem = preloadImage?.split('/').pop()?.replace(/\.webp$/, '');
+const preloadSrcset = preloadStem
+  ? HERO_WIDTHS.map((w) => `/heroes/r/${preloadStem}-${w}.webp ${w}w`).join(', ')
+  : null;
+
+const schemaArr = Array.isArray(schema) ? schema : schema ? [schema] : [];
+
+// BreadcrumbList, built from the same array the visible nav renders — Google
+// requires the markup to match what the user actually sees, so deriving both
+// from one source is the point. Home is implicit in the nav, so it is added
+// here too. Only emitted when there is a trail; the homepage has none.
+const breadcrumbSchema =
+  breadcrumbs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [{ name: 'Home', href: '/' }, ...breadcrumbs].map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.name,
+          item: new URL(b.href, siteUrl).toString(),
+        })),
+      }
+    : null;
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {noindex
+      ? <meta name="robots" content="noindex, nofollow" />
+      : <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />}
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalAbsolute} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalAbsolute} />
+    <meta property="og:image" content={ogImageAbsolute} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${siteName} — ${title}`} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content="en_GB" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageAbsolute} />
+    <meta name="twitter:image:alt" content={`${siteName} — ${title}`} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    {schemaArr.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
+
+    {breadcrumbSchema && (
+      <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    )}
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <Header />
+    <main id="main-content">
+      {breadcrumbs.length > 0 && (
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">Home</a></li>
+            {breadcrumbs.map((b, i) => (
+              <li>
+                {i < breadcrumbs.length - 1 ? (
+                  <a href={b.href}>{b.name}</a>
+                ) : (
+                  <span aria-current="page">{b.name}</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+      <slot />
+      {showLeadForm && (
+        <section class="lead-form-section" aria-labelledby="lead-form-heading">
+          <div class="container">
+            <h2 id="lead-form-heading" class="lead-form-heading">
+              {formHeading ?? 'Get Your Free Bath Rendering Quote'}
+            </h2>
+            <p class="lead-form-sub">
+              Professional plastering &amp; rendering specialists serving Bath, Bath and surrounding areas.
+              Free quotes with fast response times.
+            </p>
+            <LeadForm />
+            <ul class="lead-form-trust">
+              <li>✓ 10+ Years Experience</li>
+              <li>✓ Fully Insured</li>
+              <li>✓ Free Quotes</li>
+              <li>✓ Bath &amp; Bath Coverage</li>
+            </ul>
+          </div>
+        </section>
+      )}
+    </main>
+    {showCta && (
+      <CtaBand
+        heading={ctaHeading}
+        text={ctaText}
+        ctaLabel={ctaLabel}
+        ctaHref="/contact/"
+      />
+    )}
+
+    <Footer />
+    <CookieConsent />
+    <WhatsAppButton />
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--surface-inverse);
+    color: var(--text-inverse);
+    padding: 0.75rem 1rem;
+    z-index: 999;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    left: 1rem;
+    top: 1rem;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  .breadcrumbs {
+    background: var(--surface-alt);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 0;
+    font-size: 0.95rem;
+  }
+  .breadcrumbs ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  .breadcrumbs li:not(:last-child)::after {
+    content: " ›";
+    color: #6f7676;
+    margin-left: 0.5rem;
+  }
+  .breadcrumbs a {
+    color: var(--text);
+    text-decoration: underline;
+  }
+  .breadcrumbs [aria-current="page"] {
+    color: var(--text);
+  }
+
+  .lead-form-section {
+    background: linear-gradient(180deg, var(--surface-alt) 0%, var(--border) 100%);
+    color: var(--text);
+    padding: 3.5rem 0;
+  }
+  .lead-form-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    text-align: center;
+    color: var(--text);
+  }
+  .lead-form-sub {
+    text-align: center;
+    margin: 0 0 2rem;
+    color: var(--text-muted);
+  }
+  .lead-form {
+    background: #fff;
+    color: var(--text);
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .lead-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .lead-form-col-span {
+    grid-column: 1 / -1;
+  }
+  .lead-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .lead-form label em {
+    color: var(--accent-text);
+    font-style: normal;
+  }
+  .lead-form input,
+  .lead-form select,
+  .lead-form textarea {
+    font: inherit;
+    padding: 0.6rem 0.75rem;
+    border: 2px solid var(--surface-inverse);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--text);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .lead-form textarea {
+    font-family: inherit;
+    resize: vertical;
+  }
+  .lead-form-submit {
+    background: var(--accent);
+    color: var(--on-accent);
+    border: 0;
+    padding: 0.85rem 1.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  .lead-form-submit:hover {
+    background: var(--accent-text);
+  }
+  .lead-form-meta {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0.75rem 0 1rem;
+  }
+  .lead-form-trust {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  .hidden {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  @media (max-width: 700px) {
+    .lead-form-grid {
+      grid-template-columns: 1fr;
+    }
+    .lead-form-heading {
+      font-size: 1.5rem;
+    }
+  }
+</style>

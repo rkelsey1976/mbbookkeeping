@@ -1,0 +1,1115 @@
+/* Bebas Neue + DM Sans, self-hosted via fontsource (imported in
+   PageLayout.astro). No third-party font requests — keeps the cookie
+   policy accurate and removes render-blocking. */
+
+/* =====================================================================
+   Aspect Builds & Maintenance — Design System v4
+   Bath & BANES. Navy, bronze, and honest concrete.
+
+   Palette mirrors the live aspectbuilds.co.uk: navy chalk (#1A2332),
+   deep navy (#0d1520), bronze accent (#AE8455), Bebas Neue display over
+   DM Sans body, zero border radius.
+
+   ARCHITECTURE — two tiers, never skip a tier:
+     1. PRIMITIVES  raw values, named for what they ARE (--ink-900, --orange-500)
+     2. SEMANTIC    named for what they DO (--text, --surface, --accent)
+
+   Components must only ever reference TIER 2. If you find yourself
+   wanting a primitive in a component, the semantic layer is missing
+   a token — add it here rather than reaching past it.
+
+   Every colour pairing below is annotated with its WCAG contrast
+   ratio. AA requires 4.5:1 for body text, 3:1 for large text (>=24px,
+   or >=19px bold) and for UI boundaries. Do not introduce a pairing
+   without checking it.
+   ===================================================================== */
+
+:root {
+  /* ---------------------------------------------------------------
+     TIER 1 — PRIMITIVES
+     --------------------------------------------------------------- */
+
+  /* Neutrals — cool navy-greys, so the bronze stays the only warm hue */
+  --ink-900:   #0d1520;   /* deep navy: headings, inverse surfaces      */
+  --ink-800:   #1A2332;   /* chalk navy — raised surface on dark        */
+  --ink-700:   #232e42;   /* card surface on dark                       */
+  --ink-500:   #546178;   /* concrete — strong secondary  6.1:1 on p50  */
+  --ink-400:   #636E7E;   /* steel — muted text           5.0:1 on p50  */
+  --ink-300:   #8892A4;   /* subtle text — LARGE ONLY 3.3:1 on paper-50 */
+
+  --paper-0:   #ffffff;   /* pure white — raised cards                   */
+  --paper-50:  #fafafa;   /* default page surface                        */
+  --paper-100: #f2f4f7;   /* cool alt band                               */
+  --paper-200: #E8EBF0;   /* stone sunken band                           */
+  --paper-300: #d9dee6;   /* hairline border                             */
+  --paper-400: #b9c1cd;   /* strong border  2.1:1 — decorative only      */
+
+  /* Brand bronze.
+     500 is the brand fill (AE8455). For bronze TEXT on light, use
+     --bronze-700 (8A6840). For text ON a bronze fill, use white
+     (3.6:1 with AE8455 — large text/UI only) or --ink-900 (6.2:1). */
+  --bronze-500: #AE8455;  /* brand fill, large display accents           */
+  --bronze-600: #9a7448;  /* fill hover / pressed                        */
+  --bronze-700: #8A6840;  /* bronze TEXT on light      5.0:1  AA pass    */
+  --bronze-50:  #f5f0e9;  /* tint background                             */
+  /* Legacy names kept so any stale --orange-* reference still resolves
+     during the transition; delete after the sweep. */
+  --orange-500: var(--bronze-500);
+  --orange-600: var(--bronze-600);
+  --orange-700: var(--bronze-700);
+  --orange-50:  var(--bronze-50);
+
+
+  /* ---------------------------------------------------------------
+     TIER 2 — SEMANTIC  (components use only these)
+     --------------------------------------------------------------- */
+
+  /* Surfaces */
+  --surface:          var(--paper-50);    /* default page ground         */
+  --surface-raised:   var(--paper-0);     /* cards lifted off the page   */
+  --surface-alt:      var(--paper-100);   /* alternating band            */
+  --surface-sunken:   var(--paper-200);   /* recessed band               */
+  --surface-inverse:  var(--ink-900);     /* dark sections, footer       */
+  --surface-inverse-raised: var(--ink-700); /* cards on dark             */
+  --surface-inverse-hover:  var(--ink-800); /* inverse button hover      */
+
+  /* Text — on light surfaces */
+  --text:             var(--ink-900);     /* 19.6:1                      */
+  --text-secondary:   var(--ink-500);     /*  7.6:1                      */
+  --text-muted:       var(--ink-400);     /*  5.5:1                      */
+  --text-subtle:      var(--ink-300);     /*  3.3:1 — large text only    */
+
+  /* Text — on dark surfaces */
+  --text-inverse:         var(--paper-50);
+  --text-inverse-muted:   rgba(250, 250, 250, 0.72);
+  --text-inverse-subtle:  rgba(250, 250, 250, 0.52);
+
+  /* Accent */
+  --accent:        var(--bronze-500);  /* fills, bars, rules             */
+  --accent-hover:  var(--bronze-600);
+  --accent-text:   var(--bronze-700);  /* the ONLY bronze for body text  */
+  --accent-tint:   var(--bronze-50);
+  --on-accent:     var(--ink-900);     /* text on a bronze fill   6.2:1  */
+  /* Bronze TEXT on a dark surface: the bright bronze reads best on navy. */
+  --accent-on-dark: var(--bronze-500);
+
+
+  /* Lines */
+  --border:        var(--paper-300);
+  --border-strong: var(--paper-400);
+  --border-inverse: rgba(250, 250, 250, 0.14);
+
+  /* Focus ring — must be visible on light AND dark, hence the
+     double ring: dark core with a light halo. */
+  --focus-ring:    0 0 0 2px var(--surface), 0 0 0 4px var(--bronze-600);
+
+  /* ---------------------------------------------------------------
+     TYPE — one scale, used everywhere. Fluid steps clamp between a
+     mobile and desktop size; static steps stay fixed.
+     --------------------------------------------------------------- */
+  --fs-xs:   0.75rem;     /* 12px  micro-labels, legal                   */
+  --fs-sm:   0.875rem;    /* 14px  captions, meta                        */
+  --fs-base: 1rem;        /* 16px  UI default                            */
+  --fs-md:   1.125rem;    /* 18px  body copy                             */
+  --fs-lg:   1.375rem;    /* 22px  h4 / large lede                       */
+
+  --fs-xl:   clamp(1.5rem,  1.1rem + 1.6vw, 1.75rem);  /* 24>28  h3      */
+  --fs-2xl:  clamp(1.75rem, 1.2rem + 2.4vw, 2.25rem);  /* 28>36  h2      */
+  --fs-3xl:  clamp(2.25rem, 1.4rem + 3.6vw, 3rem);     /* 36>48  section */
+  --fs-4xl:  clamp(2.5rem,  1.2rem + 5.6vw, 4rem);     /* 40>64  h1      */
+
+  --lh-tight: 1.1;    /* display headings                                */
+  --lh-snug:  1.3;    /* sub-headings                                    */
+  --lh-body:  1.6;    /* prose                                           */
+
+  --tracking-display: -0.03em;  /* big type needs negative tracking      */
+  --tracking-heading: -0.02em;
+  --tracking-eyebrow:  0.16em;  /* small caps need it opened right up    */
+
+  --weight-body:    400;
+  --weight-medium:  500;
+  --weight-semi:    600;
+  --weight-bold:    700;
+  --weight-display: 800;
+
+  /* Font families — the live Aspect pairing. Bebas Neue is display-only
+     (uppercase, tight); DM Sans carries body and UI. */
+  --font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-body: 'DM Sans Variable', 'DM Sans', -apple-system, 'Segoe UI', sans-serif;
+
+  /* Measure — never let prose run wider than this */
+  --measure: 65ch;
+
+  /* ---------------------------------------------------------------
+     SPACE — a 4px base. Steps are multiples, so vertical rhythm holds.
+     --------------------------------------------------------------- */
+  --sp-1: 0.25rem;   /*  4px */
+  --sp-2: 0.5rem;    /*  8px */
+  --sp-3: 0.75rem;   /* 12px */
+  --sp-4: 1rem;      /* 16px */
+  --sp-5: 1.5rem;    /* 24px */
+  --sp-6: 2rem;      /* 32px */
+  --sp-7: 3rem;      /* 48px */
+  --sp-8: 4rem;      /* 64px */
+  --sp-9: 6rem;      /* 96px */
+
+  /* Section rhythm — fluid, so short viewports don't waste a screen */
+  --section-y:       clamp(3.5rem, 2rem + 6vw, 6rem);
+  --section-y-tight: clamp(2.5rem, 1.5rem + 4vw, 4rem);
+
+  /* Containers */
+  --container-max:    1200px;
+  --container-narrow:  800px;
+  --container-prose:   720px;
+  --gutter: clamp(1rem, 0.5rem + 2vw, 1.5rem);
+
+  /* Radii — the live Aspect look is sharp: zero radius on everything.
+     Full is kept for truly circular elements only. */
+  --radius-sm:   0px;
+  --radius-md:   0px;
+  --radius-lg:   0px;
+  --radius-xl:   0px;
+  --radius-full: 999px;
+
+  /* Elevation — neutral, low-opacity. Shadows read as depth, not haze. */
+  --shadow-xs: 0 1px 2px rgba(10, 10, 10, 0.04);
+  --shadow-sm: 0 2px 6px rgba(10, 10, 10, 0.06);
+  --shadow-md: 0 6px 20px rgba(10, 10, 10, 0.08);
+  --shadow-lg: 0 16px 40px rgba(10, 10, 10, 0.12);
+  /* Accent glow — for the primary CTA only. Overuse kills it. */
+  --shadow-accent:       0 4px 14px -2px rgba(255, 107, 26, 0.45);
+  --shadow-accent-hover: 0 8px 24px -4px rgba(255, 107, 26, 0.55);
+
+  /* Motion — one duration set, one easing. Some steps below are not yet
+     used anywhere; they are kept so the scale stays complete rather than
+     being re-invented ad hoc in a component. The same applies to the
+     weight scale and the inverse-text scale above. */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 0.15s;
+  --dur-mid:  0.25s;
+  --dur-slow: 0.4s;
+}
+
+/* Scroll lock while the mobile nav panel is open. */
+body.nav-is-open { overflow: hidden; }
+
+/* =====================================================================
+   Reset & base
+   ===================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* The header is sticky and publishes its measured height as --header-h.
+     Without this, every in-page anchor lands with its target tucked behind
+     the header. The fallback covers the first paint, before the script
+     that measures it has run. */
+  scroll-padding-top: calc(var(--header-h, 5rem) + var(--sp-4));
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--accent-text);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+a:hover {
+  color: var(--accent-text);
+}
+
+/* ==== Section dividers — orange hairline rules ==== */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);
+  opacity: 0.3;
+  margin: var(--sp-9) 0;
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--accent-text);
+  text-decoration: none;
+  text-underline-offset: 0.2rem;
+  transition: color 0.15s ease;
+}
+
+a:hover { color: var(--accent-text); }
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* =====================================================================
+   Typography
+   ===================================================================== */
+
+/* Headings — sizes come from the type scale, never from a local clamp().
+   If a heading needs a different size, it wants a different level.
+   Display face is Bebas Neue (the live Aspect pairing); DM Sans carries
+   weights for it where the var is referenced. */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 400; /* Bebas only ships one weight */
+  color: var(--text);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: var(--lh-snug);
+  margin: 0 0 var(--sp-4);
+
+}
+
+h1 {
+  font-size: var(--fs-4xl);
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+}
+h2 {
+  font-size: var(--fs-2xl);
+}
+h3 { font-size: var(--fs-xl); letter-spacing: 0.04em; }
+h4 { font-size: var(--fs-lg); }
+h5 { font-size: var(--fs-md); }
+h6 { font-size: var(--fs-base); }
+
+p { margin: 0 0 var(--sp-4); }
+
+.lede {
+  font-size: var(--fs-md);
+  color: var(--text-muted);
+  max-width: var(--measure);
+  line-height: var(--lh-body);
+}
+
+/* =====================================================================
+   Layout helpers
+   ===================================================================== */
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.container--narrow { max-width: var(--container-narrow); }
+.container--prose  { max-width: var(--container-prose); }
+
+/* Narrow reading measure anchored to the grid rather than centred. Pages
+   using an inline `max-width: 800px` on .container were centring their
+   copy at 257px while the logo and every other page sat at 57px. */
+.container--reading > * { max-width: var(--container-narrow); }
+
+/* =====================================================================
+   Buttons
+   ===================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-accent);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.btn--primary:hover {
+  background: var(--accent-hover);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-accent-hover);
+  transform: translateY(-2px);
+}
+
+.btn--secondary {
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+}
+.btn--secondary:hover { background: var(--surface-inverse-hover); color: var(--text-inverse); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.btn--ghost:hover { background: var(--surface-alt); border-color: var(--surface-inverse); }
+
+.btn--ghost-light {
+  background: transparent;
+  color: var(--text-inverse);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.btn--ghost-light:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--text-inverse); color: var(--text-inverse); }
+
+.btn--lg { padding: 1rem 1.75rem; font-size: var(--fs-md); }
+
+.eyebrow {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--accent-text);
+  margin-bottom: var(--sp-3);
+}
+
+.eyebrow--terracotta { color: var(--accent-text); }
+.eyebrow--stone      { color: var(--text); background: var(--border); padding: 4px 10px; border-radius: var(--radius-sm); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  background: var(--accent-tint);
+  color: var(--accent-text);
+}
+
+.badge--slate    { background: var(--border); color: var(--text); }
+.badge--clay     { background: var(--accent-tint); color: var(--accent-text); }
+.badge--rust     { background: var(--accent-tint); color: var(--accent-text); }
+
+/* =====================================================================
+   Sections
+   ===================================================================== */
+
+.section {
+  padding: var(--sp-8) 0;
+  background: var(--surface);
+}
+
+.section--alt      { background: var(--surface-sunken); }
+/* Dark band. Used for the process on service pages — the trust-builder
+   gets its own ground instead of another light section. */
+.section--dark {
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+}
+.section--dark h2,
+.section--dark h3 { color: var(--text-inverse); }
+.section--dark .lede { color: var(--text-inverse-muted); }
+.section--warm     { background: var(--surface-alt); }
+.section--stone    { background: var(--border); }
+.section--walnut {
+  background: linear-gradient(180deg, var(--surface-inverse) 0%, var(--surface-inverse-raised) 100%);
+  color: var(--text-inverse);
+}
+
+.section--walnut h1, .section--walnut h2, .section--walnut h3, .section--walnut h4 { color: var(--text-inverse); }
+.section--walnut .lede { color: var(--text-inverse-muted); }
+
+.section-header {
+  margin-bottom: var(--sp-7);
+}
+.section-header--center {
+  text-align: center;
+  max-width: 60ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.section-header--center .lede { margin-left: auto; margin-right: auto; }
+
+/* =====================================================================
+   Hero variants
+   ===================================================================== */
+
+.hero {
+  padding: var(--sp-9) 0 var(--sp-8);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero--cream {
+  background: linear-gradient(180deg, var(--surface-alt) 0%, var(--surface-sunken) 100%);
+  color: var(--text);
+}
+
+.hero__eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent-text);
+  margin-bottom: var(--sp-4);
+}
+
+.hero__title {
+  margin: 0 0 var(--sp-5);
+  max-width: 22ch;
+}
+
+.hero__lede {
+  margin: 0 0 var(--sp-6);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  max-width: 56ch;
+}
+
+.hero__cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+
+.hero__trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 500;
+}
+
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent-text);
+  margin-bottom: var(--sp-4);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+
+.hero__title {
+  margin: 0 0 var(--sp-5);
+  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--text-inverse);
+  text-wrap: balance;
+}
+
+.hero__title strong {
+  color: var(--accent-text);
+  font-weight: 800;
+  position: relative;
+  display: inline-block;
+}
+
+.hero__title strong::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: var(--accent);
+  opacity: 0.5;
+  border-radius: 3px;
+}
+
+.hero__lede {
+  margin: 0 0 var(--sp-6);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 56ch;
+}
+
+.hero__cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-6);
+}
+
+@keyframes pulse-amber {
+  0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); }
+  70% { box-shadow: 0 0 0 12px rgba(217, 119, 6, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
+}
+
+/* Refined eyebrow — thin bar + dot accent */
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: var(--sp-6);
+}
+
+/* Hero title — bold, tight, with orange accent on key phrase */
+.hero__title {
+  margin: 0 0 var(--sp-5);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--text-inverse);
+  text-wrap: balance;
+}
+
+.hero__lede {
+  margin: var(--sp-5) 0 var(--sp-7);
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 56ch;
+}
+
+.hero__cta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+/* Single-line trust strip — replaces 4 cluttered badges */
+.hero__trust {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-5);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: var(--fs-sm);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.hero__trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.hero__trust-item strong {
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+.hero__trust-item svg {
+  color: var(--accent-text);
+}
+
+/* =====================================================================
+   Service Card (used on /our-services/ and home featured grid)
+   ===================================================================== */
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+  color: var(--text);
+}
+
+.service-card:hover::before { transform: scaleX(1); }
+
+.service-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--accent-tint);
+  color: var(--accent-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* All services share the brand accent. Differentiation comes from the
+   photograph and the number, not from six competing hues. */
+
+.service-card__body { flex-grow: 1; }
+.service-card__name {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.service-card__tagline {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.service-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: var(--sp-3) 0;
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+}
+
+.service-card__price-from {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.service-card__price-value {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--accent-text);
+  font-feature-settings: 'tnum';
+}
+
+.service-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--accent-text);
+  margin-top: auto;
+}
+
+.service-card--featured { padding: var(--sp-6); }
+.service-card--featured .service-card__icon { width: 56px; height: 56px; }
+.service-card--featured .service-card__name { font-size: var(--fs-xl); }
+
+/* =====================================================================
+   Skip link + breadcrumbs
+   ===================================================================== */
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+  padding: 0.75rem 1rem;
+  z-index: 999;
+  text-decoration: none;
+}
+.skip-link:focus { left: 1rem; top: 1rem; }
+
+.breadcrumbs {
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  padding: var(--sp-3) 0;
+  font-size: var(--fs-sm);
+}
+
+.breadcrumbs ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--sp-5);
+}
+
+.breadcrumbs li:not(:last-child)::after {
+  content: "›";
+  color: var(--text-muted);
+  margin-left: var(--sp-2);
+}
+
+.breadcrumbs a { color: var(--accent-text); text-decoration: underline; }
+.breadcrumbs [aria-current="page"] { color: var(--text); }
+
+/* =====================================================================
+   Stats bar + trust strip
+   ===================================================================== */
+
+.stat-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-4);
+  padding: var(--sp-5) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 700px) {
+  .stat-bar { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 var(--sp-3);
+  border-right: 1px solid var(--border);
+}
+
+.stat:last-child { border-right: 0; }
+
+@media (max-width: 700px) {
+  .stat:nth-child(2) { border-right: 0; }
+}
+
+.stat__num {
+  font-size: var(--fs-3xl);
+  font-weight: 800;
+  color: var(--accent-text);
+  letter-spacing: -0.02em;
+  font-feature-settings: 'tnum';
+  line-height: 1;
+}
+
+.stat__num--clay { color: var(--accent-text); }
+
+.stat__label {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.trust-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-5);
+  padding: var(--sp-5) 0;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.trust-strip__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.trust-strip__icon {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-text);
+}
+
+/* =====================================================================
+   Stars (review ratings)
+   ===================================================================== */
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--accent-text);
+}
+
+.stars svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* =====================================================================
+   Card surface
+   ===================================================================== */
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.card:hover { border-color: var(--accent); box-shadow: var(--shadow-sm); }
+.card--flat:hover { transform: none; box-shadow: none; }
+.card--inset { box-shadow: inset 0 0 0 1px var(--border); }
+
+/* =====================================================================
+   Dividers
+   ===================================================================== */
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  border: 0;
+  margin: var(--sp-7) 0;
+}
+
+.divider--accent { background: var(--accent); height: 2px; max-width: 80px; }
+.divider--short  { max-width: 60px; }
+
+/* =====================================================================
+   CTA Banner
+   ===================================================================== */
+
+.cta-banner {
+  padding: var(--sp-7) 0;
+  border-radius: var(--radius-xl);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cta-banner--clay {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: var(--on-accent);
+}
+
+.cta-banner--walnut {
+  background: linear-gradient(135deg, var(--surface-inverse) 0%, var(--surface-inverse-raised) 100%);
+  color: var(--text-inverse);
+}
+
+.cta-banner--cream {
+  background: linear-gradient(135deg, var(--surface-alt) 0%, var(--border) 100%);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+
+.cta-banner h2 { margin: 0 0 var(--sp-3); }
+.cta-banner p { margin: 0 0 var(--sp-5); opacity: 0.92; max-width: 60ch; margin-left: auto; margin-right: auto; }
+
+/* =====================================================================
+   Reduced motion
+   ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* =====================================================================
+   FAQ accordions
+   Used by the service pages and /faqs, which share the same markup:
+   .faq-section > details > summary + .faq-answer
+   Neither page styled it, so both were rendering raw browser <details>
+   with the default triangle and no padding.
+   ===================================================================== */
+
+.faq-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  max-width: var(--container-narrow);
+  /* auto: the cap without it left the list against the container's left
+     edge while the centred section header sat above it. */
+  margin-inline: auto;
+}
+
+.faq-section details {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--dur-fast) var(--ease),
+              box-shadow var(--dur-fast) var(--ease);
+}
+.faq-section details:hover { border-color: var(--border-strong); }
+.faq-section details[open] {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.faq-section summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
+  /* min-height keeps the tap target comfortable on a phone */
+  min-height: 56px;
+  font-size: var(--fs-md);
+  font-weight: var(--weight-semi);
+  line-height: 1.4;
+  color: var(--text);
+  cursor: pointer;
+  /* both are needed: the standard property plus the WebKit pseudo-element,
+     or Safari keeps drawing its own triangle */
+  list-style: none;
+}
+.faq-section summary::-webkit-details-marker { display: none; }
+
+/* Chevron drawn in CSS rather than added to the markup, so the two pages
+   using this component need no changes. */
+.faq-section summary::after {
+  content: '';
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin-right: 2px;
+  border-right: 2px solid var(--accent-text);
+  border-bottom: 2px solid var(--accent-text);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.faq-section details[open] summary::after {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.faq-section summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-md);
+}
+
+.faq-section .faq-answer {
+  padding: 0 var(--sp-5) var(--sp-5);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+  max-width: var(--measure);
+}
+.faq-section .faq-answer p { margin: 0 0 var(--sp-3); }
+.faq-section .faq-answer p:last-child { margin-bottom: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-section summary::after { transition: none; }
+}
+
+
+/* =====================================================================
+   Media split — copy beside a photograph.
+   Promoted out of the service-page template so About and any future page
+   can use the same arrangement rather than re-inventing it.
+   ===================================================================== */
+
+.media-split {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: var(--sp-7);
+  align-items: center;
+}
+.media-split--reverse { grid-template-columns: 1fr 1.15fr; }
+.media-split--reverse .media-split__media { order: -1; }
+
+.media-split__copy > :first-child { margin-top: 0; }
+.media-split__copy > :last-child { margin-bottom: 0; }
+.media-split__copy p,
+.media-split__copy ul {
+  max-width: 58ch;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.media-split__media {
+  margin: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+.media-split__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+@media (max-width: 860px) {
+  .media-split,
+  .media-split--reverse { grid-template-columns: 1fr; gap: var(--sp-5); }
+  .media-split__media,
+  .media-split--reverse .media-split__media { order: -1; }
+}
+
+
+/* Three-up card grid. Shared by /our-services/, both city hubs and every
+   neighbourhood page, so it lives here rather than being redefined (and
+   drifting) in each one. */
+.service-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-4);
+}
+@media (max-width: 900px) {
+  .service-grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .service-grid-3 { grid-template-columns: 1fr; }
+}
+
+
+/* --accent-text (orange-700) is the AA-safe orange for LIGHT surfaces and
+   falls to 3.51:1 on near-black. Dark sections take the inverse token,
+   which is 6.95:1. Global so a new dark block cannot miss it. */
+.section--dark .eyebrow,
+.section--dark .section-header .eyebrow {
+  color: var(--accent-on-dark);
+}

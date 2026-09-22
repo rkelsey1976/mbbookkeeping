@@ -1,0 +1,324 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from './Hero.astro';
+import ServiceBullets from './ServiceBullets.astro';
+import ReviewCards from './ReviewCards.astro';
+import ServiceCard from './ServiceCard.astro';
+import AreaIndex from './AreaIndex.astro';
+import MaterialGrid from './MaterialGrid.astro';
+import AuthorityBio from './AuthorityBio.astro';
+import { getArea, type Area } from '../lib/areas';
+import { SERVICES, getTagline } from '../lib/services';
+import { KEY_SERVICES } from '../lib/areas';
+import { REVIEWS, reviewsFor } from '../lib/reviews';
+
+// The neighbourhood hub, shared by /bath/[slug] and /bath/[slug].
+// Everything that differs between the two cities is derived from the
+// area's own `city` field rather than duplicated into a second template.
+type Props = { area: Area };
+const { area } = Astro.props as Props;
+
+const cityName = 'Bath'; // Aspect is Bath-only
+const citySlug = area.city;
+
+// Drill to the tiered matrix where a page exists; key services only in
+// secondary areas, everything in primary ones.
+const serviceHref = (slug: string) =>
+  area.tier === 'primary' || (area.tier === 'secondary' && KEY_SERVICES.has(slug))
+    ? `/bath-${slug}/${area.slug}/`
+    : `/bath-${slug}/`;
+
+const serviceImages: Record<string, string> = {
+  'builders-bath':          '/images/hero-james-bath-property-1.webp',
+  'kitchen-fitters':        '/projects/custom-kitchen-refit-1.webp',
+  'extension-builders':     '/projects/midford-garden-extension-1.webp',
+  'loft-conversion':        '/projects/bath-loft-extension-1.webp',
+  'renovation':             '/images/hero-home-loft.webp',
+  'heritage-restoration':   '/images/hero-james-bath-property-8.webp',
+  'new-build':              '/projects/frome-garage-conversion-1.webp',
+  'stone-walling':          '/projects/garden-wall-landscaping-1.webp',
+  'landscaping':            '/projects/bath-landscaping-1.webp',
+  'plastering-rendering':   '/projects/chilcompton-rendering-1.webp',
+  'painting-decorating':    '/images/hero-james-bath-property-3.webp',
+  'property-maintenance':   '/projects/greenhouse-base-build-1.webp',
+  'windows-doors':          '/images/hero-james-bath-property-6.webp',
+  'bathroom-installers':    '/projects/luxury-bathroom-refit-1.webp',
+};
+
+// Cross-links to neighbouring areas, resolved to real entries so a stale
+// slug in the data can never render a dead link. Kept within one city:
+// the data has Bath areas listing Bath neighbours and vice versa.
+const nearby = area.nearbyAreas
+  .map((s: string) => getArea(s))
+  .filter((a): a is NonNullable<typeof a> => Boolean(a) && a!.city === area.city);
+
+// Reviews actually left in this area, where we have them. Nine of the
+// twenty areas do; the rest fall back to city-wide, labelled honestly
+// rather than implying a local review that does not exist.
+// Systems are the same wherever we work, so this is the service pages'
+// own material list rather than a second copy of it. De-duped across the
+// six services, which all specify from the same handful of manufacturers.
+const materials = Array.from(
+  new Map(SERVICES.flatMap((sv) => sv.materials).map((m) => [m.manufacturer, m])).values()
+);
+
+// A real case study belongs to one area. Show it on that area's page.
+
+const localReviews = REVIEWS.filter((r) => r.area === area.name);
+const reviews = localReviews.length ? localReviews : reviewsFor(area.slug);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Building and property maintenance',
+  provider: {
+    '@type': 'LocalBusiness',
+    '@id': 'https://www.aspectbuilds.co.uk/#organization',
+    name: 'Aspect Builds & Maintenance Ltd',
+    telephone: '+447498158747',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '2 Fir Tree Cottages, Dunkerton',
+      addressLocality: 'Bath',
+      postalCode: 'BA2 8BS',
+      addressCountry: 'GB',
+    },
+  },
+  areaServed: {
+    '@type': 'Place',
+    name: `${area.name}, ${cityName}`,
+    address: { '@type': 'PostalAddress', addressLocality: area.name, postalCode: area.postcode, addressCountry: 'GB' },
+  },
+  description: area.metaDescription,
+};
+---
+
+<PageLayout
+  title={area.titleTemplate}
+  description={area.metaDescription}
+  preloadImage="/images/hero-james-bath-property-2.webp"
+  canonical={`/${citySlug}/${area.slug}/`}
+  schema={schema}
+  breadcrumbs={[
+    { name: cityName, href: `/${citySlug}/` },
+    { name: area.name, href: `/${citySlug}/${area.slug}/` },
+  ]}
+  ctaHeading={`Planning a project in ${area.name}?`}
+  ctaText={`Free site visit across ${area.name} and the rest of ${cityName}, a fixed written quote within 48 hours, and no pressure either way.`}
+>
+  <Hero
+    size="compact"
+    eyebrow={[`${area.name} · ${area.postcode}`, area.type]}
+    title="Builders in"
+    titleAccent={area.name}
+    lede={area.intro}
+    primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+441174094116', display: '07498 158747' }}
+    image="/images/hero-james-bath-property-2.webp"
+    imageAlt="Modern extension with timber cladding on a period Bath-area home by Aspect Builds"
+    trust={['Free site visit', 'Fixed written quote', 'Fully insured']}
+  />
+
+  <!-- Local context -->
+  <section class="section">
+    <div class="container">
+      <div class="media-split">
+        <div class="media-split__copy">
+          <p class="area-lead">{area.longIntro}</p>
+        </div>
+        <figure class="media-split__media">
+          <img
+            src="/projects/bath-loft-extension-1.webp"
+            alt="Loft conversion in Bath by Aspect Builds — new rear dormer and Juliet balcony"
+            width="920" height="613" loading="lazy" decoding="async"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Housing stock -->
+  <section class="section section--alt">
+    <div class="container">
+      <ServiceBullets
+        items={area.propertyTypes}
+        variant="do"
+        columns={3}
+        eyebrow="Housing stock"
+        heading={`Property types in ${area.name}`}
+        lede="What we typically work on here, and what the housing stock means for how the job is specified."
+      />
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow">Services</span>
+        <h2>What we do in {area.name}</h2>
+        <p class="lede">Every service is available across {area.postcode} and the surrounding streets.</p>
+      </header>
+      <div class="service-grid-3">
+        {SERVICES.map((svc, i) => (
+          <ServiceCard
+            slug={svc.slug}
+            shortName={`${svc.shortName.replace(/\s+Services$/i, '')} in ${area.name}`}
+            tagline={getTagline(svc, area.city)}
+            imageSrc={serviceImages[svc.slug]}
+            number={String(i + 1).padStart(2, '0')}
+            variant="default"
+            href={serviceHref(svc.slug)}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Local knowledge -->
+  <section class="section section--alt">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow">Local knowledge</span>
+        <h2>Working in {area.name}</h2>
+      </header>
+
+      <div class="area-facts">
+        <div class="area-fact">
+          <h3>Recent work nearby</h3>
+          <ul class="area-fact__list">
+            {area.nearbyProjects.map((p: string) => <li>{p}</li>)}
+          </ul>
+        </div>
+        <div class="area-fact">
+          <h3>Landmarks we work around</h3>
+          <ul class="area-fact__chips">
+            {area.landmarks.map((l: string) => <li>{l}</li>)}
+          </ul>
+        </div>
+        <div class="area-fact">
+          <h3>Access &amp; parking</h3>
+          <p>{area.transport}</p>
+        </div>
+        <div class="area-fact">
+          <h3>Pricing notes</h3>
+          <p>{area.costVariation}</p>
+        </div>
+        <div class="area-fact">
+          <h3>Who lives here</h3>
+          <p>{area.demographics}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  {/* From here down the page runs in the same order as a service page:
+      systems, a real project, reviews, the installer. Same components,
+      so a neighbourhood page and a service page feel like one site. */}
+  <section class="section">
+    <div class="container">
+      <MaterialGrid
+        materials={materials}
+        eyebrow="Systems"
+        heading={`Materials & systems we use in ${area.name}`}
+        lede="The same manufacturer-approved systems we specify across every job, whichever service you need."
+      />
+    </div>
+  </section>
+
+  {/* "Real Project" case study removed 2026-09-02, pre-launch. The
+      CaseStudy component and the `caseStudy` entries in services.ts are
+      untouched — this is only the render call. The copy makes very
+      specific claims (a rival's £8,500 quote, 105m², 8 working days,
+      "25-year maintenance-free") that want evidencing before they go back
+      up, ideally alongside photographs of the job. */}
+
+  <ReviewCards
+    reviews={reviews}
+    eyebrow="Reviews"
+    heading={localReviews.length ? `What ${area.name} customers say` : `What ${cityName} homeowners say`}
+    lede={localReviews.length
+      ? `Verified reviews from work completed in ${area.name}.`
+      : 'Verified reviews from recent work across Bath and BANES.'}
+  />
+
+  <!-- Nearby areas -->
+  <section class="section">
+    <div class="container">
+      <AuthorityBio
+        compact={true}
+        name="James"
+        role="Founder & Lead Installer"
+        qualifications={[
+          'NVQ Level 3 in Plastering',
+          'MCIOB Chartered Builder',
+          'CSCS Cardholders & City & Guilds Qualified',
+          'City & Guilds Qualified',
+        ]}
+        bio={`James has been building across Bath and BANES since 2004, and works on ${area.name} properties himself rather than subcontracting them out.`}
+      />
+    </div>
+  </section>
+
+  {nearby.length > 0 && (
+    <section class="section section--alt">
+      <div class="container">
+        <header class="section-header section-header--center">
+          <span class="eyebrow">Nearby</span>
+          <h2>We also cover</h2>
+        </header>
+        <AreaIndex areas={nearby} city={citySlug} />
+      </div>
+    </section>
+  )}
+</PageLayout>
+
+<style>
+  .area-lead { font-size: var(--fs-md); line-height: 1.75; color: var(--text-secondary); }
+
+  .area-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sp-4);
+  }
+  .area-fact {
+    padding: var(--sp-5);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .area-fact h3 {
+    margin: 0 0 var(--sp-3);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--text-muted);
+  }
+  .area-fact p { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--text-secondary); }
+
+  .area-fact__list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--sp-3); }
+  .area-fact__list li {
+    position: relative;
+    padding-left: var(--sp-4);
+    font-size: var(--fs-sm);
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+  .area-fact__list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0.55em;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .area-fact__chips { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+  .area-fact__chips li {
+    padding: var(--sp-1) var(--sp-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+  }
+</style>

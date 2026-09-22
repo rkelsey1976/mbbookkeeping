@@ -1,0 +1,62 @@
+# Netlify redirects — cut-over map from the live aspectbuilds.co.uk IA
+# to the rebuilt IA. 301s throughout: link equity must pass.
+#
+# Rules (Netlify: nearest match wins, later rules can't shadow earlier ones):
+#   1. Renamed/moved pages first (exact paths).
+#   2. Then parameterised patterns for the IA families.
+#
+# GSC data (Sept 2026 export) prioritised the targets: /about/ (307 imp),
+# /locations/ (146), /services/ (128) and the old /services/{category}/ IA
+# (95+91+72+40+14 imp) all carry real traffic and land on their strongest
+# equivalent.
+
+/sitemap.xml            /sitemap-index.xml       301
+
+# Old form thank-you page.
+/faqs/thank-you         /thanks/                 301
+
+# There is no dedicated testimonials page any more — reviews sit on the
+# homepage and each service page. The gallery is the closest match in
+# intent: it is the proof-of-work page.
+/testimonials           /our-work/               301
+
+# Rebuild URL architecture: the service matrix moved to /bath-{service}/{area}/
+# and the hubs to /bath-{service}/. The KD-era /our-services/* shapes are gone.
+/our-services/:slug-bath/            /bath-:slug/              301
+/our-services/:slug-bath/:area/      /bath-:slug/:area/        301
+/our-services/:slug-bristol/         /bath-:slug/              301
+
+# Service rename: Plastering & Decorating split into Plastering & Rendering
+# plus a new Painting & Decorating service. Old slug redirects to the new.
+/bath-plastering-decorating/         /bath-plastering-rendering/   301
+/bath-plastering-decorating/:area/   /bath-plastering-rendering/:area/  301
+
+# ── IA renames: single pages ─────────────────────────────────────────────
+/about/                /about-us/               301
+/faq/                  /faqs/                   301
+/services/             /our-services/           301
+/projects/             /our-work/               301
+/how-we-work/          /about-us/               301
+/locations/            /bath/                   301
+/builders-bath/        /bath-builders-bath/     301
+
+# ── Old privacy URL variants ─────────────────────────────────────────────
+/privacy-policy/       /privacy/                301
+/privacy-policy        /privacy/                301
+
+# ── Old /services/{category}/ IA → the money pages ──────────────────────
+/services/heritage-restoration/   /bath-heritage-restoration/   301
+/services/property-care/          /bath-property-maintenance/   301
+/services/extensions/             /bath-extension-builders/     301
+/services/structural-builds/      /bath-extension-builders/     301
+/services/loft-conversions/       /bath-loft-conversion/        301
+/services/turnkey-refurbishments/ /bath-renovation/             301
+
+# ── Old combined area pages → the area hubs ─────────────────────────────
+/areas-covered/frome-radstock-midsomer-norton/   /bath/frome/   301
+/areas-covered/saltford-keynsham/                /bath/saltford/  301
+
+# ── All 27 area pages: /areas-covered/{area}/ → /bath/{area}/ ───────────
+/areas-covered/:area/   /bath/:area/             301
+
+# ── Case studies: /projects/{case}/ → the service page that owns it ─────

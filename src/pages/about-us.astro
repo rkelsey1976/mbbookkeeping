@@ -1,0 +1,177 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import AuthorityBio from '../components/AuthorityBio.astro';
+import AreaCoverage from '../components/AreaCoverage.astro';
+import ServiceBullets from '../components/ServiceBullets.astro';
+import Hero from '../components/Hero.astro';
+
+const whatWeDo = [
+  'House extensions — single-storey, double-storey, side-return, wraparound',
+  'Loft conversions — Velux, dormer, hip-to-gable, mansard',
+  'Heritage restoration — Bath stone, lime mortar repointing, listed buildings',
+  'Full house refurbishments — turnkey, one project manager',
+  'New builds, garage conversions, RSJ and structural steel work',
+  'Kitchens, bathrooms, landscaping, windows and doors, property maintenance',
+];
+
+const accreditations = [
+  'MCIOB — Chartered Member of the Chartered Institute of Building',
+  '£10M+ public liability insurance, AXA-verified',
+  'TrustATrader member — 4.7 from 16 verified reviews',
+  '5.0 on Google from verified customer reviews',
+  'CSCS cardholders, City & Guilds / NVQ qualified trades',
+  'FENSA-registered for window and door installations',
+];
+---
+
+<PageLayout
+  title="About Us | Aspect Builds"
+  description="Aspect Builds (Company No. 16033975) — Bath-based builders specialising in loft conversions, extensions, heritage restoration and property maintenance. Fully insured, fixed-price quotes, clean sites."
+  preloadImage="/projects/midford-garden-extension-1.webp"
+  canonical="/about-us/"
+  breadcrumbs={[{ name: 'About Us', href: '/about-us/' }]}
+  ctaHeading="Get a free quote for your project"
+  ctaText="Free site visit, fixed written quote, no pressure."
+>
+  <Hero
+    size="compact"
+    eyebrow={['About us', 'Since 2004']}
+    title="Built on precision."
+    titleAccent="delivered with trust."
+    lede="We are a Bath-based construction and maintenance firm built on one principle: the work should speak for itself. No surprises, no shortcuts, no compromises on craft."
+    primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+441174094116', display: '07498 158747' }}
+    image="/projects/midford-garden-extension-1.webp"
+    imageAlt="Garden extension in Midford by Aspect Builds with full-width glazing"
+    rotateWith={[
+      '/projects/custom-kitchen-refit-1.webp',
+      '/projects/luxury-bathroom-refit-1.webp',
+      '/projects/bath-loft-extension-1.webp',
+      '/projects/garden-wall-landscaping-1.webp',
+    ]}
+    trust={['22+ years in Bath', 'MCIOB chartered', '£10M+ public liability']}
+  />
+
+  <!-- Who we are -->
+  <section class="section">
+    <div class="container">
+      <div class="media-split">
+        <div class="media-split__copy">
+          <p>
+            Aspect Builds &amp; Maintenance Ltd (Company No. 16033975) was founded to close
+            the gap between the craftsmanship Bath's heritage architecture demands and the
+            project-management rigour that premium clients expect. Based and trading from
+            Dunkerton, just outside Bath, we operate across Bath, Bradford on Avon,
+            Keynsham, and the wider West Wiltshire region — managing extensions, loft
+            conversions, period renovations, and new builds with the same exacting standard.
+          </p>
+          <p>
+            Every project follows the same discipline: a fixed-price itemised quote, one
+            project manager from start to finish, CSCS-cardholder trades on site, and a
+            proper handover with a comprehensive snag list. What we quote is what you pay.
+          </p>
+        </div>
+        <figure class="media-split__media">
+          <img
+            src="/projects/custom-kitchen-refit-1.webp"
+            alt="Custom kitchen refit in Bath by Aspect Builds — shaker units, quartz worktops, integrated appliances"
+            width="920" height="613" loading="lazy" decoding="async"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Founder -->
+  <section class="section section--alt">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow">The team</span>
+        <h2>Who runs Aspect Builds</h2>
+      </header>
+      <AuthorityBio
+        name="James"
+        role="Founder & Managing Director"
+        qualifications={[
+          'MCIOB — Chartered Member, Chartered Institute of Building',
+          '22+ years building in Bath and the surrounding region',
+          '£10M+ public liability, AXA-verified',
+          'Fixed-price contract specialist — 200+ completed projects',
+        ]}
+        bio={`James Martin leads Aspect Builds & Maintenance Ltd, an MCIOB-chartered building firm based in Dunkerton outside Bath. Fewer than 1 in 10 builders in Bath holds the Chartered Institute of Building qualification. James specifies every quote himself, runs one project manager per job, and is on site for the key stages of every build — extensions, loft conversions, heritage restoration and new builds across Bath and BANES.`}
+      />
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section">
+    <div class="container">
+      <ServiceBullets
+        items={whatWeDo}
+        variant="do"
+        columns={3}
+        eyebrow="What we do"
+        heading="Every type of building work — one standard"
+        lede="We work for homeowners, landlords and developers across Bath, BANES and West Wiltshire."
+      />
+    </div>
+  </section>
+
+  <!-- How we work -->
+  <section class="section section--alt">
+    <div class="container">
+      <header class="section-header section-header--center">
+        <span class="eyebrow">How we work</span>
+        <h2>Fixed quotes, no surprises</h2>
+      </header>
+      <div class="media-split media-split--reverse">
+        <div class="media-split__copy">
+          <p>
+            Every quote is free, written and fixed. James visits the property, scopes the
+            work, and prices it properly — so the number you get is the number you pay.
+            If the spec changes, we re-quote before proceeding, never after.
+          </p>
+          <p>
+            Work follows a structured process: initial site appraisal, detailed
+            specification and fixed quote, scheduled build phases with weekly progress
+            updates and site photographs, then a proper handover with a comprehensive
+            snag list. Clean site, clear timeline, zero ambiguity.
+          </p>
+        </div>
+        <figure class="media-split__media">
+          <img
+            src="/projects/bath-loft-extension-3.webp"
+            alt="Loft conversion underway in Bath by Aspect Builds — scaffolded elevation with structural steelwork going in"
+            width="920" height="613" loading="lazy" decoding="async"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Accreditations -->
+  <section class="section">
+    <div class="container">
+      <ServiceBullets
+        items={accreditations}
+        variant="benefit"
+        columns={3}
+        eyebrow="Credentials"
+        heading="Accreditations and cover"
+        lede="Every claim on this page is one you can check."
+      />
+    </div>
+  </section>
+
+  <!-- Coverage -->
+  <section class="section section--alt">
+    <div class="container">
+      <AreaCoverage
+        eyebrow="Coverage"
+        heading="Where we work"
+        lede="Based in Dunkerton outside Bath, covering 27 areas across Bath, BANES and West Wiltshire."
+        note="Each service page lists the full coverage for your area. Outside it? Ask — we travel."
+      />
+    </div>
+  </section>
+</PageLayout>

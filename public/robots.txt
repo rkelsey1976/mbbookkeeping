@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /__forms.html
+
+Sitemap: https://www.aspectbuilds.co.uk/sitemap-index.xml

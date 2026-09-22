@@ -1,0 +1,110 @@
+---
+// BenefitGrid — premium card layout for "Why Choose" benefits
+// Each benefit gets a sage-green icon + headline + description.
+
+type Props = {
+  eyebrow?: string;
+  benefits: string[];
+  heading?: string;
+  lede?: string;
+};
+
+const { eyebrow, benefits, heading, lede } = Astro.props as Props;
+
+// Benefit icons
+const benefitIcons = [
+  'clock', 'piggy', 'water', 'breath', 'sun', 'shield', 'palette',
+];
+
+const iconPaths: Record<string, string> = {
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  piggy: '<path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-7.5-1.5-11 0-1.5-1.5-2.5-1-3 .5L1 9l1 1c0 1 1 2 2 2v5h14v-5c1 0 2-1 2-2l1-1-1-1c0-1-.5-2-2-2v-1z"/>',
+  water: '<path d="M12 2C8 6 5 11 5 15a7 7 0 0 0 14 0c0-4-3-9-7-13z"/>',
+  breath: '<path d="M3 12c0-5 4-9 9-9s9 4 9 9M3 12c0 5 4 9 9 9s9-4 9-9"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  palette: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.83 0 1.5-.67 1.5-1.5 0-.83-.5-1.5-.5-2.5 0-1 .5-2 2-2h2.5c2.5 0 4.5-2 4.5-4.5C22 6.5 17.5 2 12 2z"/>',
+};
+---
+
+{heading && (
+  <header class="benefits-header section-header section-header--center">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h2>{heading}</h2>
+    {lede && <p class="lede">{lede}</p>}
+  </header>
+)}
+
+<div class="benefits-grid">
+  {benefits.map((benefit, i) => {
+    const iconName = benefitIcons[i % benefitIcons.length];
+    const path = iconPaths[iconName] ?? iconPaths.shield;
+    return (
+      <div class="benefit-card">
+        <div class="benefit-card__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={path} />
+        </div>
+        <p class="benefit-card__text">{benefit}</p>
+      </div>
+    );
+  })}
+</div>
+
+<style>
+  .benefits-header {
+    margin-bottom: var(--sp-6);
+    text-align: center;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .benefits-header .lede {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sp-3);
+  }
+
+  .benefit-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: var(--sp-4);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+
+  .benefit-card:hover {
+    border-left-color: var(--accent);
+    transform: translateX(2px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .benefit-card__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: var(--accent-tint);
+    color: var(--accent-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .benefit-card__text {
+    margin: 0;
+    padding-top: var(--sp-1);
+    font-size: var(--fs-sm);
+    line-height: 1.55;
+    color: var(--text);
+    font-weight: 500;
+  }
+</style>

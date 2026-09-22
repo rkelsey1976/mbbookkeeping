@@ -1,0 +1,190 @@
+---
+import { getCollection, render } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import { getService } from '../../lib/services';
+import { getBathAreas } from '../../lib/areas';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const d = post.data;
+
+// The upward links. Rendered by the template rather than left to the author,
+// so every post feeds its service and city pages whatever the prose does.
+const service = getService(d.service)!;
+const also = d.alsoService ? getService(d.alsoService) : null;
+const cityName = d.city === 'bath' ? 'Bath' : 'Bath';
+const prose = (s: { shortName: string }) => s.shortName.replace(/\s+Services$/i, '');
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.description,
+  datePublished: d.published.toISOString(),
+  dateModified: (d.updated ?? d.published).toISOString(),
+  author: { '@type': 'Person', name: d.author },
+  publisher: {
+    '@type': 'Organization',
+    '@id': 'https://www.aspectbuilds.co.uk/#organization',
+    name: 'Aspect Builds & Maintenance Ltd',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://www.aspectbuilds.co.uk/icon-512.png',
+      width: 512,
+      height: 512,
+    },
+  },
+  mainEntityOfPage: `https://www.aspectbuilds.co.uk/blog/${post.id}/`,
+  image: `https://www.aspectbuilds.co.uk${d.image}`,
+};
+
+const fmt = (dt: Date) =>
+  dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<PageLayout
+  title={`${d.title} | Aspect Builds`}
+  description={d.description}
+  canonical={`/blog/${post.id}/`}
+  ogImage={`/og/${d.service}.jpg`}
+  preloadImage={d.image}
+  ogType="article"
+  schema={schema}
+  breadcrumbs={[
+    { name: 'Blog', href: '/blog/' },
+    { name: d.title, href: `/blog/${post.id}/` },
+  ]}
+  ctaHeading={`${prose(service)} on your property?`}
+  ctaText={`Free site visit across ${cityName}, a fixed written quote within 48 hours, and a straight answer either way.`}
+>
+  <Hero
+    size="compact"
+    eyebrow={['Guide', `${d.minutes} min read`]}
+    title={d.title}
+    lede={d.description}
+    primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+441174094116', display: '07498 158747' }}
+    image={d.image}
+    imageAlt={d.imageAlt}
+    trust={['Free site visit', 'Fixed written quote', 'Since 2004']}
+  />
+
+  <section class="section">
+    <div class="container container--reading">
+      <p class="post__byline">
+        By {d.author} · {fmt(d.published)}
+        {d.updated && <> · updated {fmt(d.updated)}</>}
+      </p>
+      <article class="post__body">
+        <Content />
+      </article>
+
+      {/* The links up. Not optional, and not left to the prose: this is the
+          whole reason the post earns its place in the graph. */}
+      <aside class="post__up" aria-labelledby="post-up-heading">
+        <h2 id="post-up-heading" class="post__up-title">Get this done</h2>
+        <ul>
+          <li>
+            <a href={`/bath-${service.slug}/`}>
+              <span class="post__up-name">{prose(service)} in Bath</span>
+              <span class="post__up-sub">{service.tagline}</span>
+            </a>
+          </li>
+          {also && (
+            <li>
+              <a href={`/bath-${also.slug}/`}>
+                <span class="post__up-name">{prose(also)} in Bath</span>
+                <span class="post__up-sub">{also.tagline}</span>
+              </a>
+            </li>
+          )}
+          <li>
+            <a href="/bath/">
+              <span class="post__up-name">Areas we cover in {cityName}</span>
+              <span class="post__up-sub">
+                {d.city === 'bath'
+                  ? `${getBathAreas().length} Bath neighbourhoods, BA postcodes`
+                  : `${getBathAreas().length} Bath neighbourhoods, BS postcodes`}
+              </span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .post__byline {
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    margin: 0 0 var(--sp-5);
+    padding-bottom: var(--sp-4);
+    border-bottom: 1px solid var(--border);
+  }
+  .post__body { font-size: var(--fs-md); line-height: 1.75; color: var(--text-secondary); }
+  .post__body :global(h2) {
+    margin: var(--sp-7) 0 var(--sp-3);
+    font-size: var(--fs-xl);
+    color: var(--text);
+  }
+  .post__body :global(h3) { margin: var(--sp-6) 0 var(--sp-2); font-size: var(--fs-lg); color: var(--text); }
+  .post__body :global(p) { margin: 0 0 var(--sp-4); }
+  .post__body :global(ul), .post__body :global(ol) { margin: 0 0 var(--sp-4); padding-left: 1.25em; }
+  .post__body :global(li) { margin-bottom: var(--sp-2); }
+  .post__body :global(a) {
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .post__body :global(table) { width: 100%; border-collapse: collapse; margin: 0 0 var(--sp-5); }
+  .post__body :global(th), .post__body :global(td) {
+    text-align: left;
+    padding: var(--sp-3) var(--sp-2);
+    border-bottom: 1px solid var(--border);
+    font-size: var(--fs-sm);
+  }
+  .post__body :global(th) { font-weight: var(--weight-bold); color: var(--text); }
+  .post__body :global(blockquote) {
+    margin: 0 0 var(--sp-5);
+    padding-left: var(--sp-4);
+    border-left: 3px solid var(--accent);
+    color: var(--text);
+  }
+
+  .post__up {
+    margin-top: var(--sp-7);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--border);
+  }
+  .post__up-title {
+    font-size: var(--fs-xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 0 0 var(--sp-4);
+  }
+  .post__up ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+  .post__up a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: var(--sp-4);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+  }
+  .post__up a:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .post__up-name { font-weight: var(--weight-semi); color: var(--text); }
+  .post__up-sub { font-size: var(--fs-sm); color: var(--text-muted); }
+</style>

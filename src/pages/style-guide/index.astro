@@ -1,0 +1,646 @@
+---
+// LIVING STYLE GUIDE — /style-guide
+//
+// Every swatch, type specimen and component below is rendered with the
+// real production tokens and the real component classes. Nothing here is
+// a screenshot or a hardcoded copy, so this page cannot drift from the
+// site: change a token in global.css and this page changes with it.
+//
+// Contrast ratios are computed in the browser from the *resolved* token
+// values, so the pass/fail badges stay honest too.
+//
+// Not indexed — noindex is set below.
+import PageLayout from '../../layouts/PageLayout.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import Hero from '../../components/Hero.astro';
+
+const surfaces = [
+  { token: '--surface',          use: 'Default page ground' },
+  { token: '--surface-raised',   use: 'Cards lifted off the page' },
+  { token: '--surface-alt',      use: 'Alternating band' },
+  { token: '--surface-sunken',   use: 'Recessed band' },
+  { token: '--surface-inverse',  use: 'Dark sections, footer' },
+  { token: '--surface-inverse-raised', use: 'Cards on dark' },
+];
+
+const inks = [
+  { token: '--text',           use: 'Headings, primary copy',      on: '--surface' },
+  { token: '--text-secondary', use: 'Strong secondary copy',       on: '--surface' },
+  { token: '--text-muted',     use: 'Captions, meta, ledes',       on: '--surface' },
+  { token: '--text-subtle',    use: 'Large text only — never body', on: '--surface' },
+];
+
+// `check` measures a pairing that a designer would actually ship. Fill
+// tokens get no ratio at all — measuring a background as if it were text
+// produces a scary red number for a colour nobody was going to set type in.
+const brand = [
+  { token: '--accent',      use: 'Fills, bars, rules',            fill: true },
+  { token: '--accent-hover',use: 'Fill hover / pressed',          fill: true },
+  { token: '--accent-text', use: 'The only orange for body text', check: ['--accent-text', '--surface'], caption: 'on page surface' },
+  { token: '--accent-tint', use: 'Tint background',               check: ['--text', '--accent-tint'],    caption: 'body text on tint' },
+  { token: '--on-accent',   use: 'Text on an orange fill',        check: ['--on-accent', '--accent'],    caption: 'on orange fill' },
+  { token: '--accent-on-dark', use: 'Orange text on a dark surface', check: ['--accent-on-dark', '--surface-inverse'], caption: 'on inverse surface' },
+];
+
+const typeScale = [
+  { token: '--fs-4xl', tag: 'h1', use: 'Page title / hero',      sample: 'Rendering that lasts' },
+  { token: '--fs-2xl', tag: 'h2', use: 'Section heading',        sample: 'Our services' },
+  { token: '--fs-xl',  tag: 'h3', use: 'Card title, sub-head',   sample: 'Silicone rendering' },
+  { token: '--fs-lg',  tag: 'h4', use: 'Minor heading, big lede',sample: 'Fully insured' },
+  { token: '--fs-md',  tag: 'p',  use: 'Body copy — the default',sample: 'Bath and BANES, since 2014.' },
+  { token: '--fs-base',tag: 'p',  use: 'UI text, buttons',       sample: 'Get your free quote' },
+  { token: '--fs-sm',  tag: 'p',  use: 'Captions, meta',         sample: 'Stone cottage, Dunkerton' },
+  { token: '--fs-xs',  tag: 'p',  use: 'Micro-labels, legal',    sample: 'VAT registered' },
+];
+
+const spacing = ['--sp-1','--sp-2','--sp-3','--sp-4','--sp-5','--sp-6','--sp-7','--sp-8','--sp-9'];
+const radii   = ['--radius-sm','--radius-md','--radius-lg','--radius-xl','--radius-full'];
+const shadows = ['--shadow-xs','--shadow-sm','--shadow-md','--shadow-lg'];
+---
+
+<PageLayout
+  title="Style guide — Aspect Builds"
+  description="Living design system reference for the Aspect Builds site."
+  canonical="/style-guide"
+  showLeadForm={false}
+  showCta={false}
+  noindex={true}
+>
+
+  <section class="sg-hero">
+    <div class="container">
+      <span class="eyebrow">Design system v4</span>
+      <h1>Style guide</h1>
+      <p class="lede">
+        Every swatch and specimen below is rendered with the live production tokens.
+        Change a value in <code>global.css</code> and this page changes with it &mdash;
+        so it cannot fall out of date.
+      </p>
+      <nav class="sg-toc" aria-label="Style guide sections">
+        <a href="#principles">Principles</a>
+        <a href="#colour">Colour</a>
+        <a href="#type">Type</a>
+        <a href="#space">Space &amp; shape</a>
+        <a href="#components">Components</a>
+        <a href="#rules">Rules</a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="section" id="principles">
+    <div class="container">
+      <h2>Principles</h2>
+      <div class="sg-principles">
+        <div class="sg-principle">
+          <span class="sg-principle__num">01</span>
+          <h3>One hue, used sparingly</h3>
+          <p>Black, white, and a single orange. The orange marks the one thing we want
+             clicked on any given screen. A second accent colour would halve its value.</p>
+        </div>
+        <div class="sg-principle">
+          <span class="sg-principle__num">02</span>
+          <h3>The photograph is the proof</h3>
+          <p>This is a trade where the work is visible. Real job photos carry the page;
+             illustration and stock imagery undermine it.</p>
+        </div>
+        <div class="sg-principle">
+          <span class="sg-principle__num">03</span>
+          <h3>Weight, not decoration</h3>
+          <p>Hierarchy comes from type weight and size. Not from borders, gradients or
+             drop shadows stacked on top of each other.</p>
+        </div>
+        <div class="sg-principle">
+          <span class="sg-principle__num">04</span>
+          <h3>Readable at AA, always</h3>
+          <p>Every pairing meets WCAG AA. The ratios below are computed live &mdash;
+             if a change breaks one, this page says so.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="section section--alt" id="colour">
+    <div class="container">
+      <h2>Colour</h2>
+      <p class="lede">
+        Two tiers. Primitives name what a colour <em>is</em>; semantic tokens name what it
+        <em>does</em>. Components only ever reference the semantic tier.
+      </p>
+
+      <h3 class="sg-subhead">Surfaces</h3>
+      <div class="sg-swatches">
+        {surfaces.map((s) => (
+          <div class="sg-swatch">
+            <div class="sg-swatch__chip" style={`background: var(${s.token})`}></div>
+            <code class="sg-swatch__token">{s.token}</code>
+            <span class="sg-swatch__hex" data-resolve={s.token}></span>
+            <span class="sg-swatch__use">{s.use}</span>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="sg-subhead">Text</h3>
+      <div class="sg-swatches">
+        {inks.map((s) => (
+          <div class="sg-swatch">
+            <div class="sg-swatch__chip" style={`background: var(${s.token})`}></div>
+            <code class="sg-swatch__token">{s.token}</code>
+            <span class="sg-swatch__hex" data-resolve={s.token}></span>
+            <span class="sg-swatch__use">{s.use}</span>
+            <span class="sg-ratio" data-fg={s.token} data-bg={s.on} data-caption="on page surface"></span>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="sg-subhead">Brand</h3>
+      <div class="sg-swatches">
+        {brand.map((s) => (
+          <div class="sg-swatch">
+            <div class="sg-swatch__chip" style={`background: var(${s.token})`}></div>
+            <code class="sg-swatch__token">{s.token}</code>
+            <span class="sg-swatch__hex" data-resolve={s.token}></span>
+            <span class="sg-swatch__use">{s.use}</span>
+            {s.fill
+              ? <span class="sg-fill-chip">Fill only — never type</span>
+              : <span class="sg-ratio" data-fg={s.check?.[0]} data-bg={s.check?.[1]} data-caption={s.caption}></span>}
+          </div>
+        ))}
+      </div>
+
+
+      <div class="sg-callout sg-callout--warn">
+        <strong>The orange trap.</strong> <code>--accent</code> (#ff6b1a) is only
+        2.7:1 on white &mdash; it fails AA for text. It is a <em>fill</em> colour.
+        For orange text on a light surface use <code>--accent-text</code>; for text
+        sitting on an orange fill use <code>--on-accent</code>, which is near-black
+        at 6.95:1. White on orange fails and must not be used.
+      </div>
+
+      <div class="sg-callout sg-callout--warn">
+        <strong>It inverts on dark.</strong> On a dark surface the pairing flips:
+        <code>--accent-text</code> (the dark orange) drops to 3.5:1 and is no longer
+        safe for anything but large display type, while the bright
+        <code>--accent</code> rises to 6.95:1. Orange text on the hero or any inverse
+        section must use <code>--accent-on-dark</code>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="section" id="type">
+    <div class="container">
+      <h2>Type</h2>
+      <p class="lede">
+        Inter throughout, with tabular figures for prices. Sizes come from the scale
+        below &mdash; never from a one-off <code>clamp()</code> in a component. If a
+        heading needs a different size, it wants a different level.
+      </p>
+      <div class="sg-type">
+        {typeScale.map((t) => (
+          <div class="sg-type__row">
+            <div class="sg-type__meta">
+              <code>{t.token}</code>
+              <span class="sg-type__px" data-resolve-size={t.token}></span>
+              <span class="sg-type__use">{t.use}</span>
+            </div>
+            <div class="sg-type__sample" style={`font-size: var(${t.token}); font-weight: ${t.tag === 'p' ? 400 : t.tag === 'h1' || t.tag === 'h2' ? 800 : 700}; letter-spacing: ${t.tag === 'p' ? 'normal' : '-0.02em'}; line-height: 1.15;`}>
+              {t.sample}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="section section--alt" id="space">
+    <div class="container">
+      <h2>Space &amp; shape</h2>
+      <p class="lede">A 4px base. Every step is a multiple, so vertical rhythm holds across components.</p>
+
+      <h3 class="sg-subhead">Spacing scale</h3>
+      <div class="sg-space">
+        {spacing.map((t) => (
+          <div class="sg-space__row">
+            <code>{t}</code>
+            <span class="sg-space__px" data-resolve-size={t}></span>
+            <div class="sg-space__bar" style={`width: var(${t})`}></div>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="sg-subhead">Radii</h3>
+      <div class="sg-tiles">
+        {radii.map((t) => (
+          <div class="sg-tile">
+            <div class="sg-tile__box" style={`border-radius: var(${t})`}></div>
+            <code>{t}</code>
+            <span class="sg-tile__px" data-resolve-size={t}></span>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="sg-subhead">Elevation</h3>
+      <div class="sg-tiles">
+        {shadows.map((t) => (
+          <div class="sg-tile">
+            <div class="sg-tile__box sg-tile__box--raised" style={`box-shadow: var(${t})`}></div>
+            <code>{t}</code>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="section" id="components">
+    <div class="container">
+      <h2>Components</h2>
+      <p class="lede">Rendered from the real production classes, not copies.</p>
+
+      <h3 class="sg-subhead">Buttons</h3>
+      <div class="sg-row">
+        <a href="#components" class="btn btn--primary">Get your free quote</a>
+        <a href="#components" class="btn btn--secondary">Call the team</a>
+        <a href="#components" class="btn btn--ghost">See our work</a>
+        <a href="#components" class="btn btn--primary btn--lg">Large primary</a>
+      </div>
+      <p class="sg-note">
+        Primary is near-black on orange &mdash; the highest-contrast pairing we have,
+        and the boldest. One primary per screen.
+      </p>
+
+      <h3 class="sg-subhead">Eyebrows &amp; badges</h3>
+      <div class="sg-row">
+        <span class="eyebrow">What we do</span>
+        <span class="badge">Fully insured</span>
+        <span class="badge badge--clay">Fully insured</span>
+      </div>
+
+      <h3 class="sg-subhead">Service card</h3>
+      <div class="service-grid">
+        <ServiceCard
+          slug="extension-builders"
+          shortName="House Extensions"
+          tagline="Single, double-storey, wraparound."
+          number="01"
+          variant="default"
+        />
+        <ServiceCard
+          slug="loft-conversion"
+          shortName="Loft Conversions"
+          tagline="Skimming, floating and full re-plasters, finished flat and clean."
+          number="02"
+          variant="default"
+        />
+      </div>
+
+      <h3 class="sg-subhead">Hero</h3>
+      <p class="sg-note">
+        One component, driven by props. Every line inside it &mdash; eyebrow, headline,
+        lede, buttons and the first stat &mdash; shares the site container, so they all
+        land on the same left edge as the header logo. Shown here at
+        <code>size="compact"</code>.
+      </p>
+      <div class="sg-hero-demo">
+        <Hero
+          size="compact"
+          eyebrow={['Reusable component', 'Hero.astro']}
+          title="Every line sits on"
+          titleAccent="one left edge."
+          lede="Pass an eyebrow, a headline, an accent phrase, a lede, a CTA, a phone number, a photograph and any number of stats."
+          primaryCta={{ label: 'Primary action', href: '#components' }}
+          phone={{ number: '+441174094116', display: '07498 158747' }}
+          image="/hero-home.webp"
+          stats={[
+            { value: 10, suffix: '+', label: 'Years in Bath' },
+            { value: 290, suffix: '+', label: 'Google · Checkatrade · MyBuilder' },
+            { value: 25, suffix: ' yr', label: 'System Warranty' },
+          ]}
+        />
+      </div>
+
+      <h3 class="sg-subhead">Surfaces on dark</h3>
+      <div class="sg-dark">
+        <h4>Inverse section</h4>
+        <p>Body copy on an inverse surface uses <code>--text-inverse-muted</code>.</p>
+        <a href="#components" class="btn btn--primary">Primary still reads here</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="section section--alt" id="rules">
+    <div class="container">
+      <h2>House rules</h2>
+      <div class="sg-rules">
+        <div class="sg-rule sg-rule--do">
+          <h3>Do</h3>
+          <ul>
+            <li>Reference semantic tokens only (<code>--text</code>, <code>--accent</code>).</li>
+            <li>Use one primary CTA per screen.</li>
+            <li>Let real job photography carry the page.</li>
+            <li>Keep prose to <code>--measure</code> (65ch) or narrower.</li>
+            <li>Use tabular figures for any price or phone number.</li>
+          </ul>
+        </div>
+        <div class="sg-rule sg-rule--dont">
+          <h3>Don't</h3>
+          <ul>
+            <li>Hardcode a hex in a component &mdash; add a token instead.</li>
+            <li>Put white text on the orange fill. It fails AA.</li>
+            <li>Introduce a second accent hue.</li>
+            <li>Write a one-off <code>clamp()</code> for a heading size.</li>
+            <li>Stack a border, a shadow <em>and</em> a tint on the same card.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<script is:inline>
+  // Resolve tokens live from the cascade, so this page always reports the
+  // values the site is actually using.
+  (function () {
+    var cs = getComputedStyle(document.documentElement);
+    var val = function (t) { return cs.getPropertyValue(t).trim(); };
+
+    document.querySelectorAll('[data-resolve]').forEach(function (el) {
+      var v = val(el.getAttribute('data-resolve'));
+      el.textContent = v.toUpperCase();
+    });
+
+    document.querySelectorAll('[data-resolve-size]').forEach(function (el) {
+      var probe = document.createElement('div');
+      probe.style.cssText = 'position:absolute;visibility:hidden;width:' + val(el.getAttribute('data-resolve-size'));
+      document.body.appendChild(probe);
+      var px = Math.round(probe.getBoundingClientRect().width * 10) / 10;
+      probe.remove();
+      el.textContent = px + 'px';
+    });
+
+    // --- live WCAG contrast ---
+    function toRgb(c) {
+      var d = document.createElement('div');
+      d.style.color = c; document.body.appendChild(d);
+      var m = getComputedStyle(d).color.match(/\d+(\.\d+)?/g);
+      d.remove();
+      return m ? m.slice(0, 3).map(Number) : [0, 0, 0];
+    }
+    function lum(rgb) {
+      var a = rgb.map(function (v) {
+        v /= 255;
+        return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+    }
+    function ratio(fg, bg) {
+      var l1 = lum(toRgb(fg)), l2 = lum(toRgb(bg));
+      var hi = Math.max(l1, l2), lo = Math.min(l1, l2);
+      return (hi + 0.05) / (lo + 0.05);
+    }
+
+    document.querySelectorAll('.sg-ratio').forEach(function (el) {
+      var r = ratio(val(el.getAttribute('data-fg')), val(el.getAttribute('data-bg')));
+      var rounded = Math.round(r * 100) / 100;
+      var body = r >= 4.5, large = r >= 3;
+      var verdict = body ? 'AA' : large ? 'AA large only' : 'fail';
+      var cap = el.getAttribute('data-caption');
+      el.textContent = rounded.toFixed(2) + ':1 ' + verdict + (cap ? ' — ' + cap : '');
+      el.classList.add(body ? 'sg-ratio--pass' : large ? 'sg-ratio--large' : 'sg-ratio--fail');
+    });
+  })();
+</script>
+
+<style>
+  .sg-hero {
+    padding: var(--section-y) 0 var(--section-y-tight);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .sg-toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-top: var(--sp-5);
+  }
+  .sg-toc a {
+    padding: var(--sp-2) var(--sp-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: var(--fs-sm);
+    font-weight: var(--weight-semi);
+    color: var(--text);
+    background: var(--surface-raised);
+    transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  }
+  .sg-toc a:hover { border-color: var(--accent); color: var(--accent-text); }
+
+  .sg-subhead {
+    margin: var(--sp-7) 0 var(--sp-4);
+    font-size: var(--fs-lg);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* --- principles --- */
+  .sg-principles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--sp-5);
+  }
+  .sg-principle {
+    padding: var(--sp-5);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .sg-principle__num {
+    display: block;
+    font-size: var(--fs-sm);
+    font-weight: var(--weight-display);
+    color: var(--accent-text);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: var(--sp-3);
+  }
+  .sg-principle h3 { font-size: var(--fs-md); margin-bottom: var(--sp-2); }
+  .sg-principle p  { font-size: var(--fs-sm); color: var(--text-muted); margin: 0; }
+
+  /* --- swatches --- */
+  .sg-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--sp-4);
+  }
+  .sg-swatch {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+  }
+  .sg-swatch__chip {
+    height: 56px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-bottom: var(--sp-3);
+  }
+  .sg-swatch__token {
+    font-size: var(--fs-sm);
+    font-weight: var(--weight-semi);
+    color: var(--text);
+  }
+  .sg-swatch__hex {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.04em;
+  }
+  .sg-swatch__use { font-size: var(--fs-xs); color: var(--text-muted); }
+
+  .sg-ratio {
+    align-self: flex-start;
+    margin-top: var(--sp-2);
+    font-size: var(--fs-xs);
+    font-weight: var(--weight-bold);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-variant-numeric: tabular-nums;
+  }
+  .sg-ratio--pass  { background: var(--surface-sunken); color: var(--text); }
+  .sg-ratio--large { background: var(--accent-tint);  color: var(--accent-text); }
+  .sg-ratio--fail  { background: var(--surface-inverse); color: var(--text-inverse); }
+
+  .sg-fill-chip {
+    align-self: flex-start;
+    margin-top: var(--sp-2);
+    font-size: var(--fs-xs);
+    font-weight: var(--weight-bold);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: var(--surface-sunken);
+    color: var(--text-secondary);
+  }
+
+  .sg-callout {
+    margin-top: var(--sp-6);
+    padding: var(--sp-5);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--accent);
+    background: var(--accent-tint);
+    font-size: var(--fs-sm);
+    max-width: var(--measure);
+  }
+  .sg-callout code { font-weight: var(--weight-bold); }
+
+  /* --- type --- */
+  .sg-type__row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--sp-5);
+    align-items: baseline;
+    padding: var(--sp-4) 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sg-type__meta { display: flex; flex-direction: column; gap: 2px; }
+  .sg-type__meta code { font-size: var(--fs-sm); font-weight: var(--weight-semi); }
+  .sg-type__px  { font-size: var(--fs-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .sg-type__use { font-size: var(--fs-xs); color: var(--text-muted); }
+  .sg-type__sample { color: var(--text); overflow-wrap: anywhere; }
+
+  /* --- space --- */
+  .sg-space__row {
+    display: grid;
+    grid-template-columns: 90px 60px 1fr;
+    gap: var(--sp-4);
+    align-items: center;
+    padding: var(--sp-2) 0;
+  }
+  .sg-space__row code { font-size: var(--fs-sm); }
+  .sg-space__px { font-size: var(--fs-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .sg-space__bar { height: 16px; background: var(--accent); border-radius: 2px; }
+
+  .sg-tiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-5);
+  }
+  .sg-tile { display: flex; flex-direction: column; gap: var(--sp-2); align-items: flex-start; }
+  .sg-tile code { font-size: var(--fs-xs); }
+  .sg-tile__px { font-size: var(--fs-xs); color: var(--text-muted); }
+  .sg-tile__box {
+    width: 90px; height: 64px;
+    background: var(--accent-tint);
+    border: 1px solid var(--accent);
+  }
+  .sg-tile__box--raised {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  /* --- components --- */
+  .sg-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+    align-items: center;
+  }
+  .sg-note {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    max-width: var(--measure);
+  }
+  .sg-hero-demo {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .sg-dark {
+    margin-top: var(--sp-4);
+    padding: var(--sp-6);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-md);
+  }
+  .sg-dark h4 { color: var(--text-inverse); }
+  .sg-dark p  { color: var(--text-inverse-muted); font-size: var(--fs-sm); }
+
+  /* --- rules --- */
+  .sg-rules {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sp-5);
+  }
+  .sg-rule {
+    padding: var(--sp-5);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    border-top: 3px solid var(--border);
+  }
+  .sg-rule--do   { border-top-color: var(--text); }
+  .sg-rule--dont { border-top-color: var(--accent); }
+  .sg-rule h3 { font-size: var(--fs-md); }
+  .sg-rule ul { margin: 0; padding-left: 1.1rem; }
+  .sg-rule li { font-size: var(--fs-sm); color: var(--text-muted); margin-bottom: var(--sp-2); }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9em;
+    background: var(--surface-sunken);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .sg-type__row  { grid-template-columns: 1fr; gap: var(--sp-2); }
+    .sg-space__row { grid-template-columns: 80px 54px 1fr; }
+  }
+</style>

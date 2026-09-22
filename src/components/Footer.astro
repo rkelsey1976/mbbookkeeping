@@ -1,0 +1,489 @@
+---
+import { SERVICES } from '../lib/services';
+import Logo from './Logo.astro';
+
+const services = SERVICES.map(s => s.slug);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo"><Logo variant="inline" size={30} /></div>
+        <p class="footer-tagline">
+          Premium construction across Bath &amp; BANES. Extensions, loft
+          conversions, Georgian renovation and new build &mdash; delivered
+          with precision, without surprises.
+        </p>
+
+        {/* TrustATrader badge — mirrors the live footer's 4.6/16 figures. */}
+        <a
+          href="https://www.trustatrader.com/traders/aspect-builds-maintenance-ltd-interior-refurbishment-bath-south"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-tat"
+          aria-label="4.6 out of 5 from 16 verified TrustATrader reviews"
+        >
+          <img src="/logos/trustatrader-logo.svg" alt="TrustATrader Verified" width="52" height="52" loading="lazy" />
+          <span class="footer-tat__text">
+            <strong>4.6 / 5</strong>
+            <span>TrustATrader &middot; 16 Reviews</span>
+          </span>
+        </a>
+
+        <ul class="footer-social">
+          <li>
+            {/* Same-as links mirrored from contact.ts — Google verifies the
+                entity faster when profiles are linked from the site as well
+                as asserted in schema. */}
+            <a href="https://www.facebook.com/profile.php?id=61590355720472" target="_blank" rel="noopener me"
+               aria-label="Aspect Builds on Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78L15.9 15h-2.34v7A9.98 9.98 0 0 0 22 12.06z"/>
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.instagram.com/aspectbuilds1/" target="_blank" rel="noopener me"
+               aria-label="Aspect Builds on Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a href="https://g.page/r/CSgqcByy81a7EBM/review" target="_blank" rel="noopener"
+               aria-label="Aspect Builds on Google — 5 out of 5 from 5 reviews">
+              <span class="footer-social__text">Google 5.0</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <details class="footer-col footer-col--services" open>
+        <summary class="footer-col__bar"><h3>Services</h3><svg class="footer-col__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ul class="footer-services">
+          {services.map((slug) => (
+            <li><a href={`/bath-${slug}/`}>{slug.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}</a></li>
+          ))}
+        </ul>
+      </details>
+
+      <details class="footer-col footer-col--areas" open>
+        <summary class="footer-col__bar"><h3>Service Areas</h3><svg class="footer-col__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <p class="footer-area-note">
+          Serving Bath, Keynsham, Bradford on Avon, Frome, Westbury and the
+          wider Bath &amp; BANES area — extensions, loft conversions,
+          renovations and new builds.
+        </p>
+        <p class="footer-area-note">
+          Free site visits across Bath and the surrounding villages.
+        </p>
+      </details>
+
+      <div class="footer-col footer-col--contact">
+        <h3>Get in touch</h3>
+        <p class="footer-area-note footer-contact__loc">
+          Builders based in Dunkerton, just outside Bath.
+        </p>
+        <ul class="footer-contact-list">
+          <li>
+            <a class="contact-pill" href="tel:+447498158747">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              07498 158747
+            </a>
+          </li>
+          <li>
+            {/* The mobile is the WhatsApp line — NAP has to match the Google
+                Business Profile, so it shows here too. */}
+            <a class="contact-pill" href="https://wa.me/447498158747" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.13a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.17 8.17 0 0 1-1.25-4.36c0-4.54 3.7-8.24 8.24-8.24a8.19 8.19 0 0 1 5.82 2.42 8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.25 8.23z"/>
+              </svg>
+              07498 158747 <span class="footer-wa-tag">WhatsApp</span>
+            </a>
+          </li>
+          <li>
+            <a class="contact-pill" href="mailto:james.aspectbuilds@gmail.com">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              james.aspectbuilds@gmail.com
+            </a>
+          </li>
+        </ul>
+        <p class="footer-hours">Mon&ndash;Thu 8:00&ndash;17:00 &middot; Fri 7:00&ndash;17:00 &middot; Sat 8:00&ndash;13:00</p>
+      </div>
+
+      <details class="footer-col footer-col--company" open>
+        <summary class="footer-col__bar"><h3>Company</h3><svg class="footer-col__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ul>
+          <li><a href="/about-us/">About Us</a></li>
+          <li><a href="/our-work/">Our Work</a></li>
+          <li><a href="/faqs/">FAQs</a></li>
+          <li><a href="/blog/">Guides</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/privacy/">Privacy Policy</a></li>
+          <li><a href="/terms/">Terms &amp; Conditions</a></li>
+          <li><a href="/cookies/">Cookies</a></li>
+        </ul>
+      </details>
+    </div>
+
+    <div class="footer-accreditations">
+      <span class="accred">✓ MCIOB Chartered</span>
+      <span class="accred">✓ CSCS Cardholders</span>
+      <span class="accred">✓ City &amp; Guilds Qualified</span>
+      <span class="accred">✓ Fully Insured</span>
+      <span class="accred">✓ Fixed-Price Quotes</span>
+    </div>
+
+    <div class="footer-bottom">
+      <p>
+        &copy; {year} Aspect Builds &amp; Maintenance Ltd. Registered in
+        England and Wales, company no. 16033975. All rights reserved.
+      </p>
+      {/* Canonical host is the apex — www redirects to it, so link the apex
+          directly rather than through a 301. */}
+      <p class="footer-credit">
+        Website by <a href="https://seo-kings.co.uk/">SEO Kings</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+<script is:inline>
+  // Footer accordion sync. Columns ship open so the page is correct without
+  // JS and for crawlers; on phones the nav columns collapse after paint.
+  // Re-syncs when the viewport crosses the breakpoint (rotation, URL bar).
+  (() => {
+    const mq = window.matchMedia('(max-width: 1023px)');
+    const cols = document.querySelectorAll('details.footer-col');
+    const sync = () => cols.forEach((d) => { d.open = !mq.matches; });
+
+    let last = mq.matches;
+    const check = () => {
+      if (mq.matches === last) return;
+      last = mq.matches;
+      sync();
+    };
+
+    // Close after first paint so the initial render stays crawl-complete.
+    requestAnimationFrame(() => { if (mq.matches) cols.forEach((d) => { d.open = false; }); });
+
+    // A plain resize handler would slam panels on mobile URL-bar resizes;
+    // only act when the breakpoint is actually crossed.
+    window.addEventListener('resize', check, { passive: true });
+  })();
+</script>
+
+<style>
+  /* ═══ FOOTER — mobile-first premium.
+     Phone (375–430px) is the design target: big brand block, tappable
+     contact pills, two-column link chips, bordered credential strip.
+     Desktop expands the same elements into the five-column grid. */
+
+  .site-footer {
+    background:
+      linear-gradient(180deg, var(--ink-900) 0%, #0a111b 100%);
+    color: var(--text-inverse-muted);
+    padding: var(--sp-8) 0 calc(var(--sp-6) + env(safe-area-inset-bottom));
+    border-top: 3px solid var(--accent);
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr;   /* mobile: single column, generous rhythm */
+    gap: var(--sp-6);
+    padding-bottom: var(--sp-6);
+    border-bottom: 1px solid var(--border-inverse);
+  }
+
+  /* ── Brand block ── */
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    /* On mobile the brand block is the hero of the footer */
+  }
+  .footer-logo { color: var(--text-inverse); }
+  .footer-tagline {
+    font-size: var(--fs-sm);
+    line-height: 1.65;
+    max-width: 40ch;
+    margin: 0;
+  }
+
+  .footer-tat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--text-inverse);
+    background: var(--surface-inverse-raised);
+    border: 1px solid var(--border-inverse);
+    padding: 0.75rem 1rem;
+    width: fit-content;
+    transition: border-color 0.2s;
+  }
+  .footer-tat:hover { border-color: var(--accent); }
+  .footer-tat img {
+    width: 46px;
+    height: 46px;
+    background: var(--paper-0);
+    padding: 4px;
+  }
+  /* The TrustATrader mark is a white circular badge — it needs the brand navy
+     behind it to read as a badge rather than an empty white square. */
+  .footer-tat { background: var(--surface-inverse-raised); }
+  .footer-tat__text { display: flex; flex-direction: column; gap: 2px; }
+  .footer-tat__text strong {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+  .footer-tat__text span {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-inverse-muted);
+  }
+
+  .footer-social {
+    display: flex;
+    gap: var(--sp-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer-social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 0.75rem;
+    color: var(--text-inverse-muted);
+    border: 1px solid var(--border-inverse);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .footer-social a:hover { color: var(--accent); border-color: var(--accent); }
+  .footer-social__text {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  /* ── Columns: shared ── */
+  /* Mobile: each nav column is a <details> accordion. The summary is a full
+     tap row (min 44px); the chevron flips when open. Contact + brand are
+     always visible — they are the conversion content, not navigation. */
+  .footer-col summary.footer-col__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    list-style: none;
+    cursor: pointer;
+    min-height: 48px;             /* comfortable tap target */
+    -webkit-tap-highlight-color: transparent;
+  }
+  .footer-col summary.footer-col__bar::-webkit-details-marker { display: none; }
+  .footer-col__chev {
+    flex-shrink: 0;
+    color: var(--text-inverse-subtle);
+    transition: transform 0.25s var(--ease, ease);
+  }
+  details[open] > summary.footer-col__bar .footer-col__chev {
+    transform: rotate(180deg);
+  }
+
+  .footer-col h3 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-inverse);
+    margin: 0;
+    /* Section-rule eyebrow treatment */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+  .footer-col h3::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-inverse);
+  }
+  /* Accordion content: breathing room below the bar */
+  .footer-col > summary + * { margin-top: var(--sp-4); }
+  .footer-col .footer-area-note:first-of-type { margin-top: var(--sp-4); }
+
+  .footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* mobile: two-up link chips */
+    gap: 0.55rem 1rem;
+  }
+  .footer-col ul a {
+    color: var(--text-inverse-muted);
+    text-decoration: none;
+    font-size: var(--fs-sm);
+    line-height: 1.35;
+    display: inline-block;
+    padding: 0.35rem 0;
+    transition: color 0.2s;
+  }
+  .footer-col ul a:hover { color: var(--accent); }
+
+  /* Services list: 14 links — 2-up on phones, tight */
+  .footer-col--services .footer-services a { font-size: 0.86rem; }
+
+  /* ── Contact column: tappable pills, full-width on mobile ── */
+  .footer-contact__loc { margin: 0 0 var(--sp-3); }
+  .footer-col--contact .footer-contact-list {
+    grid-template-columns: 1fr;   /* one per row — big tap targets */
+    gap: 0.6rem;
+  }
+  .contact-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.85rem 1rem;
+    background: var(--surface-inverse-raised);
+    border: 1px solid var(--border-inverse);
+    color: var(--text-inverse);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .contact-pill:hover { border-color: var(--accent); color: var(--text-inverse); }
+  .contact-pill svg { flex-shrink: 0; color: var(--accent); }
+
+  .footer-wa-tag {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 2px 6px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .footer-hours {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.02em;
+    margin: var(--sp-3) 0 0;
+    color: var(--text-inverse-subtle);
+  }
+
+  .footer-area-note {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--text-inverse-muted);
+  }
+  .footer-col:not(.footer-col--contact) .footer-area-note { margin: 0; }
+
+  /* ── Accreditations: bordered strip ── */
+  .footer-accreditations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: var(--sp-5) 0;
+  }
+  .accred {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-inverse-muted);
+    border: 1px solid var(--border-inverse);
+    padding: 0.45rem 0.8rem;
+    white-space: nowrap;
+  }
+
+  /* ── Bottom bar: stacked + centred on mobile ── */
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--sp-2);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--border-inverse);
+  }
+  .footer-bottom p {
+    font-size: var(--fs-xs);
+    margin: 0;
+    line-height: 1.6;
+    max-width: 46ch;
+  }
+  .footer-credit a {
+    color: var(--text-inverse-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .footer-credit a:hover { color: var(--accent); }
+
+  /* ── Tablet ≥640: brand block full-width, then 2-col nav/contact ── */
+  @media (min-width: 640px) {
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .footer-brand { grid-column: 1 / -1; }
+  }
+
+  /* ── Desktop: the five-column layout ── */
+  @media (min-width: 1024px) {
+    .site-footer { padding: var(--section-y-tight) 0 calc(var(--sp-6) + env(safe-area-inset-bottom)); }
+    .footer-top {
+      grid-template-columns: 1.5fr 1.6fr 1.1fr 1.3fr 1fr;
+      gap: var(--sp-6);
+      align-items: start;
+    }
+    .footer-brand { grid-column: auto; }
+    .footer-tat { padding: 0.65rem 0.9rem; }
+    /* Accordions flatten to static columns on desktop */
+    .footer-col summary.footer-col__bar {
+      cursor: default;
+      min-height: 0;
+      pointer-events: none;   /* the whole summary is a no-op with mouse */
+    }
+    .footer-col__chev { display: none; }
+    .footer-col > summary + * { margin-top: 0; }
+    .footer-col h3 { margin: 0 0 var(--sp-4); }
+    .footer-col details-content,
+    .footer-col > *:not(summary) { display: block; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 0.55rem; }
+    .footer-col ul a { padding: 0; font-size: var(--fs-sm); }
+    /* 14 links would tower over the other columns — two-up on desktop */
+    .footer-col--services .footer-services {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem 1.25rem;
+    }
+    .footer-col--contact .footer-contact-list { grid-template-columns: 1fr; gap: 0.65rem; }
+    .contact-pill {
+      padding: 0;
+      background: none;
+      border: none;
+      font-size: var(--fs-sm);
+      font-weight: 400;
+      width: fit-content;
+    }
+    .footer-bottom { flex-direction: row; justify-content: space-between; text-align: left; }
+  }
+</style>

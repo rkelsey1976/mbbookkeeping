@@ -1,0 +1,82 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const lastUpdated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<PageLayout
+  title="Privacy Policy | Aspect Builds"
+  description="How Aspect Builds handles your personal data under UK GDPR and the Data Protection Act 2018."
+  canonical="/privacy/"
+  showLeadForm={false}
+  breadcrumbs={[{ name: 'Privacy Policy', href: '/privacy/' }]}
+>
+  <section class="section">
+    <div class="container container--reading">
+      <h1>Privacy Policy</h1>
+      <p style="color: var(--text-muted);">Last updated: {lastUpdated}</p>
+
+      <h2>Who we are</h2>
+      <p>Aspect Builds &amp; Maintenance Ltd ("we", "us", "our") is a building and property maintenance contractor based at 2 Fir Tree Cottages, Dunkerton, Bath BA2 8BS. We provide building, renovation and property maintenance services to homeowners, landlords and developers across Bath and the surrounding areas.</p>
+      <p>For the purposes of UK data protection law, Aspect Builds &amp; Rendering Services is the <strong>data controller</strong> for the personal information collected through this website.</p>
+
+      <h2>What we collect</h2>
+      <p>When you fill in our quote form, contact us by phone or email, or book our services, we collect:</p>
+      <ul>
+        <li>Your name</li>
+        <li>Your phone number</li>
+        <li>Your email address</li>
+        <li>Your postcode and address</li>
+        <li>Details about your project (property type, size, service required)</li>
+        <li>Standard technical data (your IP address, the pages you visited, browser type)</li>
+      </ul>
+
+      <h2>How we use it (legal basis)</h2>
+      <p>We use your personal data on the basis of <strong>legitimate interests</strong> — to provide quotes, deliver the services you have booked, and communicate with you about your project. We also rely on your explicit <strong>consent</strong> when you tick the consent box on our quote form.</p>
+      <p>We do not use your data for automated decision-making, profiling, or marketing to third parties.</p>
+
+      <h2>Who we share it with</h2>
+      <p>We do <strong>not</strong> sell, rent, or share your details with any third parties for marketing purposes. We share your data only with:</p>
+      <ul>
+        <li>Our scaffold partner, when scaffold erection forms part of your quoted works</li>
+        <li>Our material suppliers and trade counters (builders’ merchants), only when placing a product order on your behalf</li>
+        <li>
+          Google, but only if you accept cookies — Google Analytics receives anonymised
+          usage data, and the embedded map on our contact page loads from Google. Reject
+          the banner and no data reaches them.
+        </li>
+        <li>
+          Netlify, who host the site and process the quote form you submit
+        </li>
+        <li>Our hosting provider (Netlify) and form-handling service, for the technical operation of this website</li>
+      </ul>
+
+      <h2>How long we keep it</h2>
+      <p>We keep your enquiry details and project records for up to 7 years for tax and contractual warranty purposes. Technical logs (IP, browser) are kept for up to 30 days for security and capacity planning, then deleted.</p>
+
+      <h2>Your rights</h2>
+      <p>Under UK GDPR you have the right to:</p>
+      <ul>
+        <li><strong>Access</strong> the personal data we hold about you</li>
+        <li><strong>Correct</strong> any data that is wrong</li>
+        <li><strong>Delete</strong> your data (the "right to be forgotten")</li>
+        <li><strong>Restrict</strong> or <strong>object to</strong> our processing of your data</li>
+        <li><strong>Withdraw consent</strong> at any time</li>
+        <li><strong>Complain</strong> to the Information Commissioner's Office (ICO)</li>
+      </ul>
+      <p>To exercise any of these rights, email us at <a href="mailto:james.aspectbuilds@gmail.com">james.aspectbuilds@gmail.com</a>. We will respond within one month.</p>
+
+      <h2>Cookies</h2>
+      <p>
+        The site sets no cookies and loads no third-party scripts unless you accept them
+        on the banner. If you accept, we enable Google Analytics 4 and the Google map on
+        our contact page; if you reject or ignore the banner, neither loads. We never use
+        advertising or retargeting cookies. Full detail, and how to change your answer, is
+        in our <a href="/cookies/">cookie policy</a>.
+      </p>
+
+      <h2>Contact</h2>
+      <p>For any privacy-related question, email <a href="mailto:james.aspectbuilds@gmail.com">james.aspectbuilds@gmail.com</a> or call 07498 158747. You can also complain to the Information Commissioner's Office at <a href="https://ico.org.uk/make-a-complaint/" rel="noopener">ico.org.uk</a>.</p>
+    </div>
+  </section>
+</PageLayout>

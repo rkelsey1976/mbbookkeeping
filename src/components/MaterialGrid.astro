@@ -1,0 +1,201 @@
+---
+// MaterialGrid — premium card layout for materials/manufacturers
+// Each manufacturer card has a logo placeholder + product line chips
+// + BBA / warranty badge.
+
+type Material = {
+  manufacturer: string;
+  products: string[];
+  notes?: string;
+  bba?: boolean;
+};
+
+type Props = {
+  eyebrow?: string;
+  materials: Material[];
+  heading?: string;
+  lede?: string;
+};
+
+// Manufacturer logos, keyed on the name in services.ts. Files come from
+// scripts/prepare-logos.sh, which trims the padding off the source images —
+// several arrive as square canvases with the mark small in the middle.
+// Anything without a file falls back to the generic icon — so only add a
+// key here once the file exists, or it 404s instead of falling back.
+const LOGOS: Record<string, string> = {
+  "Johnstone's":    '/logos/johnstones.png',
+  'K Rend':         '/logos/k-rend.png',
+  'Parex':          '/logos/parex.png',
+  'Weber':          '/logos/weber.png',
+};
+
+const { eyebrow, materials, heading, lede } = Astro.props as Props;
+
+// Manufacturer icon (factory-style)
+const iconPaths: Record<string, string> = {
+  factory: '<path d="M2 20h20M4 20V8l5 3V8l5 3V8l5 3v9M9 14h2M13 14h2M17 14h2M9 18h2M13 18h2"/>',
+};
+---
+
+{heading && (
+  <header class="materials-header section-header section-header--center">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h2>{heading}</h2>
+    {lede && <p class="lede">{lede}</p>}
+  </header>
+)}
+
+<div class="materials-grid">
+  {materials.map((m) => (
+    <article class="material-card">
+      <div class="material-card__top">
+        {LOGOS[m.manufacturer] ? (
+          <img
+            class="material-card__logo"
+            src={LOGOS[m.manufacturer]}
+            alt={`${m.manufacturer} logo`}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div class="material-card__icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={iconPaths.factory} />
+          </div>
+        )}
+        {m.bba && (
+          <span class="material-card__badge" aria-label="BBA certified">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            BBA
+          </span>
+        )}
+      </div>
+
+      <h3 class="material-card__name">{m.manufacturer}</h3>
+
+      {m.notes && (
+        <p class="material-card__notes">{m.notes}</p>
+      )}
+
+      <ul class="material-card__products">
+        {m.products.map((p) => (
+          <li class="material-card__product">{p}</li>
+        ))}
+      </ul>
+    </article>
+  ))}
+</div>
+
+<style>
+  .materials-header {
+    margin-bottom: var(--sp-6);
+    text-align: center;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .materials-header .lede {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .materials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sp-4);
+  }
+
+  .material-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .material-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .material-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .material-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--accent-tint);
+    color: var(--accent-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Logos arrive at wildly different aspect ratios and colours. A fixed
+     box with contain, plus a max-width, keeps a row of them level whatever
+     the source files look like. */
+  .material-card__logo {
+    height: 34px;
+    max-width: 150px;
+    width: auto;
+    object-fit: contain;
+    object-position: left center;
+    display: block;
+  }
+
+  .material-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: var(--sp-1) var(--sp-2);
+    background: var(--accent-tint);
+    color: var(--accent-text);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+  }
+
+  .material-card__name {
+    margin: 0;
+    font-size: var(--fs-xl);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .material-card__notes {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .material-card__products {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .material-card__product {
+    margin: 0;
+    padding: var(--sp-1) var(--sp-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    color: var(--text);
+    font-weight: 500;
+  }
+</style>
