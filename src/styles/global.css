@@ -142,7 +142,7 @@
 
   /* Font families — the live Aspect pairing. Bebas Neue is display-only
      (uppercase, tight); DM Sans carries body and UI. */
-  --font-display: 'DM Sans Variable', 'DM Sans', 'Segoe UI', sans-serif;
+  --font-display: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
   --font-body: 'DM Sans Variable', 'DM Sans', -apple-system, 'Segoe UI', sans-serif;
 
   /* Measure — never let prose run wider than this */
