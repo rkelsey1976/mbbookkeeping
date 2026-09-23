@@ -142,7 +142,7 @@
 
   /* Font families — the live Aspect pairing. Bebas Neue is display-only
      (uppercase, tight); DM Sans carries body and UI. */
-  --font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-display: 'DM Sans Variable', 'DM Sans', 'Segoe UI', sans-serif;
   --font-body: 'DM Sans Variable', 'DM Sans', -apple-system, 'Segoe UI', sans-serif;
 
   /* Measure — never let prose run wider than this */
@@ -282,13 +282,11 @@ textarea:focus-visible {
    weights for it where the var is referenced. */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 400; /* Bebas only ships one weight */
+  font-weight: 800;
   color: var(--text);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
   line-height: var(--lh-snug);
   margin: 0 0 var(--sp-4);
-
 }
 
 h1 {

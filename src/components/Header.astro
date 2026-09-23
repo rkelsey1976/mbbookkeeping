@@ -53,8 +53,10 @@ const isActive = (path: string) => {
           <div class="mega-menu" id="services-mega" aria-labelledby="services-trigger">
             <div class="container mega-menu__container">
               <div class="mega-menu__header">
-                <p class="eyebrow eyebrow--clay">Our Services</p>
-                <h2 class="mega-menu__title">Seven services. {AREAS.length} neighbourhoods.</h2>
+                <div>
+                  <p class="mega-menu__eyebrow">Our services</p>
+                  <h2 class="mega-menu__title">Seven services. {AREAS.length} neighbourhoods.</h2>
+                </div>
                 {/* The category page had no sitewide link — keep one here so
                     the menu always has a route to the services index. */}
                 <a href="/our-services/" class="mega-menu__all">
@@ -430,10 +432,10 @@ const isActive = (path: string) => {
     left: 0;
     right: 0;
     top: 100%;
-    background: #fff;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    box-shadow: var(--shadow-lg);
+    background: linear-gradient(180deg, #0a2a52 0%, #002349 100%);
+    border-top: 3px solid var(--brand-teal);
+    border-bottom: 0;
+    box-shadow: 0 24px 48px -12px rgba(0, 15, 35, 0.5);
     padding: var(--sp-5) 0 var(--sp-6);
     opacity: 0;
     visibility: hidden;
@@ -461,8 +463,9 @@ const isActive = (path: string) => {
     margin-top: var(--sp-3);
     font-size: var(--fs-sm);
     font-weight: var(--weight-semi);
-    color: var(--accent-on-dark);
+    color: #6fd6c4;
     text-decoration: none;
+    white-space: nowrap;
   }
   .mega-menu__all:hover { text-decoration: underline; }
   .mega-menu__all svg { transition: transform var(--dur-fast) var(--ease); }
@@ -470,17 +473,29 @@ const isActive = (path: string) => {
 
   .mega-menu__header {
     display: flex;
-    align-items: baseline;
+    align-items: flex-end;
+    justify-content: space-between;
     gap: var(--sp-4);
-    margin-bottom: var(--sp-4);
+    margin-bottom: var(--sp-5);
+    padding-bottom: var(--sp-4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .mega-menu__eyebrow {
+    margin: 0 0 4px;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #6fd6c4;
   }
 
   .mega-menu__title {
-    font-size: var(--fs-base);
-    font-weight: var(--weight-semi);
-    color: var(--text-muted);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
     margin: 0;
-    letter-spacing: 0;
+    letter-spacing: -0.01em;
   }
 
   .mega-menu__grid {
@@ -514,20 +529,18 @@ const isActive = (path: string) => {
     border-radius: var(--radius-md);
     text-decoration: none;
     color: var(--text);
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
     transition: border-color var(--dur-fast) var(--ease),
                 box-shadow var(--dur-fast) var(--ease),
                 transform var(--dur-fast) var(--ease);
   }
 
   .mega-menu__item:hover {
-    border-color: var(--accent);
-    box-shadow: var(--shadow-sm);
+    border-color: var(--brand-teal);
+    box-shadow: 0 10px 24px -8px rgba(0, 15, 30, 0.45);
     transform: translateY(-2px);
   }
-
-  /* Cards are text-only (name + tagline) — no thumbnails in the menu. */
 
   .mega-menu__copy {
     display: flex;
@@ -559,14 +572,14 @@ const isActive = (path: string) => {
   .mega-menu__footer {
     margin-top: var(--sp-4);
     padding-top: var(--sp-4);
-    border-top: 1px solid var(--border);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
     text-align: center;
     font-size: var(--fs-sm);
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.75);
   }
 
   .mega-menu__footer a {
-    color: var(--accent-text);
+    color: #6fd6c4;
     font-weight: 600;
     text-decoration: none;
   }
