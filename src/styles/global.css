@@ -282,7 +282,7 @@ textarea:focus-visible {
    weights for it where the var is referenced. */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 800; /* Plus Jakarta tops out at 800 — no synthetic bolding */
   color: var(--text);
   letter-spacing: -0.02em;
   line-height: var(--lh-snug);
