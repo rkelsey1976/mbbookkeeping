@@ -136,8 +136,8 @@ export const SERVICES: Service[] = [
     relatedServices: ['bank-reconciliation', 'vat-returns', 'management-accounts'],
     heroImageAlt: 'MB Bookkeeping — organised ledger and cloud accounting for a Bristol small business',
     category: 'bookkeeping',
-    metaDescription: 'Bookkeeping in Yate & Bristol. Purchase & sales ledgers, data entry and bank reconciliations done accurately every month. Free consultation.',
-    titleTemplate: 'Bookkeeping Yate & Bristol | MB Bookkeeping & Payroll',
+    metaDescription: 'Bookkeeping & small business accounting support in Yate & Bristol. Ledgers, data entry and reconciliations done accurately every month — clean figures for your accountant. Free consultation.',
+    titleTemplate: 'Bookkeeping & Small Business Accounting Yate & Bristol | MB Bookkeeping',
   },
 
   {
@@ -221,8 +221,8 @@ export const SERVICES: Service[] = [
     relatedServices: ['bookkeeping', 'self-assessment', 'vat-returns'],
     heroImageAlt: 'MB Bookkeeping — payroll management for a Bristol business',
     category: 'payroll',
-    metaDescription: 'Payroll management in Yate & Bristol. Payslips, PAYE, RTI and auto-enrolment pensions handled end to end. Staff paid correctly and on time.',
-    titleTemplate: 'Payroll Management Yate & Bristol | MB Bookkeeping',
+    metaDescription: 'Payroll services in Yate & Bristol. Payslips, PAYE, RTI and auto-enrolment pensions handled end to end — HMRC-compliant, on time, every run. Free consultation.',
+    titleTemplate: 'Payroll Services Yate & Bristol | Accountancy Support | MB Bookkeeping',
   },
 
   {
@@ -295,7 +295,7 @@ export const SERVICES: Service[] = [
     heroImageAlt: 'MB Bookkeeping — Making Tax Digital compliant VAT returns',
     category: 'tax',
     metaDescription: 'VAT returns & Making Tax Digital in Yate & Bristol. Quarterly returns prepared from clean books, filed on time. Scheme advice included.',
-    titleTemplate: 'VAT Returns & MTD Yate & Bristol | MB Bookkeeping',
+    titleTemplate: 'VAT Returns & MTD Accounting Yate & Bristol | MB Bookkeeping',
   },
 
   {
@@ -371,8 +371,8 @@ export const SERVICES: Service[] = [
     relatedServices: ['bookkeeping', 'vat-returns', 'payroll'],
     heroImageAlt: 'MB Bookkeeping — Self Assessment returns for Bristol sole traders',
     category: 'tax',
-    metaDescription: 'Self Assessment tax returns in Yate & Bristol. Sole traders, directors and landlords — filed early, allowances claimed, fixed fee.',
-    titleTemplate: 'Self Assessment Returns Yate & Bristol | MB Bookkeeping',
+    metaDescription: 'Self Assessment tax return help in Yate & Bristol. Sole traders, directors and landlords — filed early, allowances claimed, working with your accountant. Fixed fee.',
+    titleTemplate: 'Self Assessment Tax Return Help Yate & Bristol | MB Bookkeeping',
   },
 
   {
