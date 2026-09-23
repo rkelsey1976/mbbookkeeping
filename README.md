@@ -28,3 +28,11 @@ npm run build
 
 `scripts/prepare-logos.sh` trims and normalises manufacturer logos dropped
 into `public/logos/raw/`.
+
+
+## Photography
+
+Hero images are from Unsplash (free licence, no attribution required):
+- jakub-zerdzicki (desk/workspace series), carlos-muza (laptop dashboard), kelly-sikkema (tax paperwork)
+- Stored as 1600px WebP in public/hero/ (30-65KB each)
+- Swap for the client's own photography at live-build stage

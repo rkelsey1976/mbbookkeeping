@@ -1,75 +1,73 @@
-// Per-combination copy for the service × neighbourhood pages.
+// Per-combination copy for the service × area pages.
 //
 // WHY THIS FILE EXISTS
 // Those pages are built from area data plus service data, so two pages that
-// share an area differ only by the service name — measured at 95% identical,
-// which reads as doorway pages. This is the one place for copy that is true
-// of *this service* in *this area* and nowhere else.
+// share an area differ only by the service name — which reads as doorway
+// pages. This is the one place for copy that is true of a specific pairing
+// only ("card takings reconciled weekly for Gloucester Road cafés").
 //
-// HOW TO FILL IT IN
-// Two or three sentences per entry, in James's voice. The specifics carry it:
-// the substrate, the typical property here, what actually fails locally,
-// access and scaffold. For example:
-//
-//   'silicone-rendering/eastville':
-//     "Eastville's Victorian terraces were mostly rendered in sand-and-cement " +
-//     "in the 1970s, and that's what fails first on the north-facing gables. " +
-//     "We strip back to brick, repoint, then apply silicone over a mesh base. " +
-//     "The terraces are tight for scaffold, so we work one elevation at a time.",
-//
-// Leave an entry as '' and the page omits the block — nothing breaks, the page
-// is just less distinct until the copy arrives.
-//
-// Regenerate (keeps existing copy):  node scripts/gen-notes.mjs
-// Check what's outstanding:          node scripts/notes-coverage.mjs
-
-/* NOTE ON SOURCE OF TRUTH (2026-08-27)
-
-Three things to know about the notes in this file:
-
-1. HOUSING STOCK AND PRICING NOTES are general descriptions of each area
-   from public knowledge. Specific claims like sqft ranges, value bands,
-   transport, demographics and project examples come from the project data
-   layer (areas.ts) — but the *character* of each area is a research-grade
-   description, not James's testimony. James should review before publication,
-   especially anything quoted as fact.
-
-2. PROJECT REFERENCES (e.g. "Silicone re-render on a 1930s semi on Court
-   Road (BS15)") come from the nearbyProjects list in areas.ts. These are
-   the real ones.
-
-3. KEYNSHAM, CLIFTON, REDLAND — Keynsham is in Bath & North East Somerset
-   but filed under /bath/ because it's on the Hanham–Bath route and has
-   a BS postcode. Clifton and Redland are inner-Bath. All three are
-   filed under the bristol/ directory in the URL structure. If you want
-   Keynsham moved to /bath/ instead, the file system move is a one-liner
-   but the SEO trade-off (BS postcode, BS search volume) probably isn't
-   worth it.
-
-   Total slots: 6 services × 18 areas = 108 combinations. All 108 filled
-   as of 2026-08-27.
-*/
+// MOCKUP STATUS: seeded with notes for the flagship combinations used on
+// the mock's showcase pages. Empty slots are omitted rather than padded.
+// Fill these before any live build — the script scripts/notes-coverage.mjs
+// reports coverage.
 
 export const SERVICE_AREA_NOTES: Record<string, string> = {
-  // ---------- Plastering & Rendering ----------
-  // Written per area against its real housing stock; omitted where nothing
-  // specific can honestly be said. Primary areas first.
+  // Yate — office-town pairings
+  'bookkeeping:yate':
+    'Yate businesses get the full home-town service: a monthly face-to-face at your place or ours on Reed Road, ledgers reconciled weekly if card takings make that worthwhile, and a direct line to the person who actually does your books.',
+  'payroll:yate':
+    'Yate employers — from the Station Road industrial estate to the High Street — pay from £30/month for a 1–10 person payroll, with RTI never late and pensions administered as part of the run.',
+  'vat-returns:yate':
+    'Yate VAT clients file from reconciled books with a scheme check every year. Most Yate businesses we see should be on a different scheme than the one they registered for — we model it with your actual figures.',
+  'self-assessment:yate':
+    'Yate sole traders and landlords file well before the January deadline, with payments-on-account forecast so July and January hold no surprises.',
+  'bank-reconciliation:yate':
+    'Yate businesses on card terminals — the cafés and shops around Yate Shopping Centre especially — benefit from weekly reconciliation of card settlements against the bank, where most unexplained differences hide.',
+  'management-accounts:yate':
+    'Yate owner-managers get a three-page monthly pack and a 15-minute call: what you earned, what you spent, who owes you, and the two numbers worth acting on this month.',
+  'cloud-accounting:yate':
+    'Yate businesses still on spreadsheets get a full Xero or QuickBooks setup with bank feeds and rules — usually live within two weeks, with training on your own data.',
 
-  'plastering-rendering/trowbridge': 'Trowbridge mixes Georgian red-brick terraces around the Court Street conservation area with post-war estates on the town\'s edges. The brick terraces usually need lime-based plaster over the original solid walls; the post-war semis are mostly sound gypsum substrates where a straight skim is the right answer. We specify per wall, not per house.',
-  'plastering-rendering/radstock': 'Radstock\'s colliery-era cottages and 1930s semis both throw up the same problem: decades of cement-based patches over what were originally lime-finished solid walls. We strip failed patches back, assess the substrate honestly, and either match lime or advise a full re-plaster — quoting both so you can decide.',
-  'plastering-rendering/chippenham': 'Chippenham\'s stock is largely Georgian and Victorian terraces near the town centre plus 20th-century estates further out. Period walls get breathable lime systems; modern blocks take machine-applied backing plaster and a two-coat skim. External work on the estate houses is usually silicone render over sound substrate.',
-  'plastering-rendering/frome': 'Frome has some of the most interesting plastering in the area — medieval timber-frame on Catherine Hill, Georgian stone terraces, and everything after. Solid stone walls here nearly always want lime, and we hot-mix on site where the job demands it. Conservation-area liaison included where relevant.',
-  'plastering-rendering/batheaston': 'Batheaston sits just outside the Bath conservation boundary but shares the same Bath stone building tradition. The village stock is lime-plaster walled period housing; we match NHL grades to the wall\'s exposure, and limewash-compatible finishes come as standard on the external work.',
-  'plastering-rendering/corsham': 'Corsham\'s Cotswold stone terraces need sympathetic lime plastering — hard cement renders have already damaged a fair few of them across the town. We strip where the cement has trapped moisture, re-point as needed, and rebuild with NHL lime that lets the stone breathe again.',
+  // Chipping Sodbury — High Street pairings
+  'bookkeeping:chipping-sodbury':
+    'Chipping Sodbury\'s High Street independents run on long hours and thin margins — books kept weekly, supplier invoices scheduled so early-payment discounts are never missed, and a monthly report that shows exactly which lines carry the business.',
+  'payroll:chipping-sodbury':
+    'High Street hospitality in Sodbury runs on variable hours — payroll handled weekly with overtime and split shifts calculated properly, payslips out on time, every time.',
 
-  // ---------- Painting & Decorating ----------
-  'painting-decorating/trowbridge': 'Trowbridge weavers\' cottages and Georgian terraces often hold original joinery worth restoring rather than replacing — we key and repaint sash windows and shutters properly rather than slapping paint over sticking frames. Exteriors in the conservation area get breathable masonry paint in period-appropriate colours.',
-  'painting-decorating/radstock': 'Radstock\'s older terraces often come to us mid-projects: fresh plaster needing mist coats, or kitchens half-decorated by the previous owner. We pick up other trades\' work, quote the prep honestly, and finish the job to one standard rather than three.',
-  'painting-decorating/chippenham': 'Chippenham\'s Georgian townhouses around the Market Place need more prep than paint — layers of old emulsion cut back, linings hung, then two proper coats. The newer estates are simpler: one spec, hard-wearing trade paint, quick turnaround between tenancies.',
-  'painting-decorating/frome': 'Frome\'s period interiors reward care — lime-plastered walls that need limewash or clay paint rather than vinyl, original cornices cut in by hand. We work with the building, not against it, and the conservation-area rules on external colours are second nature to us.',
-  'painting-decorating/batheaston': 'Bath stone exteriors around Batheaston should usually be left alone — the stone is the finish — so external work here is mostly woodwork: sashes, soffits, doors, in breathable systems. Interiors get the full prep-and-paint treatment, with colours that sit right in a village setting.',
-  'painting-decorating/corsham': 'Corsham\'s Cotswold stone cottages take limewash beautifully, and it is usually the right answer for their walls — breathable, self-healing, and the soft matt finish the buildings were designed for. We mix to traditional colours and reapply on a sensible cycle rather than sealing the stone up.',
+  // Bradley Stoke — professional/contractor pairings
+  'cloud-accounting:bradley-stoke':
+    'Bradley Stoke\'s consultants and contractors are the classic cloud-accounting client: everything in Xero or QuickBooks, receipts photographed from the phone, and a monthly review that takes fifteen minutes.',
+  'self-assessment:bradley-stoke':
+    'Bradley Stoke\'s limited-company consultants juggle salary, dividends and expenses — the return is assembled year-round from cloud records, filed at Christmas, not January.',
+
+  // Clifton — light-touch professional pairings
+  'bookkeeping:clifton':
+    'Clifton clients get the low-touch model: bank feeds and rules do the heavy lifting, receipts come in by app, and your monthly call lands in the diary at Whiteladies Road or wherever suits.',
+  'management-accounts:clifton':
+    'Clifton agencies and consultancies get a monthly pack built around utilisation and debtor days — the numbers a professional-services business actually steers by.',
+
+  // Bishopston — hospitality pairings
+  'bank-reconciliation:bishopston':
+    'Gloucester Road card takings reconciled weekly — reader settlements matched to the bank, festival weekends reconciled by the Tuesday, and discrepancies caught while the receipt is still in the till drawer.',
+  'bookkeeping:bishopston':
+    'Gloucester Road independents get weekly books that follow the takings — festival weekends, seasonal swings and card fees all handled as routine.',
+
+  // Thornbury — management accounts focus
+  'management-accounts:thornbury':
+    'Thornbury\'s professional firms plan long-term, so the monthly pack carries budget-vs-actual and margin-by-service-line — market-town firms that plan, not just record.',
+
+  // Clevedon — seasonal hospitality
+  'payroll:clevedon':
+    'Clevedon\'s hospitality payroll flexes with the season — summer staff surges, winter hours, and holiday accrual handled properly rather than estimated.',
+
+  // Keynsham
+  'bookkeeping:keynsham':
+    'Keynsham businesses get steady monthly bookkeeping with a personal visit — the A4174 makes our Reed Road office a 25-minute run from the High Street.',
+
+  // Portishead
+  'cloud-accounting:portishead':
+    'Portishead\'s home-based professionals get the marina-side setup: Xero configured for multiple income streams, with a quarterly in-person at the marina and everything else in the cloud.',
 };
 
 export const getNote = (service: string, area: string): string =>
-  SERVICE_AREA_NOTES[`${service}/${area}`] ?? '';
+  SERVICE_AREA_NOTES[`${service}:${area}`] ?? '';

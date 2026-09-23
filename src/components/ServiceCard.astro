@@ -17,7 +17,7 @@ export type ServiceCardData = {
   variant?: 'default' | 'featured' | 'bento' | 'bento-lg';
   imageSrc?: string;          // hero photo for bento variants
   imageAlt?: string;          // alt text for the hero photo
-  href?: string;              // defaults to the Bath service page
+  href?: string;              // defaults to the MB service hub
 };
 
 const {
@@ -31,24 +31,17 @@ const {
   variant = 'default',
   imageSrc,
   imageAlt,
-  href = `/bath-${slug}/`,
+  href = `/${slug}/`,
 } = Astro.props as ServiceCardData;
 
 const iconMap: Record<string, string> = {
-  'builders-bath':         'house',
-  'kitchen-fitters':       'default',
-  'extension-builders':    'default',
-  'loft-conversion':       'default',
-  'renovation':            'default',
-  'heritage-restoration':  'plaster',
-  'new-build':             'house',
-  'stone-walling':         'wall',
-  'landscaping':           'default',
-  'plastering-rendering':  'silicone',
-  'painting-decorating':   'default',
-  'property-maintenance':  'default',
-  'windows-doors':         'default',
-  'bathroom-installers':   'default',
+  'bookkeeping':           'mono',
+  'payroll':               'default',
+  'vat-returns':           'default',
+  'self-assessment':       'default',
+  'bank-reconciliation':   'default',
+  'management-accounts':   'default',
+  'cloud-accounting':      'default',
 };
 const resolvedIcon = icon !== 'default' ? icon : (iconMap[slug] ?? 'default');
 

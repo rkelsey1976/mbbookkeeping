@@ -1,69 +1,49 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
-import { PROFILES, COMPANY } from '../lib/contact';
+import { PROFILES, COMPANY, PHONE, LANDLINE, EMAIL, ADDRESS, HOURS, BRAND } from '../lib/contact';
 import Hero from '../components/Hero.astro';
-import { getBathAreas } from '../lib/areas';
+import { AREAS } from '../lib/areas';
 import AreaCoverage from '../components/AreaCoverage.astro';
 import LeadForm from '../components/LeadForm.astro';
 
-const bristol = getBathAreas();
-const bath = getBathAreas();
-
-// Single source of truth for NAP — must match the homepage schema and the
-// Google Business Profile exactly, or local ranking signals get diluted.
+// Single source of truth for NAP — must match the homepage schema exactly,
+// or local ranking signals get diluted.
 const nap = {
-  name: 'Aspect Builds & Maintenance Ltd',
-  street: '2 Fir Tree Cottages, Dunkerton',
-  locality: 'Bath',
-  postcode: 'BA2 8BS',
-  phoneDisplay: '07498 158747',
-  phoneHref: '+441174094116',
-  email: 'james.aspectbuilds@gmail.com',
-  // Dunkerton, from the Google Business Profile.
-  lat: 51.3562,
-  lng: -2.3661,
+  name: BRAND.fullName,
+  street: ADDRESS.street,
+  locality: ADDRESS.locality,
+  postcode: ADDRESS.postcode,
+  phoneDisplay: PHONE.display,
+  phoneHref: PHONE.tel,
+  landlineDisplay: LANDLINE.display,
+  landlineHref: LANDLINE.tel,
+  email: EMAIL,
+  lat: ADDRESS.lat,
+  lng: ADDRESS.lng,
 };
 
-const hours = [
-  { days: 'Monday – Friday', time: '8am – 6pm' },
-  { days: 'Saturday',        time: '9am – 1pm' },
-  { days: 'Sunday',          time: 'Closed' },
-];
+const hours = HOURS.filter((h) => h.opens).map((h) => ({
+  days: h.days,
+  time: `${h.opens} – ${h.closes}`,
+}));
 
 const schema = {
   '@context': 'https://schema.org',
-  '@type': ['LocalBusiness', 'GeneralContractor'],
-  '@id': 'https://www.aspectbuilds.co.uk/#organization',
+  '@type': ['LocalBusiness', 'AccountingService'],
+  '@id': 'https://www.mbbookkeepingandpayrollsolutions.co.uk/#organization',
   name: nap.name,
-  url: 'https://www.aspectbuilds.co.uk/contact/',
-  telephone: `+${nap.phoneHref.replace('+', '')}`,
+  url: 'https://www.mbbookkeepingandpayrollsolutions.co.uk/contact/',
+  telephone: '+447828742991',
   contactPoint: [
-    { '@type': 'ContactPoint', telephone: '+441174094116', contactType: 'customer service', areaServed: 'GB', availableLanguage: 'English' },
-    { '@type': 'ContactPoint', telephone: '+447961114662', contactType: 'customer service', areaServed: 'GB', availableLanguage: 'English' },
+    { '@type': 'ContactPoint', telephone: '+447828742991', contactType: 'customer service', areaServed: 'GB', availableLanguage: 'English' },
+    { '@type': 'ContactPoint', telephone: '+441454447343', contactType: 'customer service', areaServed: 'GB', availableLanguage: 'English' },
   ],
-  // Consolidates this site with the same business elsewhere.
   sameAs: PROFILES,
-  // Google reads these on the LocalBusiness for the knowledge panel.
-  // image: real work, not the logo. logo: the square brand mark.
-  // hasMap ties the entity to the Business Profile listing itself.
-  image: [
-  'https://www.aspectbuilds.co.uk/projects/midford-garden-extension-1.webp',
-  'https://www.aspectbuilds.co.uk/projects/custom-kitchen-refit-1.webp',
-  'https://www.aspectbuilds.co.uk/projects/bath-loft-extension-1.webp',
-  ],
-  logo: 'https://www.aspectbuilds.co.uk/icon-512.png',
+  logo: 'https://www.mbbookkeepingandpayrollsolutions.co.uk/icon-512.png',
   description:
-  'Building, extensions, loft conversions, heritage restoration and property maintenance across Bath and BANES. Free site visits, fixed written quotes within 48 hours.',
-  hasMap: 'https://maps.google.com/?cid=4018445236727357871',
-  // The registered entity (Companies House 16033975).
+    'Bookkeeping, payroll, VAT returns and MTD support, self assessment and management accounts across Yate, Bristol and South Gloucestershire. Free first consultation.',
   legalName: COMPANY.legalName,
-  foundingDate: COMPANY.incorporated,
-  identifier: {
-    '@type': 'PropertyValue',
-    name: 'Company number',
-    value: COMPANY.number,
-  },
-    email: nap.email,
+  email: nap.email,
   address: {
     '@type': 'PostalAddress',
     streetAddress: nap.street,
@@ -72,35 +52,24 @@ const schema = {
     addressCountry: 'GB',
   },
   geo: { '@type': 'GeoCoordinates', latitude: nap.lat, longitude: nap.lng },
-  areaServed: [
-    { '@type': 'City', name: 'Bath' },
-    ...[...bristol, ...bath].map((a) => ({ '@type': 'Place', name: a.name })),
-  ],
+  areaServed: AREAS.map((a) => ({ '@type': 'Place', name: a.name })),
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'],
-      opens: '08:00',
-      closes: '17:00',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '08:30',
+      closes: '17:30',
     },
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: 'Friday',
-      opens: '07:00',
-      closes: '17:00',
-    },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '08:00', closes: '13:00' },
   ],
   priceRange: '££',
 };
 
-const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postcode}`);
+const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality}, ${nap.postcode}`);
 ---
 
 <PageLayout
-  title="Contact Aspect Builds | Bath & BANES"
-  description="Get a free quote from Aspect Builds. Call 07498 158747, email us, or send the form. Based in Dunkerton, just outside Bath — covering Bath and BANES."
-  preloadImage="/projects/midford-garden-extension-1.webp"
+  title="Contact MB Bookkeeping | Yate, Bristol & South Gloucestershire"
+  description="Book a free consultation with MB Bookkeeping & Payroll Solutions. Call 07828 742991, email us, or send the form. Covering Bristol and South Gloucestershire."
   canonical="/contact/"
   schema={schema}
   breadcrumbs={[{ name: 'Contact', href: '/contact/' }]}
@@ -111,23 +80,23 @@ const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postco
     size="compact"
     eyebrow={['Contact']}
     title="Tell us about"
-    titleAccent="the property."
-    lede="We'll come and look at it. Free site visit across Bath and BANES, a fixed written quote within 48 hours, and no pressure either way."
+    titleAccent="your business."
+    lede="Book a free consultation — we'll talk through your bookkeeping, payroll and VAT, and what it would cost. No pressure either way."
     primaryCta={{ label: 'Send us the details', href: '#lead-form-heading' }}
-    phone={{ number: '+441174094116', display: '07498 158747' }}
-    image="/projects/midford-garden-extension-1.webp"
-    imageAlt="Garden extension in Midford by Aspect Builds with full-width glazing"
-    trust={['Free site visit', 'Fixed written quote', 'Within 48 hours']}
+    phone={{ number: PHONE.tel, display: PHONE.display }}
+    trust={['Free consultation', 'Bristol & South Glos', 'MTD-ready']}
+    image="/hero/hero-contact.webp"
+    imageAlt="Desk with calculator, notebook and financial charts"
   />
 
   <section class="section">
     <div class="container">
       <div class="contact-layout">
         <div class="contact-layout__main">
-          <h2 id="lead-form-heading" class="contact-form-heading">Get your free quote</h2>
+          <h2 id="lead-form-heading" class="contact-form-heading">Book your free consultation</h2>
           <p class="lede">
-            Tell us about the property and we'll come and look at it — free site visit,
-            fixed written quote within 48 hours.
+            Tell us what you need and we'll come back to you — a free consultation,
+            with no obligation.
           </p>
           <LeadForm />
         </div>
@@ -136,6 +105,7 @@ const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postco
           <div class="contact-aside__block">
             <h3>Call or email</h3>
             <a href={`tel:${nap.phoneHref}`} class="contact-aside__phone">{nap.phoneDisplay}</a>
+            <a href={`tel:${nap.landlineHref}`} class="contact-aside__email">{nap.landlineDisplay}</a>
             <a href={`mailto:${nap.email}`} class="contact-aside__email">{nap.email}</a>
           </div>
 
@@ -143,9 +113,9 @@ const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postco
             <h3>Where we are</h3>
             <address class="contact-aside__address">
               {nap.street}<br />
-              {nap.locality} {nap.postcode}
+              {nap.locality}, {nap.postcode}
             </address>
-            <p class="contact-aside__note">Based in Dunkerton, just outside Bath — covering Bath and BANES.</p>
+            <p class="contact-aside__note">Our office is in Yate — covering Bristol and South Gloucestershire.</p>
           </div>
 
           <div class="contact-aside__block">
@@ -161,9 +131,9 @@ const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postco
           </div>
 
           <ul class="contact-aside__trust">
-            <li>22+ years in the trade</li>
-            <li>£10m public liability</li>
-            <li>Free site visits</li>
+            <li>Free first consultation</li>
+            <li>MTD-ready VAT support</li>
+            <li>Xero, QuickBooks &amp; Sage</li>
           </ul>
         </aside>
       </div>
@@ -173,7 +143,7 @@ const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postco
   <section class="section section--alt">
     <div class="container">
       <h2>Find us</h2>
-      <p class="lede">2 Fir Tree Cottages, Dunkerton, Bath BA2 8BS.</p>
+      <p class="lede">18 Reed Road, Yate, Bristol BS37 7DR.</p>
 
       {/* Click-to-load: nothing is requested from Google until someone asks
           for the map, so the site really does load no third-party scripts by
@@ -200,7 +170,7 @@ const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postco
         <AreaCoverage
           eyebrow="Coverage"
           heading="Areas we cover"
-          lede={`${bristol.length + bath.length} neighbourhoods across Bath and BANES. Not listed? Ask — we travel.`}
+          lede={`${AREAS.length} neighbourhoods across Bristol and South Gloucestershire. Not listed? Ask — we can help.`}
         />
     </div>
   </section>
@@ -218,7 +188,7 @@ const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postco
     wrap.dataset.loaded = 'true';
     const frame = document.createElement('iframe');
     frame.src = src;
-    frame.title = 'Map showing 2 Fir Tree Cottages, Dunkerton, Bath BA2 8BS';
+    frame.title = 'Map showing 18 Reed Road, Yate, Bristol BS37 7DR';
     frame.loading = 'lazy';
     frame.referrerPolicy = 'no-referrer-when-downgrade';
     frame.setAttribute('allowfullscreen', '');
@@ -347,10 +317,6 @@ const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postco
     .contact-aside { position: static; }
   }
 
-
-
-
-
   .map {
     margin-top: var(--sp-6);
     aspect-ratio: 16 / 9;
@@ -373,7 +339,4 @@ const mapQuery = encodeURIComponent(`${nap.street}, ${nap.locality} ${nap.postco
   .map__title { margin: 0; font-size: var(--fs-lg); font-weight: var(--weight-bold); }
   .map__note { margin: 0; max-width: 46ch; font-size: var(--fs-sm); color: var(--text-muted); }
   .map__alt { margin: 0; font-size: var(--fs-sm); }
-
-  @media (max-width: 640px) {
-  }
 </style>

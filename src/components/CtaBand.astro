@@ -1,47 +1,57 @@
 ---
-// Full-bleed CTA band that sits directly above the footer on every page.
+// CtaBand — full-bleed call-to-action band that sits directly above the
+// footer on every page.
 //
 // Namespaced `cta-band-*` deliberately: `.cta-banner` in global.css is still
 // live on three pages, and reusing that name would have collided.
 //
-// The photograph is served at two crops — a wide band for desktop and a
-// near-square for phones, via <picture>. One 1920px-wide file scaled down to
-// a 375px screen wastes most of its pixels and crops to a meaningless strip.
+// Band background: Unsplash workspace photo (public/hero/hero-payroll.webp)
+// under a brand-navy scrim — white text, teal accents. Swap for the client's
+// own photography at live-build stage.
+
+import { PHONE } from '../lib/contact';
 
 type Props = {
   heading?: string;
   text?: string;
-  /** Overrides the default "Get Your Free Quote". */
+  /** Overrides the default CTA label. */
   ctaLabel?: string;
   ctaHref?: string;
 };
 
 const {
-  heading = 'Get a fixed written quote for your project',
-  text = 'Free site visit across Bath and BANES, a fixed written quote within 48 hours, and no pressure either way.',
-  ctaLabel = 'Get Your Free Quote',
+  heading = 'Book your free consultation',
+  text = 'Free first consultation across Bristol and South Gloucestershire — talk it through with no pressure either way.',
+  ctaLabel = 'Book a Free Consultation',
   ctaHref = '/contact/',
 } = Astro.props as Props;
 
+// Structural truths only — no invented proof points.
 const proof = [
-  "22+ years in Bath",
-  '4.6 on TrustATrader, 5.0 on Google',
-  '£10m public liability',
-  'Fixed-price written quotes',
+  'Free first consultation',
+  'MTD-ready VAT and payroll',
+  'Xero, QuickBooks & Sage',
+  'Bristol & South Gloucestershire',
 ];
 ---
 
 <section class="cta-band" aria-labelledby="cta-band-heading">
-  <picture class="cta-band__bg">
-    <source media="(max-width: 640px)" srcset="/cta-bg-mobile.webp" width="900" height="900" />
-    <img src="/cta-bg.webp" alt="" width="1920" height="760" loading="lazy" decoding="async" />
-  </picture>
+  <img
+    class="cta-band__bg"
+    src="/hero/hero-payroll.webp"
+    alt=""
+    width="1600"
+    height="1139"
+    loading="eager"
+    decoding="async"
+    aria-hidden="true"
+  />
   <div class="cta-band__scrim" aria-hidden="true"></div>
 
   <div class="cta-band__inner">
     <p class="cta-band__eyebrow">
       <span class="cta-band__rule" aria-hidden="true"></span>
-      Bath &amp; BANES
+      Bristol &amp; South Gloucestershire
     </p>
 
     <h2 id="cta-band-heading" class="cta-band__heading">{heading}</h2>
@@ -55,9 +65,9 @@ const proof = [
           <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
         </svg>
       </a>
-      <a href="tel:+441174094116" class="cta-band__phone">
+      <a href={`tel:${PHONE.tel}`} class="cta-band__phone">
         <span class="cta-band__phone-label">or call</span>
-        <span class="cta-band__phone-num">07498 158747</span>
+        <span class="cta-band__phone-num">{PHONE.display}</span>
       </a>
     </div>
 
@@ -80,44 +90,37 @@ const proof = [
     position: relative;
     width: 100%;
     overflow: hidden;
-    background: var(--surface-inverse);
-    color: var(--text-inverse);
+    color: #ffffff;
     isolation: isolate;
   }
 
-  /* Not negative z-index: a child at z-index:-1 paints BEHIND its own
-     parent's background, and this section has an opaque black one, so the
-     photograph was being covered by it. Layer forwards instead. */
-  .cta-band__bg { position: absolute; inset: 0; z-index: 0; }
-  .cta-band__bg img {
+  /* Photo background + navy scrim (brand-matched) */
+  .cta-band__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 62%;
-    display: block;
   }
-
-  /* Two layers: a horizontal ramp so the copy always has a dark ground on
-     the left, and a flat wash so the right-hand side never blows out on a
-     bright render. */
   .cta-band__scrim {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 0;
     background:
-      linear-gradient(95deg,
-        rgba(10, 10, 10, 0.95) 0%,
-        rgba(10, 10, 10, 0.86) 38%,
-        rgba(10, 10, 10, 0.55) 68%,
-        rgba(10, 10, 10, 0.35) 100%),
-      linear-gradient(rgba(10, 10, 10, 0.25), rgba(10, 10, 10, 0.25));
+      linear-gradient(96deg,
+        rgba(0, 35, 73, 0.94) 0%,
+        rgba(0, 35, 73, 0.9) 40%,
+        rgba(0, 35, 73, 0.8) 68%,
+        rgba(0, 35, 73, 0.72) 100%),
+      linear-gradient(to top,
+        rgba(0, 35, 73, 0.6) 0%,
+        rgba(0, 35, 73, 0.12) 38%);
   }
 
-  /* Full-bleed band, container-aligned copy — same left edge as the header
-     logo and the hero. */
   .cta-band__inner {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     width: 100%;
     max-width: var(--container-max);
     margin-inline: auto;
@@ -133,115 +136,82 @@ const proof = [
     font-weight: var(--weight-semi);
     text-transform: uppercase;
     letter-spacing: var(--tracking-eyebrow);
-    color: var(--text-inverse-muted);
+    color: rgba(255, 255, 255, 0.82);
   }
-  .cta-band__rule { width: 32px; height: 2px; background: var(--accent); }
+  .cta-band__rule { width: 32px; height: 2px; background: #7fd6c8; }
 
   .cta-band__heading {
-    margin: 0;
-    max-width: 20ch;
-    font-size: clamp(1.9rem, 1.1rem + 2.6vw, 3rem);
-    font-weight: var(--weight-display);
-    line-height: 1.08;
-    letter-spacing: var(--tracking-display);
-    color: var(--text-inverse);
-    text-wrap: balance;
+    margin: 0 0 var(--sp-4);
+    font-size: clamp(1.9rem, 1.2rem + 2.6vw, 3rem);
+    line-height: 1.1;
+    /* The global h1–h6 rule sets color: var(--text) (dark navy) on every
+       heading, which beats the band's inherited white. Set it explicitly. */
+    color: #ffffff;
   }
-
   .cta-band__text {
-    margin: var(--sp-4) 0 0;
+    margin: 0 0 var(--sp-6);
     max-width: 52ch;
-    font-size: var(--fs-md);
-    line-height: 1.55;
-    color: var(--text-inverse-muted);
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.7;
   }
 
   .cta-band__actions {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
-    gap: var(--sp-6);
-    margin-top: var(--sp-6);
+    align-items: center;
+    gap: var(--sp-4) var(--sp-6);
+    margin: 0 0 var(--sp-7);
   }
-
   .cta-band__cta {
     display: inline-flex;
     align-items: center;
     gap: var(--sp-3);
-    padding: 1.05rem 1.9rem;
-    background: var(--accent);
-    color: var(--on-accent);        /* near-black on orange — 6.95:1 */
-    font-weight: var(--weight-bold);
-    font-size: 1.05rem;
-    border-radius: var(--radius-sm);
+    padding: 1rem 1.6rem;
+    background: var(--brand-teal);
+    color: #ffffff;
+    border-radius: var(--radius-full);
     text-decoration: none;
-    box-shadow: var(--shadow-accent);
-    transition: background var(--dur-fast) var(--ease),
-                transform var(--dur-fast) var(--ease),
-                box-shadow var(--dur-fast) var(--ease);
+    font-weight: var(--weight-semi);
+    transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
   }
-  .cta-band__cta svg { transition: transform var(--dur-mid) var(--ease-out); }
-  .cta-band__cta:hover {
-    background: var(--accent-hover);
-    color: var(--on-accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-accent-hover);
-  }
-  .cta-band__cta:hover svg { transform: translateX(4px); }
-
+  .cta-band__cta:hover { background: #05957f; transform: translateY(-2px); }
   .cta-band__phone {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
-    gap: 2px;
-    padding-left: var(--sp-6);
-    border-left: 1px solid rgba(250, 250, 250, 0.18);
-    color: var(--text-inverse);
     text-decoration: none;
   }
   .cta-band__phone-label {
     font-size: var(--fs-xs);
     text-transform: uppercase;
     letter-spacing: var(--tracking-eyebrow);
-    color: var(--text-inverse-subtle);
+    color: rgba(255, 255, 255, 0.75);
   }
   .cta-band__phone-num {
-    font-size: 1.2rem;
-    font-weight: var(--weight-bold);
+    font-size: var(--fs-lg);
+    font-weight: var(--weight-display);
     font-variant-numeric: tabular-nums;
+    color: #ffffff;
   }
-  .cta-band__phone:hover { color: var(--accent-on-dark); }
+  .cta-band__phone:hover .cta-band__phone-num { color: #7fd6c8; }
 
   .cta-band__proof {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
     gap: var(--sp-3) var(--sp-6);
-    margin: var(--sp-7) 0 0;
-    padding: var(--sp-5) 0 0;
-    list-style: none;
-    border-top: 1px solid rgba(250, 250, 250, 0.14);
   }
   .cta-band__proof li {
     display: flex;
     align-items: center;
     gap: var(--sp-2);
     font-size: var(--fs-sm);
-    font-weight: var(--weight-medium);
-    color: var(--text-inverse-muted);
+    color: rgba(255, 255, 255, 0.85);
   }
-  .cta-band__proof svg { color: var(--accent-on-dark); flex: none; }
+  .cta-band__proof svg { color: #7fd6c8; flex: none; }
 
   @media (max-width: 640px) {
-    .cta-band__bg img { object-position: center; }
-    /* The horizontal ramp does nothing once the copy spans the full width. */
-    .cta-band__scrim {
-      background: linear-gradient(180deg,
-        rgba(10, 10, 10, 0.88) 0%,
-        rgba(10, 10, 10, 0.82) 55%,
-        rgba(10, 10, 10, 0.92) 100%);
-    }
-    .cta-band__heading { max-width: none; }
-    .cta-band__cta { width: 100%; justify-content: center; }
-    .cta-band__phone { padding-left: 0; border-left: 0; }
-    .cta-band__proof { gap: var(--sp-3) var(--sp-5); }
+    .cta-band__actions { flex-direction: column; align-items: flex-start; }
   }
 </style>

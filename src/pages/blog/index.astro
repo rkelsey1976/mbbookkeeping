@@ -23,20 +23,19 @@ const schema = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
   name: 'Builder guides for Bath & BANES',
-  url: 'https://www.aspectbuilds.co.uk/blog/',
+  url: 'https://www.mbbookkeepingandpayrollsolutions.co.uk/blog/',
   hasPart: posts.map((p) => ({
     '@type': 'Article',
     headline: p.data.title,
-    url: `https://www.aspectbuilds.co.uk/blog/${p.id}/`,
+    url: `https://www.mbbookkeepingandpayrollsolutions.co.uk/blog/${p.id}/`,
   })),
 };
 ---
 
 <PageLayout
-  title="Builder Guides | Costs, Timelines & Advice | Aspect Builds"
+  title="Builder Guides | Costs, Timelines & Advice | MB Bookkeeping"
   description="Straight answers on extensions, loft conversions, renovation costs, planning rules and hiring a builder — written by the people doing the work across Bath and BANES."
   canonical="/blog/"
-  preloadImage="/projects/bath-loft-extension-1.webp"
   schema={schema}
   breadcrumbs={[{ name: 'Blog', href: '/blog/' }]}
 >
@@ -48,8 +47,7 @@ const schema = {
     lede="Straight answers on extensions, loft conversions, renovation costs, planning rules and hiring a builder in Bath — written from what we find on site, not from a keyword list."
     primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
     phone={{ number: '+441174094116', display: '07498 158747' }}
-    image="/projects/bath-loft-extension-1.webp"
-    imageAlt="Loft conversion in Bath by Aspect Builds — finished bedroom with ensuite"
+    imageAlt="Loft conversion in Bath by MB Bookkeeping — finished bedroom with ensuite"
     trust={['Free site visit', 'Fixed written quote', 'Since 2004']}
   />
 

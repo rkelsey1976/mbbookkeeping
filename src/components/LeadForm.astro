@@ -1,30 +1,23 @@
 ---
-// LeadForm — quote request form for Aspect Builds.
+// LeadForm — free consultation request form for MB Bookkeeping & Payroll Solutions.
 // Netlify Forms with honeypot spam protection.
-// Form fields: name, phone, email, postcode, service, project notes.
+// Form fields: name, phone, email, postcode, service, notes.
 
 const services = [
-  { value: 'builders-bath', label: 'General building work' },
-  { value: 'extension-builders', label: 'House extension' },
-  { value: 'loft-conversion', label: 'Loft conversion' },
-  { value: 'renovation', label: 'Full house refurbishment' },
-  { value: 'kitchen-fitters', label: 'Kitchen' },
-  { value: 'bathroom-installers', label: 'Bathroom' },
-  { value: 'heritage-restoration', label: 'Heritage / listed building' },
-  { value: 'new-build', label: 'New build' },
-  { value: 'stone-walling', label: 'Stone walling' },
-  { value: 'landscaping', label: 'Landscaping' },
-  { value: 'plastering-rendering', label: 'Plastering & rendering' },
-  { value: 'painting-decorating', label: 'Painting & decorating' },
-  { value: 'property-maintenance', label: 'Property maintenance' },
-  { value: 'windows-doors', label: 'Windows & doors' },
+  { value: 'bookkeeping', label: 'Bookkeeping' },
+  { value: 'payroll', label: 'Payroll' },
+  { value: 'vat-returns', label: 'VAT returns & MTD' },
+  { value: 'self-assessment', label: 'Self assessment' },
+  { value: 'bank-reconciliation', label: 'Bank reconciliation' },
+  { value: 'management-accounts', label: 'Management accounts' },
+  { value: 'cloud-accounting', label: 'Cloud accounting setup' },
   { value: 'other', label: 'Other / not sure yet' },
 ];
 ---
 
 <div class="lead-form">
   <form
-    name="aspect-quote"
+    name="mb-consultation"
     method="POST"
     action="/thanks/"
     data-netlify="true"
@@ -34,7 +27,7 @@ const services = [
     {/* Netlify attributes the submission to a form by this hidden field.
         Without it the POST is accepted but nothing lands in the Forms
         dashboard. */}
-    <input type="hidden" name="form-name" value="aspect-quote" />
+    <input type="hidden" name="form-name" value="mb-consultation" />
 
     <!-- Honeypot — hidden from users, visible to bots -->
     <p class="lead-form__honeypot" aria-hidden="true">
@@ -78,7 +71,7 @@ const services = [
     <div class="lead-form__row">
       <div class="lead-form__field">
         <label for="ab-postcode">Postcode <span class="lead-form__required" aria-hidden="true">*</span></label>
-        <input id="ab-postcode" name="postcode" type="text" required autocomplete="postal-code" placeholder="e.g. BA2 8BS" />
+        <input id="ab-postcode" name="postcode" type="text" required autocomplete="postal-code" placeholder="e.g. BS37 7DR" />
       </div>
 
       <div class="lead-form__field">
@@ -91,17 +84,17 @@ const services = [
     </div>
 
     <div class="lead-form__field">
-      <label for="kd-notes">Project details</label>
-      <textarea id="kd-notes" name="notes" rows="3" placeholder="Tell us about your property &mdash; type of home, what needs doing, timing, anything specific..."></textarea>
+      <label for="kd-notes">What do you need help with?</label>
+      <textarea id="kd-notes" name="notes" rows="3" placeholder="Tell us about your business &mdash; what needs doing, how often, timing, anything specific..."></textarea>
     </div>
 
     <label class="lead-form__consent">
       <input type="checkbox" name="consent" value="yes" required />
-      <span>I&rsquo;m happy for Aspect Builds to contact me about this quote. We&rsquo;ll never share your details with anyone else.</span>
+      <span>I&rsquo;m happy for MB Bookkeeping &amp; Payroll Solutions to contact me about my enquiry. We&rsquo;ll never share your details with anyone else.</span>
     </label>
 
     <button type="submit" class="btn btn--primary btn--lg lead-form__submit">
-      <span>Get my free quote</span>
+      <span>Request my free consultation</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M5 12h14M12 5l7 7-7 7"/>
       </svg>

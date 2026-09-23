@@ -4,8 +4,8 @@
 // and includes the global stylesheet.
 
 import '../styles/global.css';
-// Fonts: Bebas Neue (display) + DM Sans (body) — same pairing as the live
-// aspectbuilds.co.uk, self-hosted via fontsource so no third-party request.
+// Fonts: Bebas Neue (display) + DM Sans (body), self-hosted via fontsource
+// so no third-party request.
 import '@fontsource/bebas-neue/latin.css';
 import '@fontsource-variable/dm-sans/standard.css';
 import '@fontsource-variable/dm-sans/standard-italic.css';
@@ -15,6 +15,9 @@ import CtaBand from '../components/CtaBand.astro';
 import Footer from '../components/Footer.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { AREAS } from '../lib/areas';
+import { SERVICES } from '../lib/services';
+import { PHONE, LANDLINE, EMAIL, ADDRESS, HOURS, BRAND, COMPANY } from '../lib/contact';
 
 export type BreadcrumbItem = { name: string; href: string };
 
@@ -69,13 +72,86 @@ const {
   ctaLabel,
 } = Astro.props as Props;
 
-const siteName = 'Aspect Builds'; // display name; legal name lives in contact.ts/schema
-const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.aspectbuilds.co.uk';
+const siteName = BRAND.fullName; // display name; legal name lives in contact.ts/schema
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? `https://${BRAND.domain}`;
 // Force the trailing slash so a page can't ship a slashless canonical that then
 // 301s on Netlify — matches trailingSlash: 'always' in astro.config.mjs.
 const canonicalPath = canonical === '/' ? '/' : canonical.replace(/\/?$/, '/');
 const canonicalAbsolute = new URL(canonicalPath, siteUrl).toString();
 const ogImageAbsolute = new URL(ogImage, siteUrl).toString();
+
+// Sitewide LocalBusiness entity. contact.ts masks dial strings in the
+// tel: hrefs, but schema needs the real E.164 numbers — they are
+// constructed from the display values here, not hardcoded elsewhere.
+const schemaTelephone = PHONE.display.replace(/\s/g, '').replace(/^0/, '+44');
+const schemaLandline = LANDLINE.display.replace(/\s/g, '').replace(/^0/, '+44');
+
+// areaServed: every named neighbourhood from src/lib/areas.ts — the same
+// entity must describe its service area the same way everywhere it appears.
+const areaServedSchema = AREAS.map((a) => ({ '@type': 'Place', name: a.name }));
+
+// hasOfferCatalog: the seven services, derived from SERVICES so it can't
+// drift from the pages that render them.
+const offerCatalogSchema = {
+  '@type': 'OfferCatalog',
+  name: 'Bookkeeping & payroll services',
+  itemListElement: SERVICES.map((s) => ({
+    '@type': 'Offer',
+    itemOffered: {
+      '@type': 'Service',
+      name: s.name,
+      description: s.intro,
+      url: new URL(`/${s.slug}/`, siteUrl).toString(),
+    },
+  })),
+};
+
+// The one organisation-wide schema. Pages may add page-specific schema on
+// top (FAQ, Service, breadcrumbs) but nothing else should restate NAP.
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': ['LocalBusiness', 'AccountingService'],
+  name: BRAND.fullName,
+  legalName: COMPANY.legalName,
+  url: siteUrl,
+  telephone: schemaTelephone,
+  email: EMAIL,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: ADDRESS.street,
+    addressLocality: ADDRESS.locality,
+    addressRegion: ADDRESS.city,
+    postalCode: ADDRESS.postcode,
+    addressCountry: 'GB',
+  },
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      telephone: schemaTelephone,
+      contactType: 'customer service',
+      areaServed: 'GB',
+      availableLanguage: 'English',
+    },
+    {
+      '@type': 'ContactPoint',
+      telephone: schemaLandline,
+      contactType: 'customer service',
+      areaServed: 'GB',
+      availableLanguage: 'English',
+    },
+  ],
+  openingHoursSpecification: HOURS.filter((h) => h.opens && h.closes).map((h) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    opens: h.opens,
+    closes: h.closes,
+  })),
+  areaServed: areaServedSchema,
+  hasOfferCatalog: offerCatalogSchema,
+  // Nothing verified beyond NAP (no geo, hasMap, foundingDate, identifier,
+  // sameAs, reviews or accreditations) — deliberately omitted.
+};
+
 // Must match the ladder in Hero.astro.
 const HERO_WIDTHS = [480, 800, 1200, 1600];
 const preloadStem = preloadImage?.split('/').pop()?.replace(/\.webp$/, '');
@@ -150,6 +226,8 @@ const breadcrumbSchema =
       <script type="application/ld+json" set:html={JSON.stringify(s)} />
     ))}
 
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
+
     {breadcrumbSchema && (
       <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
     )}
@@ -179,18 +257,18 @@ const breadcrumbSchema =
         <section class="lead-form-section" aria-labelledby="lead-form-heading">
           <div class="container">
             <h2 id="lead-form-heading" class="lead-form-heading">
-              {formHeading ?? 'Get Your Free Bath Rendering Quote'}
+              {formHeading ?? 'Request Your Free Consultation'}
             </h2>
             <p class="lead-form-sub">
-              Professional plastering &amp; rendering specialists serving Bath, Bath and surrounding areas.
-              Free quotes with fast response times.
+              Bookkeeping and payroll for businesses across Bristol and
+              South Gloucestershire. Free first consultation, no obligation.
             </p>
             <LeadForm />
             <ul class="lead-form-trust">
-              <li>✓ 10+ Years Experience</li>
-              <li>✓ Fully Insured</li>
-              <li>✓ Free Quotes</li>
-              <li>✓ Bath &amp; Bath Coverage</li>
+              <li>✓ MTD-ready bookkeeping &amp; payroll</li>
+              <li>✓ Xero, QuickBooks &amp; Sage</li>
+              <li>✓ Free first consultation</li>
+              <li>✓ Yate, Bristol &amp; South Gloucestershire</li>
             </ul>
           </div>
         </section>

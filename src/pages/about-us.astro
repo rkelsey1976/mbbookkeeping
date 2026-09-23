@@ -1,177 +1,126 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
-import AuthorityBio from '../components/AuthorityBio.astro';
 import AreaCoverage from '../components/AreaCoverage.astro';
-import ServiceBullets from '../components/ServiceBullets.astro';
 import Hero from '../components/Hero.astro';
+import { AREAS } from '../lib/areas';
+import { BRAND, PHONE, EMAIL, ADDRESS } from '../lib/contact';
+import { SERVICES } from '../lib/services';
 
+// What the practice does — structural facts from the live site, kept honest.
 const whatWeDo = [
-  'House extensions — single-storey, double-storey, side-return, wraparound',
-  'Loft conversions — Velux, dormer, hip-to-gable, mansard',
-  'Heritage restoration — Bath stone, lime mortar repointing, listed buildings',
-  'Full house refurbishments — turnkey, one project manager',
-  'New builds, garage conversions, RSJ and structural steel work',
-  'Kitchens, bathrooms, landscaping, windows and doors, property maintenance',
-];
+  'Bookkeeping — purchase and sales ledgers, data entry, kept up to date',
+  'Bank reconciliations — done and checked, so the numbers can be trusted',
+  'Payroll management — runs on time, HMRC-compliant, payslips handled',
+  'VAT returns and Making Tax Digital support',
+  'Self assessment — completed and filed',
+  'Regular financial reports — who owes you, what you owe, where you stand',
+  'Cloud accounting — set up and supported in Xero, QuickBooks or Sage',
+] as const;
 
-const accreditations = [
-  'MCIOB — Chartered Member of the Chartered Institute of Building',
-  '£10M+ public liability insurance, AXA-verified',
-  'TrustATrader member — 4.7 from 16 verified reviews',
-  '5.0 on Google from verified customer reviews',
-  'CSCS cardholders, City & Guilds / NVQ qualified trades',
-  'FENSA-registered for window and door installations',
-];
+// PITCH PROPOSAL: software partners + MTD claim to be confirmed with the
+// client before any live build. No accreditations or review claims are shown
+// because the live site publishes none.
 ---
 
 <PageLayout
-  title="About Us | Aspect Builds"
-  description="Aspect Builds (Company No. 16033975) — Bath-based builders specialising in loft conversions, extensions, heritage restoration and property maintenance. Fully insured, fixed-price quotes, clean sites."
-  preloadImage="/projects/midford-garden-extension-1.webp"
+  title="About MB Bookkeeping & Payroll Solutions | Yate, Bristol"
+  description="MB Bookkeeping & Payroll Solutions is a bookkeeping and payroll practice serving small businesses across Bristol and South Gloucestershire. Bookkeeping, payroll, VAT and MTD support, self assessment and management accounts."
   canonical="/about-us/"
   breadcrumbs={[{ name: 'About Us', href: '/about-us/' }]}
-  ctaHeading="Get a free quote for your project"
-  ctaText="Free site visit, fixed written quote, no pressure."
 >
   <Hero
     size="compact"
-    eyebrow={['About us', 'Since 2004']}
-    title="Built on precision."
-    titleAccent="delivered with trust."
-    lede="We are a Bath-based construction and maintenance firm built on one principle: the work should speak for itself. No surprises, no shortcuts, no compromises on craft."
-    primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
-    phone={{ number: '+441174094116', display: '07498 158747' }}
-    image="/projects/midford-garden-extension-1.webp"
-    imageAlt="Garden extension in Midford by Aspect Builds with full-width glazing"
-    rotateWith={[
-      '/projects/custom-kitchen-refit-1.webp',
-      '/projects/luxury-bathroom-refit-1.webp',
-      '/projects/bath-loft-extension-1.webp',
-      '/projects/garden-wall-landscaping-1.webp',
-    ]}
-    trust={['22+ years in Bath', 'MCIOB chartered', '£10M+ public liability']}
+    eyebrow={['About us']}
+    title="The bookkeeper on"
+    titleAccent="your side."
+    lede="A bookkeeping and payroll practice for small businesses across Bristol and South Gloucestershire — accurate books, tidy payroll, no jargon."
+    primaryCta={{ label: 'Book a Free Consultation', href: '/contact/#lead-form-heading' }}
+    phone={{ number: PHONE.tel, display: PHONE.display }}
+    trust={['Bristol & South Glos', 'Free first consultation', 'MTD-ready']}
+    image="/hero/hero-about.webp"
+    imageAlt="Hands working through accounts with a calculator and notebook"
   />
 
-  <!-- Who we are -->
   <section class="section">
-    <div class="container">
-      <div class="media-split">
-        <div class="media-split__copy">
-          <p>
-            Aspect Builds &amp; Maintenance Ltd (Company No. 16033975) was founded to close
-            the gap between the craftsmanship Bath's heritage architecture demands and the
-            project-management rigour that premium clients expect. Based and trading from
-            Dunkerton, just outside Bath, we operate across Bath, Bradford on Avon,
-            Keynsham, and the wider West Wiltshire region — managing extensions, loft
-            conversions, period renovations, and new builds with the same exacting standard.
-          </p>
-          <p>
-            Every project follows the same discipline: a fixed-price itemised quote, one
-            project manager from start to finish, CSCS-cardholder trades on site, and a
-            proper handover with a comprehensive snag list. What we quote is what you pay.
-          </p>
-        </div>
-        <figure class="media-split__media">
-          <img
-            src="/projects/custom-kitchen-refit-1.webp"
-            alt="Custom kitchen refit in Bath by Aspect Builds — shaker units, quartz worktops, integrated appliances"
-            width="920" height="613" loading="lazy" decoding="async"
-          />
-        </figure>
-      </div>
+    <div class="container container--reading">
+      <p class="lede">
+        MB Bookkeeping &amp; Payroll Solutions looks after the books for small businesses
+        across Bristol and South Gloucestershire — the shops, trades, contractors and
+        professional firms that are established and busy but don't have an in-house
+        finance person. Our office is on Reed Road in Yate, on the North-East edge of
+        the city.
+      </p>
+      <p>
+        Most of our clients came to us the same way: the books had slipped behind, the
+        accountant was asking questions at year end, and VAT or payroll had become the
+        thing that ate their evenings. We take those jobs over, keep them current, and
+        hand back figures you can actually read — so your accountant's job is cheaper,
+        and yours is easier.
+      </p>
+      <p>
+        You stay in the software you already use. We work with Xero, QuickBooks, Sage
+        and FreeAgent, and we're set up for Making Tax Digital from day one.
+      </p>
     </div>
   </section>
 
-  <!-- Founder -->
   <section class="section section--alt">
     <div class="container">
-      <header class="section-header section-header--center">
-        <span class="eyebrow">The team</span>
-        <h2>Who runs Aspect Builds</h2>
-      </header>
-      <AuthorityBio
-        name="James"
-        role="Founder & Managing Director"
-        qualifications={[
-          'MCIOB — Chartered Member, Chartered Institute of Building',
-          '22+ years building in Bath and the surrounding region',
-          '£10M+ public liability, AXA-verified',
-          'Fixed-price contract specialist — 200+ completed projects',
-        ]}
-        bio={`James Martin leads Aspect Builds & Maintenance Ltd, an MCIOB-chartered building firm based in Dunkerton outside Bath. Fewer than 1 in 10 builders in Bath holds the Chartered Institute of Building qualification. James specifies every quote himself, runs one project manager per job, and is on site for the key stages of every build — extensions, loft conversions, heritage restoration and new builds across Bath and BANES.`}
-      />
+      <h2>What we do</h2>
+      <p class="lede">The seven services the practice is built around:</p>
+      <ul class="what-we-do">
+        {whatWeDo.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+      <p><a href="/our-services/" class="btn btn--secondary">See all services</a></p>
     </div>
   </section>
 
-  <!-- Services -->
   <section class="section">
-    <div class="container">
-      <ServiceBullets
-        items={whatWeDo}
-        variant="do"
-        columns={3}
-        eyebrow="What we do"
-        heading="Every type of building work — one standard"
-        lede="We work for homeowners, landlords and developers across Bath, BANES and West Wiltshire."
-      />
+    <div class="container container--reading">
+      <h2>How we work</h2>
+      <p>
+        Everything starts with a free consultation — a conversation about what your
+        business needs, not a sales pitch. If we're a fit, we agree a way of working
+        and a price you've seen in writing before anything starts. You send us your
+        paperwork or give us access to your software; we do the rest, on the schedule
+        we agreed.
+      </p>
+      <p>
+        You'll hear from us regularly — not just at year end. If something looks wrong
+        in the numbers, you'll know from us before you hear it from your accountant.
+      </p>
     </div>
   </section>
 
-  <!-- How we work -->
-  <section class="section section--alt">
-    <div class="container">
-      <header class="section-header section-header--center">
-        <span class="eyebrow">How we work</span>
-        <h2>Fixed quotes, no surprises</h2>
-      </header>
-      <div class="media-split media-split--reverse">
-        <div class="media-split__copy">
-          <p>
-            Every quote is free, written and fixed. James visits the property, scopes the
-            work, and prices it properly — so the number you get is the number you pay.
-            If the spec changes, we re-quote before proceeding, never after.
-          </p>
-          <p>
-            Work follows a structured process: initial site appraisal, detailed
-            specification and fixed quote, scheduled build phases with weekly progress
-            updates and site photographs, then a proper handover with a comprehensive
-            snag list. Clean site, clear timeline, zero ambiguity.
-          </p>
-        </div>
-        <figure class="media-split__media">
-          <img
-            src="/projects/bath-loft-extension-3.webp"
-            alt="Loft conversion underway in Bath by Aspect Builds — scaffolded elevation with structural steelwork going in"
-            width="920" height="613" loading="lazy" decoding="async"
-          />
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- Accreditations -->
-  <section class="section">
-    <div class="container">
-      <ServiceBullets
-        items={accreditations}
-        variant="benefit"
-        columns={3}
-        eyebrow="Credentials"
-        heading="Accreditations and cover"
-        lede="Every claim on this page is one you can check."
-      />
-    </div>
-  </section>
-
-  <!-- Coverage -->
   <section class="section section--alt">
     <div class="container">
       <AreaCoverage
-        eyebrow="Coverage"
-        heading="Where we work"
-        lede="Based in Dunkerton outside Bath, covering 27 areas across Bath, BANES and West Wiltshire."
-        note="Each service page lists the full coverage for your area. Outside it? Ask — we travel."
+        eyebrow="Where we cover"
+        heading={`${AREAS.length} neighbourhoods across Bristol and South Gloucestershire`}
+        lede="Covering Bristol city, the suburbs and the surrounding towns. Not listed? Ask."
       />
     </div>
   </section>
 </PageLayout>
+
+<style>
+  .what-we-do {
+    list-style: none;
+    margin: var(--sp-4) 0 var(--sp-5);
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sp-3);
+  }
+  .what-we-do li {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-4);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+</style>

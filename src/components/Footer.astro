@@ -1,65 +1,36 @@
 ---
 import { SERVICES } from '../lib/services';
+import { AREAS } from '../lib/areas';
+import { PHONE, LANDLINE, EMAIL, ADDRESS, HOURS, whatsappHref, BRAND } from '../lib/contact';
 import Logo from './Logo.astro';
 
 const services = SERVICES.map(s => s.slug);
 const year = new Date().getFullYear();
+const waHref = whatsappHref();
+
+// Coverage note — Bristol-first: the city + suburbs + South Glos ring, drawn
+// from the data layer (src/lib/areas.ts region/primary-tier names) rather
+// than hardcoded copy.
+const primaryAreas = AREAS.filter(a => a.tier === 'primary').map(a => a.name);
 ---
 
 <footer class="site-footer">
   <div class="container">
     <div class="footer-top">
       <div class="footer-brand">
-        <div class="footer-logo"><Logo variant="inline" size={30} /></div>
+        <div class="footer-logo"><Logo variant="stacked" size={30} /></div>
         <p class="footer-tagline">
-          Premium construction across Bath &amp; BANES. Extensions, loft
-          conversions, Georgian renovation and new build &mdash; delivered
-          with precision, without surprises.
+          Bookkeeping and payroll for Bristol and South
+          Gloucestershire. Ledgers kept current, VAT filed on time and
+          staff paid correctly &mdash; with a free first consultation.
         </p>
-
-        {/* TrustATrader badge — mirrors the live footer's 4.6/16 figures. */}
-        <a
-          href="https://www.trustatrader.com/traders/aspect-builds-maintenance-ltd-interior-refurbishment-bath-south"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="footer-tat"
-          aria-label="4.6 out of 5 from 16 verified TrustATrader reviews"
-        >
-          <img src="/logos/trustatrader-logo.svg" alt="TrustATrader Verified" width="52" height="52" loading="lazy" />
-          <span class="footer-tat__text">
-            <strong>4.6 / 5</strong>
-            <span>TrustATrader &middot; 16 Reviews</span>
-          </span>
-        </a>
 
         <ul class="footer-social">
           <li>
-            {/* Same-as links mirrored from contact.ts — Google verifies the
-                entity faster when profiles are linked from the site as well
-                as asserted in schema. */}
-            <a href="https://www.facebook.com/profile.php?id=61590355720472" target="_blank" rel="noopener me"
-               aria-label="Aspect Builds on Facebook">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78L15.9 15h-2.34v7A9.98 9.98 0 0 0 22 12.06z"/>
-              </svg>
-            </a>
-          </li>
-          <li>
-            <a href="https://www.instagram.com/aspectbuilds1/" target="_blank" rel="noopener me"
-               aria-label="Aspect Builds on Instagram">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="2" y="2" width="20" height="20" rx="5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
-              </svg>
-            </a>
-          </li>
-          <li>
-            <a href="https://g.page/r/CSgqcByy81a7EBM/review" target="_blank" rel="noopener"
-               aria-label="Aspect Builds on Google — 5 out of 5 from 5 reviews">
-              <span class="footer-social__text">Google 5.0</span>
-            </a>
+            {/* MB's Facebook/Instagram profiles exist but the URLs are
+                unverified (see contact.ts PROFILES) — no links until
+                confirmed with the client. */}
+            <span class="footer-social__note">Our office is on Reed Road in Yate &mdash; free first consultation across Bristol and South Gloucestershire.</span>
           </li>
         </ul>
       </div>
@@ -68,7 +39,7 @@ const year = new Date().getFullYear();
         <summary class="footer-col__bar"><h3>Services</h3><svg class="footer-col__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
         <ul class="footer-services">
           {services.map((slug) => (
-            <li><a href={`/bath-${slug}/`}>{slug.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}</a></li>
+            <li><a href={`/${slug}/`}>{slug.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}</a></li>
           ))}
         </ul>
       </details>
@@ -76,57 +47,66 @@ const year = new Date().getFullYear();
       <details class="footer-col footer-col--areas" open>
         <summary class="footer-col__bar"><h3>Service Areas</h3><svg class="footer-col__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
         <p class="footer-area-note">
-          Serving Bath, Keynsham, Bradford on Avon, Frome, Westbury and the
-          wider Bath &amp; BANES area — extensions, loft conversions,
-          renovations and new builds.
+          Serving {primaryAreas.join(', ')} and the wider South
+          Gloucestershire area &mdash; bookkeeping, payroll, VAT returns and
+          Self Assessment.
         </p>
         <p class="footer-area-note">
-          Free site visits across Bath and the surrounding villages.
+          Free first consultations across Yate, Bristol and South Gloucestershire.
         </p>
       </details>
 
       <div class="footer-col footer-col--contact">
         <h3>Get in touch</h3>
         <p class="footer-area-note footer-contact__loc">
-          Builders based in Dunkerton, just outside Bath.
+          Covering Bristol and South Gloucestershire.
         </p>
         <ul class="footer-contact-list">
           <li>
-            <a class="contact-pill" href="tel:+447498158747">
+            <a class="contact-pill" href={`tel:${PHONE.tel}`}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
               </svg>
-              07498 158747
+              {PHONE.display}
+            </a>
+          </li>
+          <li>
+            <a class="contact-pill" href={`tel:${LANDLINE.tel}`}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              {LANDLINE.display}
             </a>
           </li>
           <li>
             {/* The mobile is the WhatsApp line — NAP has to match the Google
                 Business Profile, so it shows here too. */}
-            <a class="contact-pill" href="https://wa.me/447498158747" target="_blank" rel="noopener">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.13a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.17 8.17 0 0 1-1.25-4.36c0-4.54 3.7-8.24 8.24-8.24a8.19 8.19 0 0 1 5.82 2.42 8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.25 8.23z"/>
-              </svg>
-              07498 158747 <span class="footer-wa-tag">WhatsApp</span>
-            </a>
+            {waHref && (
+              <a class="contact-pill" href={waHref} target="_blank" rel="noopener">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.13a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.17 8.17 0 0 1-1.25-4.36c0-4.54 3.7-8.24 8.24-8.24a8.19 8.19 0 0 1 5.82 2.42 8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.25 8.23z"/>
+                </svg>
+                {PHONE.display} <span class="footer-wa-tag">WhatsApp</span>
+              </a>
+            )}
           </li>
           <li>
-            <a class="contact-pill" href="mailto:james.aspectbuilds@gmail.com">
+            <a class="contact-pill" href={`mailto:${EMAIL}`}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                 <polyline points="22,6 12,13 2,6"/>
               </svg>
-              james.aspectbuilds@gmail.com
+              {EMAIL}
             </a>
           </li>
         </ul>
-        <p class="footer-hours">Mon&ndash;Thu 8:00&ndash;17:00 &middot; Fri 7:00&ndash;17:00 &middot; Sat 8:00&ndash;13:00</p>
+        <p class="footer-hours">Mon&ndash;Fri 08:30&ndash;17:30</p>
       </div>
 
       <details class="footer-col footer-col--company" open>
         <summary class="footer-col__bar"><h3>Company</h3><svg class="footer-col__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
         <ul>
           <li><a href="/about-us/">About Us</a></li>
-          <li><a href="/our-work/">Our Work</a></li>
           <li><a href="/faqs/">FAQs</a></li>
           <li><a href="/blog/">Guides</a></li>
           <li><a href="/contact/">Contact</a></li>
@@ -138,17 +118,16 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="footer-accreditations">
-      <span class="accred">✓ MCIOB Chartered</span>
-      <span class="accred">✓ CSCS Cardholders</span>
-      <span class="accred">✓ City &amp; Guilds Qualified</span>
-      <span class="accred">✓ Fully Insured</span>
-      <span class="accred">✓ Fixed-Price Quotes</span>
+      <!-- PITCH PROPOSAL: confirm software/certs with client before live build -->
+      <span class="accred">MTD-ready</span>
+      <span class="accred">Free first consultation</span>
+      <span class="accred">Xero, QuickBooks &amp; Sage</span>
+      <span class="accred">Bristol &amp; South Glos</span>
     </div>
 
     <div class="footer-bottom">
       <p>
-        &copy; {year} Aspect Builds &amp; Maintenance Ltd. Registered in
-        England and Wales, company no. 16033975. All rights reserved.
+        &copy; {year} MB Bookkeeping &amp; Payroll Solutions. All rights reserved.
       </p>
       {/* Canonical host is the apex — www redirects to it, so link the apex
           directly rather than through a 301. */}
@@ -214,48 +193,12 @@ const year = new Date().getFullYear();
     gap: var(--sp-4);
     /* On mobile the brand block is the hero of the footer */
   }
-  .footer-logo { color: var(--text-inverse); }
+  .footer-logo { display: inline-block; }
   .footer-tagline {
     font-size: var(--fs-sm);
     line-height: 1.65;
     max-width: 40ch;
     margin: 0;
-  }
-
-  .footer-tat {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    text-decoration: none;
-    color: var(--text-inverse);
-    background: var(--surface-inverse-raised);
-    border: 1px solid var(--border-inverse);
-    padding: 0.75rem 1rem;
-    width: fit-content;
-    transition: border-color 0.2s;
-  }
-  .footer-tat:hover { border-color: var(--accent); }
-  .footer-tat img {
-    width: 46px;
-    height: 46px;
-    background: var(--paper-0);
-    padding: 4px;
-  }
-  /* The TrustATrader mark is a white circular badge — it needs the brand navy
-     behind it to read as a badge rather than an empty white square. */
-  .footer-tat { background: var(--surface-inverse-raised); }
-  .footer-tat__text { display: flex; flex-direction: column; gap: 2px; }
-  .footer-tat__text strong {
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    letter-spacing: 0.05em;
-    line-height: 1;
-  }
-  .footer-tat__text span {
-    font-size: 0.68rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-inverse-muted);
   }
 
   .footer-social {
@@ -277,11 +220,10 @@ const year = new Date().getFullYear();
     transition: color 0.2s, border-color 0.2s;
   }
   .footer-social a:hover { color: var(--accent); border-color: var(--accent); }
-  .footer-social__text {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
+  .footer-social__note {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--text-inverse-muted);
   }
 
   /* ── Columns: shared ── */
@@ -349,7 +291,7 @@ const year = new Date().getFullYear();
   }
   .footer-col ul a:hover { color: var(--accent); }
 
-  /* Services list: 14 links — 2-up on phones, tight */
+  /* Services list: 7 links — 2-up on phones, tight */
   .footer-col--services .footer-services a { font-size: 0.86rem; }
 
   /* ── Contact column: tappable pills, full-width on mobile ── */
@@ -399,7 +341,7 @@ const year = new Date().getFullYear();
   }
   .footer-col:not(.footer-col--contact) .footer-area-note { margin: 0; }
 
-  /* ── Accreditations: bordered strip ── */
+  /* ── Credential strip: bordered ── */
   .footer-accreditations {
     display: flex;
     flex-wrap: wrap;
@@ -455,7 +397,6 @@ const year = new Date().getFullYear();
       align-items: start;
     }
     .footer-brand { grid-column: auto; }
-    .footer-tat { padding: 0.65rem 0.9rem; }
     /* Accordions flatten to static columns on desktop */
     .footer-col summary.footer-col__bar {
       cursor: default;
@@ -469,11 +410,11 @@ const year = new Date().getFullYear();
     .footer-col > *:not(summary) { display: block; }
     .footer-col ul { display: flex; flex-direction: column; gap: 0.55rem; }
     .footer-col ul a { padding: 0; font-size: var(--fs-sm); }
-    /* 14 links would tower over the other columns — two-up on desktop */
+    /* 7 links fit a single column on desktop — no two-up needed */
     .footer-col--services .footer-services {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.4rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
     }
     .footer-col--contact .footer-contact-list { grid-template-columns: 1fr; gap: 0.65rem; }
     .contact-pill {

@@ -1,33 +1,13 @@
 ---
 import Logo from './Logo.astro';
-import { AREAS } from '../lib/areas';
+import { SERVICES, getTagline } from '../lib/services';
+import { PHONE } from '../lib/contact';
 
 const pathname = Astro.url.pathname;
 const isActive = (path: string) => {
   if (path === '/') return pathname === '/';
   return pathname.startsWith(path);
 };
-
-// Services data for mega menu — kept inline so the menu works without import complexity
-// Thumbnails are pre-generated WebP (560x374, ~25KB each) in
-// /services/thumbs/. The full hero JPEGs are 260KB-1MB — six of those in a
-// dropdown is 2.2MB, which makes the menu feel slow rather than expensive.
-const services = [
-  { slug: 'builders-bath', name: 'Builders Bath', tagline: '22 years trading, zero surprises', image: '/images/hero-james-bath-property-1.webp' },
-  { slug: 'kitchen-fitters', name: 'Kitchen Fitters', tagline: 'Design, supply, expert installation', image: '/projects/custom-kitchen-refit-1.webp' },
-  { slug: 'extension-builders', name: 'House Extensions', tagline: 'Single, double-storey, wraparound', image: '/projects/midford-garden-extension-1.webp' },
-  { slug: 'loft-conversion', name: 'Loft Conversions', tagline: 'Velux, dormer, hip-to-gable', image: '/projects/bath-loft-extension-1.webp' },
-  { slug: 'renovation', name: 'House Renovations', tagline: 'Whole-house, one project manager', image: '/images/hero-home-loft.webp' },
-  { slug: 'heritage-restoration', name: 'Heritage Restoration', tagline: 'Bath stone, lime mortar, listed buildings', image: '/images/hero-james-bath-property-8.webp' },
-  { slug: 'new-build', name: 'New Builds', tagline: 'Foundations to handover', image: '/projects/frome-garage-conversion-1.webp' },
-  { slug: 'stone-walling', name: 'Bath Stone Walling', tagline: 'Retaining, boundary, garden walls', image: '/projects/garden-wall-landscaping-1.webp' },
-  { slug: 'landscaping', name: 'Landscaping', tagline: 'Patios, paving, structural gardens', image: '/projects/bath-landscaping-1.webp' },
-  { slug: 'plastering-rendering', name: 'Plastering & Rendering', tagline: 'Skimming, lime, silicone render systems', image: '/projects/chilcompton-rendering-1.webp' },
-  { slug: 'painting-decorating', name: 'Painting & Decorating', tagline: 'Prepped properly, finished to last', image: '/images/hero-james-bath-property-3.webp' },
-  { slug: 'property-maintenance', name: 'Property Maintenance', tagline: 'Planned and responsive', image: '/projects/greenhouse-base-build-1.webp' },
-  { slug: 'windows-doors', name: 'Windows & Doors', tagline: 'UPVC, aluminium, timber, FENSA', image: '/images/hero-james-bath-property-6.webp' },
-  { slug: 'bathroom-installers', name: 'Bathroom Installers', tagline: 'Luxury refits and wetrooms', image: '/projects/luxury-bathroom-refit-1.webp' },
-];
 ---
 
 <header class="site-header" data-scrolled="false">
@@ -62,53 +42,34 @@ const services = [
             <div class="container mega-menu__container">
               <div class="mega-menu__header">
                 <p class="eyebrow eyebrow--clay">Our Services</p>
-                <h2 class="mega-menu__title">Fourteen services. {AREAS.length} neighbourhoods.</h2>
-                {/* The category page had no sitewide link — it was reached only by
-                    breadcrumbs, all 102 of them reading "Our Services". */}
+                <h2 class="mega-menu__title">Seven services. {SERVICES.length} neighbourhoods.</h2>
+                {/* The category page had no sitewide link — keep one here so
+                    the menu always has a route to the services index. */}
                 <a href="/our-services/" class="mega-menu__all">
-                  Compare all Aspect services
+                  Compare all services
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                        stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
                   </svg>
                 </a>
               </div>
               <div class="mega-menu__grid">
-                {services.map((s) => (
-                  <a href={`/bath-${s.slug}/`} class="mega-menu__item">
-                    <span class="mega-menu__shot">
-                      {/* data-src, not src: the panel is visibility:hidden but
-                          laid out inside the viewport, so loading="lazy" never
-                          defers it. These twelve thumbnails were fetching ~360KB
-                          at 32ms and starving the LCP image. Swapped in on first
-                          intent, or at idle. */}
-                      <img
-                        data-src={s.image}
-                        alt=""
-                        width="560"
-                        height="374"
-                        decoding="async"
-                      />
-                    </span>
+                {SERVICES.map((s) => (
+                  <a href={`/${s.slug}/`} class="mega-menu__item">
                     <span class="mega-menu__copy">
                       <span class="mega-menu__name">{s.name}</span>
-                      <span class="mega-menu__tagline">{s.tagline}</span>
+                      <span class="mega-menu__tagline">{getTagline(s, 'bristol')}</span>
                     </span>
                   </a>
                 ))}
               </div>
               <div class="mega-menu__footer">
-                <p>Not sure what you need? <a href="/contact/">Get a free site visit &rarr;</a></p>
+                <p>Not sure what you need? <a href="/contact/">Book a free consultation &rarr;</a></p>
               </div>
             </div>
           </div>
         </li>
 
-        <li>
-          <a href="/our-work/" class:list={['nav-link', isActive('/our-work') ? 'is-active' : '']}>
-            Gallery
-          </a>
-        </li>
         <li>
           <a href="/about-us/" class:list={['nav-link', isActive('/about-us') ? 'is-active' : '']}>
             About
@@ -122,11 +83,11 @@ const services = [
         
       </ul>
 
-      <a href="tel:+441174094116" class="header-phone">
+      <a href={`tel:${PHONE.tel}`} class="header-phone">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
         </svg>
-        <span class="header-phone__num">07498 158747</span>
+        <span class="header-phone__num">{PHONE.display}</span>
       </a>
     </nav>
   </div>
@@ -264,45 +225,14 @@ const services = [
     mq.addEventListener('change', (e) => { if (e.matches) setOpen(false); });
   }
 
-  // Mega-menu thumbnails: fetch on first intent, or at idle once the page
-  // has settled — whichever comes first. Held in data-src because the panel
-  // is laid out inside the viewport, which defeats loading="lazy".
-  {
-    let loaded = false;
-    const fill = () => {
-      if (loaded) return;
-      loaded = true;
-      document
-        .querySelectorAll<HTMLImageElement>('.mega-menu img[data-src]')
-        .forEach((img) => {
-          img.src = img.dataset.src!;
-          img.removeAttribute('data-src');
-        });
-    };
-
-    const mega = document.querySelector('.has-mega');
-    if (mega) {
-      ['pointerenter', 'focusin', 'click'].forEach((evt) =>
-        mega.addEventListener(evt, fill, { once: true })
-      );
-    }
-
-    const idle = () =>
-      'requestIdleCallback' in window
-        ? (window as any).requestIdleCallback(fill, { timeout: 5000 })
-        : setTimeout(fill, 3000);
-    if (document.readyState === 'complete') idle();
-    else window.addEventListener('load', idle, { once: true });
-  }
-
 </script>
 
 <style>
   /* ============== Base header ============== */
   .site-header {
-    background: var(--surface-inverse);
-    color: var(--text-inverse);
-    border-bottom: 1px solid var(--border-inverse);
+    background: #ffffff;
+    color: var(--brand-navy);
+    border-bottom: 1px solid var(--brand-teal);
     position: sticky;
     top: 0;
     z-index: 50;
@@ -311,7 +241,7 @@ const services = [
   }
 
   .site-header[data-scrolled="true"] {
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 6px 24px rgba(0, 35, 73, 0.18);
   }
 
   .site-header__inner {
@@ -332,13 +262,11 @@ const services = [
     display: flex;
     align-items: center;
     flex: none;
-    color: var(--text-inverse);
+    color: var(--brand-navy);
     transition: opacity var(--dur-fast) var(--ease);
   }
   .logo:hover { opacity: 0.82; }
-  /* The chevron mark carries the bronze accent, wordmark stays white —
-     mirrors the live nav treatment. */
-  .logo :global(.ab__mark) { color: var(--accent); }
+
 
 
 
@@ -352,7 +280,7 @@ const services = [
     border: 0;
     cursor: pointer;
     padding: var(--sp-3);
-    color: var(--text-inverse);
+    color: var(--brand-navy);
     display: none;
   }
 
@@ -414,7 +342,7 @@ const services = [
     align-items: center;
     gap: var(--sp-2);
     padding: var(--sp-3) var(--sp-4);
-    color: var(--text-inverse-muted);
+    color: var(--brand-navy);
     text-decoration: none;
     font-weight: 500;
     font-size: var(--fs-sm);
@@ -430,10 +358,9 @@ const services = [
   .nav-link:hover,
   .nav-link.is-active,
   .has-mega.is-open .nav-link--button {
-    /* --accent-text is the dark orange: correct on white, only 3.5:1 on
-       black. On the inverse bar the bright orange is the readable one. */
-    color: var(--accent-on-dark);
-    background: rgba(255, 107, 26, 0.12);
+    /* White bar: brand teal reads cleanly, with a soft teal tint behind. */
+    color: var(--brand-teal);
+    background: rgba(4, 127, 113, 0.09);
   }
 
   .nav-caret {
@@ -451,8 +378,8 @@ const services = [
     align-items: center;
     gap: var(--sp-2);
     padding: var(--sp-3) var(--sp-4);
-    background: var(--accent);
-    color: var(--on-accent) !important;
+    background: var(--brand-teal);
+    color: #ffffff !important;
     border-radius: var(--radius-md);
     font-weight: 600;
     font-size: var(--fs-sm);
@@ -560,28 +487,7 @@ const services = [
     transform: translateY(-2px);
   }
 
-  /* The photograph is the sell. Fixed aspect so six different source crops
-     still line up as a grid. */
-  .mega-menu__shot {
-    position: relative;
-    display: block;
-    flex: none;
-    width: 84px;
-    aspect-ratio: 4 / 3;
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    background: var(--surface-sunken);
-  }
-  .mega-menu__shot img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform var(--dur-slow) var(--ease-out);
-  }
-  .mega-menu__item:hover .mega-menu__shot img { transform: scale(1.05); }
-
-
+  /* Cards are text-only (name + tagline) — no thumbnails in the menu. */
 
   .mega-menu__copy {
     display: flex;
@@ -646,8 +552,8 @@ const services = [
       flex-direction: column;
       align-items: stretch;
       gap: 0;
-      background: var(--surface-inverse);
-      border-top: 1px solid var(--border-inverse);
+      background: #ffffff;
+      border-top: 1px solid var(--brand-teal);
       padding: var(--sp-5) 0 calc(var(--sp-6) + env(safe-area-inset-bottom, 0px));
       overflow-y: auto;
       overscroll-behavior: contain;
@@ -679,9 +585,8 @@ const services = [
       padding: 0 var(--gutter);
       margin: 0;
     }
-    /* Inverse hairlines — --border is the light one and was far too hot
-       against the black panel. */
-    .primary-nav__list > li { border-bottom: 1px solid var(--border-inverse); }
+    /* Hairlines on the white drawer */
+    .primary-nav__list > li { border-bottom: 1px solid var(--border); }
     .primary-nav__list > li:last-child { border-bottom: 0; }
 
     .nav-link {
@@ -692,13 +597,13 @@ const services = [
       border-radius: 0;
       font-size: var(--fs-md);
       font-weight: var(--weight-semi);
-      color: var(--text-inverse);
+      color: var(--brand-navy);
     }
     .nav-link:hover,
     .nav-link.is-active,
     .has-mega.is-open .nav-link--button {
       background: transparent;
-      color: var(--accent-on-dark);
+      color: var(--brand-teal);
     }
 
     /* Services opens inline as an indented list. The desktop card grid is
@@ -732,30 +637,27 @@ const services = [
       background: transparent;
       border: 0;
       border-radius: var(--radius-sm);
-      color: var(--text-inverse);
+      color: var(--brand-navy);
     }
     .mega-menu__item:hover {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(4, 127, 113, 0.06);
       border-color: transparent;
       box-shadow: none;
       transform: none;
     }
-    .mega-menu__item:hover .mega-menu__shot img { transform: none; }
-
-    .mega-menu__shot { width: 72px; }
 
     .mega-menu__copy { padding: 0; gap: 3px; }
-    .mega-menu__name { color: var(--text-inverse); font-size: var(--fs-base); }
-    .mega-menu__tagline { color: var(--text-inverse-muted); }
+    .mega-menu__name { color: var(--brand-navy); font-size: var(--fs-base); }
+    .mega-menu__tagline { color: var(--text-muted); }
 
     .mega-menu__footer {
       margin-top: var(--sp-4);
       padding: var(--sp-4) 0 0;
       text-align: left;
-      border-top: 1px solid var(--border-inverse);
-      color: var(--text-inverse-muted);
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
     }
-    .mega-menu__footer a { color: var(--accent-on-dark); }
+    .mega-menu__footer a { color: var(--brand-teal); }
 
     /* `margin-top: auto` pins the CTA to the bottom of the full-height
        panel rather than letting it float under the last link. */

@@ -18,102 +18,68 @@ import { getBathAreas } from '../../lib/areas';
 import { BRAND } from '../../lib/contact';
 import { getCasesForService } from '../../lib/caseServiceMap';
 
-const BATH_AREA_NAMES = new Set(getBathAreas().map((a) => a.name));
-const bathAreaCount2 = getBathAreas().length;
-const bathAreaCount = getBathAreas().length;
+const areaCount = getBathAreas().length;
 
 
 export function getStaticPaths() {
-  return SERVICES.filter((s) => s.city === 'bath').map((service) => ({
-    params: { service: `bath-${service.slug}` },
+  return SERVICES.filter((s) => s.city === 'bristol').map((service) => ({
+    params: { service: service.slug },
   }));
 }
 
 const { service: slug } = Astro.params;
-// URL segment is 'bath-kitchen-fitters'; the Service slug is 'kitchen-fitters'
-const serviceSlug = slug!.replace(/^bath-/, '');
+const serviceSlug = slug!;
 const service = getService(serviceSlug);
 if (!service) throw new Error(`Service not found: ${slug}`);
 
 const relatedServices = getRelatedServices(serviceSlug);
 
 // Real case studies for this service (from the /projects/ portfolio).
+// Empty on the MB mock — nothing is invented for a real business.
 const allStudies = await getCollection('caseStudies');
 const serviceCases = getCasesForService(serviceSlug)
   .map((id) => allStudies.find((s) => s.id === id))
   .filter((s): s is NonNullable<typeof s> => Boolean(s))
   .slice(0, 2);
 
-// shortName is a label, not a noun phrase: "Plastering Services" reads
-// wrong mid-sentence ("the plastering services work we take on"). This is
+// shortName is a label, not a noun phrase: "Payroll Services" reads
+// wrong mid-sentence ("the payroll services work we take on"). This is
 // the prose form — headings still use the full shortName.
 const serviceProse = service.shortName.replace(/\s+Services$/i, '').toLowerCase();
 // Title-case form for headings that read as a sentence: "How Much Does
-// Plastering Services Cost?" is not English.
+// Payroll Services Cost?" is not English.
 const serviceTitle = service.shortName.replace(/\s+Services$/i, '');
 
 // Guides naming this service. Capped at two: the point is a relevant link
-// down and a link back up, not a link farm.
+// down and a link back up, not a link farm. Empty on the mock (blog is
+// empty until the client signs).
 const guides = (await getCollection('blog', ({ data }) =>
   !data.draft && (data.service === service.slug || data.alsoService === service.slug)
 )).slice(0, 2);
 
-
-
-// Intro photograph — a different frame from the hero, so the top of the
-// page does not show the same house twice.
-const introImages: Record<string, string> = {
-  'builders-bath':         '/images/hero-james-bath-property-2.webp',
-  'kitchen-fitters':       '/projects/custom-kitchen-refit-3.webp',
-  'extension-builders':    '/projects/midford-garden-extension-3.webp',
-  'loft-conversion':       '/projects/bath-loft-extension-3.webp',
-  'renovation':            '/images/hero-james-bath-property-5.webp',
-  'heritage-restoration':  '/images/hero-james-bath-property-8.webp',
-  'new-build':             '/projects/frome-garage-conversion-3.webp',
-  'stone-walling':         '/projects/garden-wall-landscaping-3.webp',
-  'landscaping':           '/projects/bath-landscaping-3.webp',
-  'plastering-rendering':  '/projects/chilcompton-rendering-3.webp',
-  'painting-decorating':   '/images/hero-james-bath-property-10.webp',
-  'property-maintenance':  '/projects/greenhouse-base-build-3.webp',
-  'windows-doors':         '/images/hero-james-bath-property-6.webp',
-  'bathroom-installers':   '/projects/luxury-bathroom-refit-3.webp',
-};
-const introAlt: Record<string, string> = {
-  'builders-bath':         'Aspect Builds site — structural steel and blockwork in a Bath extension',
-  'kitchen-fitters':       'Custom kitchen installation in Bath by Aspect Builds with integrated appliances',
-  'extension-builders':    'Garden room extension in Midford by Aspect Builds with full-width glazing',
-  'loft-conversion':       'Loft conversion in Bath with new staircase and dormer by Aspect Builds',
-  'renovation':            'Full house renovation in Bath by Aspect Builds — stripped-back interior mid-refit',
-  'heritage-restoration':  'Bath stone heritage restoration by Aspect Builds — lime mortar repointing',
-  'new-build':             'Garage conversion and new build works in Frome by Aspect Builds',
-  'stone-walling':         'Bath stone garden wall with lime mortar joints by Aspect Builds',
-  'landscaping':           'Countryside garden landscaping near Bath by Aspect Builds',
-  'plastering-rendering':  'External rendering in Chilcompton by Aspect Builds',
-  'painting-decorating':   'Interior painting and decorating in Bath by Aspect Builds',
-  'property-maintenance':  'Greenhouse base construction in Bath by Aspect Builds',
-  'windows-doors':         'Window and door installation by Aspect Builds in Bath',
-  'bathroom-installers':   'Luxury bathroom refit in Bath by Aspect Builds with walk-in shower',
-};
-
-// Recent-work grid. Empty for a service with no photos yet, and the section
-// is omitted rather than rendered as an empty box.
-// Recent-work grid feeds from the real case-study galleries (the KD-era
-// SERVICE_GALLERY map had 6 render slugs and never matched Aspect services —
-// it rendered as an empty grid everywhere).
-const gallery = serviceCases.flatMap((s) =>
-  s.data.gallery.slice(0, 6).map((src, i) => ({
-    src,
-    alt: `${s.data.title} in ${s.data.location} by Aspect Builds — photo ${i + 1}`,
-    caseId: s.id,
-    caseTitle: s.data.title,
-  })),
-);
 const reviewsForService = REVIEWS
   .filter((r) => r.service.toLowerCase().includes(service.shortName.toLowerCase().split(' ')[0]))
-  // Bath jobs are the proof on the Bath page, not here. Filter before the
-  // slice, or dropping one leaves two reviews instead of pulling in a third.
-  .filter((r) => !BATH_AREA_NAMES.has(r.area))
   .slice(0, 3);
+
+// Hero photography — Unsplash (free licence), chosen per service theme.
+const heroImages: Record<string, string> = {
+  'bookkeeping':           '/hero/hero-bookkeeping.webp',
+  'payroll':               '/hero/hero-payroll.webp',
+  'vat-returns':           '/hero/hero-vat-returns.webp',
+  'self-assessment':       '/hero/hero-vat-returns.webp',
+  'bank-reconciliation':   '/hero/hero-bookkeeping.webp',
+  'management-accounts':   '/hero/hero-payroll.webp',
+  'cloud-accounting':      '/hero/hero-payroll.webp',
+};
+const heroAlts: Record<string, string> = {
+  'bookkeeping':           'Calculator on printed financial reports and charts',
+  'payroll':               'Laptop showing a finance dashboard with charts and KPIs',
+  'vat-returns':           'Tax paperwork, calculator and folders being reviewed',
+  'self-assessment':       'Tax paperwork, calculator and folders being reviewed',
+  'bank-reconciliation':   'Calculator on printed financial reports and charts',
+  'management-accounts':   'Laptop showing a finance dashboard with charts and KPIs',
+  'cloud-accounting':      'Laptop showing cloud accounting software',
+};
 
 // Build comprehensive Service + LocalBusiness + FAQPage + Offer schema
 const schema = [
@@ -125,25 +91,22 @@ const schema = [
     description: service.longIntro,
     provider: {
       '@type': 'LocalBusiness',
-      name: 'Aspect Builds & Maintenance Ltd',
-      '@id': 'https://www.aspectbuilds.co.uk/#organization',
-      telephone: '+447498158747',
-      email: 'james.aspectbuilds@gmail.com',
-      url: 'https://www.aspectbuilds.co.uk',
+      name: 'MB Bookkeeping & Payroll Solutions',
+      '@id': 'https://www.mbbookkeepingandpayrollsolutions.co.uk/#organization',
+      telephone: '+447828742991',
+      email: 'info@mbbookkeepingandpayrollsolutions.co.uk',
+      url: 'https://www.mbbookkeepingandpayrollsolutions.co.uk',
       address: {
         '@type': 'PostalAddress',
-        streetAddress: '2 Fir Tree Cottages',
-        addressLocality: 'Dunkerton',
-        postalCode: 'BA2 8BS',
+        streetAddress: '18 Reed Road',
+        addressLocality: 'Yate',
+        postalCode: 'BS37 7DR',
         addressCountry: 'GB',
       },
-      areaServed: { '@type': 'City', name: 'Bath' },
+      areaServed: AREAS.map((a) => ({ '@type': 'Place', name: a.name })),
+      // AggregateOffer and OfferCatalog removed. They published unconfirmed
+      // price bands as structured data — restore only with signed-off figures.
     },
-    areaServed: { '@type': 'City', name: 'Bath' },
-    // AggregateOffer and OfferCatalog removed 2026-09-02. They published
-    // unconfirmed price bands as structured data, which Google can surface
-    // directly in results — worse than having them in copy. Restore with
-    // the on-page cost sections once the figures are signed off.
   },
   {
     '@context': 'https://schema.org',
@@ -161,7 +124,7 @@ const schema = [
     '@context': 'https://schema.org',
     '@type': 'HowTo',
     name: `The ${serviceProse} process, step by step`,
-    description: `How Aspect Builds delivers a ${serviceProse} project in Bath, from the free site visit to the 12-month aftercare check.`,
+    description: `How MB Bookkeeping & Payroll Solutions runs ${serviceProse} for businesses across Bristol and South Gloucestershire, from the free consultation to the regular reports.`,
     step: service.processSteps.map((s, i) => ({
       '@type': 'HowToStep',
       position: i + 1,
@@ -172,7 +135,7 @@ const schema = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    url: `https://www.aspectbuilds.co.uk/${slug}/`,
+    url: `https://www.mbbookkeepingandpayrollsolutions.co.uk/${slug}/`,
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: ['.intro-split__copy p', '.faq-section details:first-of-type'],
@@ -184,112 +147,54 @@ const schema = [
 <PageLayout
   title={service.titleTemplate}
   description={service.metaDescription}
-  preloadImage={`/heroes/${service.slug}.webp`}
   canonical={`/${slug}/`}
   ogImage={`/og/${service.slug}.jpg`}
-  breadcrumbs={[{ name: 'Our Services', href: '/our-services/' }, { name: service.shortName, href: `/bath-${service.slug}/` }]}
+  breadcrumbs={[{ name: 'Our Services', href: '/our-services/' }, { name: service.shortName, href: `/${service.slug}/` }]}
   prefillService={service.shortName}
   schema={schema}
-  formHeading={`Get Your Free ${service.slug === 'builders-bath' ? 'Building' : service.shortName} Quote`}
+  formHeading={`Book Your Free ${serviceTitle} Consultation`}
 >
   <Hero
     size="compact"
-    eyebrow={[service.slug === 'builders-bath' ? 'Bath\u2019s builder' : `${service.shortName} in Bath`]}
+    eyebrow={[`${service.shortName} in Bristol & South Gloucestershire`]}
     title={service.name}
     lede={service.intro}
-    primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
-    phone={{ number: '+441174094116', display: '07498 158747' }}
-    image={{
-    'builders-bath':         '/images/hero-james-bath-property-1.webp',
-    'kitchen-fitters':       '/projects/custom-kitchen-refit-1.webp',
-    'extension-builders':    '/projects/midford-garden-extension-1.webp',
-    'loft-conversion':       '/projects/bath-loft-extension-1.webp',
-    'renovation':            '/images/hero-home-loft.webp',
-    'heritage-restoration':  '/images/hero-james-bath-property-8.webp',
-    'new-build':             '/projects/frome-garage-conversion-1.webp',
-    'stone-walling':         '/projects/garden-wall-landscaping-1.webp',
-    'landscaping':           '/projects/bath-landscaping-1.webp',
-    'plastering-rendering':  '/projects/chilcompton-rendering-1.webp',
-    'painting-decorating':   '/images/hero-james-bath-property-3.webp',
-    'property-maintenance':  '/projects/greenhouse-base-build-1.webp',
-    'windows-doors':         '/images/hero-james-bath-property-6.webp',
-    'bathroom-installers':   '/projects/luxury-bathroom-refit-1.webp',
-  }[service.slug] ?? '/images/hero-james-bath-property-1.webp'}
-    imageAlt={service.heroImageAlt ?? ''}
-    trust={['22+ years in Bath', 'MCIOB chartered', '£10M+ public liability', warrantyBadge(service)]}
+    primaryCta={{ label: 'Book a Free Consultation', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+447828742991', display: '07828 742991' }}
+    image={heroImages[service.slug] ?? '/hero/hero-bookkeeping.webp'}
+    imageAlt={heroAlts[service.slug] ?? 'Bookkeeping workspace with calculator and financial reports'}
+    trust={['Free first consultation', 'MTD-ready', warrantyBadge(service)]}
   />
 
   <section class="section">
-    <div class="container">
-      <div class="intro-split">
-        <div class="intro-split__copy">
-          <p>{service.longIntro}</p>
-        </div>
-        <figure class="intro-split__media">
-          <img
-            src={introImages[service.slug]}
-            alt={introAlt[service.slug] ?? ''}
-            width="920"
-            height="613"
-            loading="lazy"
-            decoding="async"
-          />
-        </figure>
-      </div>
+    <div class="container container--reading">
+      <p>{service.longIntro}</p>
+    </div>
+  </section>
 
+  <section class="section section--alt">
+    <div class="container">
       <ServiceBullets
         eyebrow="What we do"
         items={service.whatWeDo}
         variant="do"
         columns={4}
         heading="What We Do"
-        lede={`The ${serviceProse} work we take on across Bath — every project, every property type.`}
+        lede={`The ${serviceProse} work we take on across Yate, Bristol and South Gloucestershire — every business type, every setup.`}
       />
     </div>
   </section>
 
-  {gallery.length > 0 && (
-    <section class="work-grid-section">
-      {/* .container is the global wrapper in global.css. .wrap is scoped to
-          another component, so using it here produced a zero-width box. */}
-      <div class="container">
-        <p class="work-grid__eyebrow">Recent work</p>
-        <h2 class="work-grid__heading">{serviceProse.charAt(0).toUpperCase() + serviceProse.slice(1)} we have done</h2>
-        <p class="work-grid__lede">Real jobs, photographed as we finished them. No stock photography.</p>
-        <ul class="work-grid">
-          {gallery.map((img) => (
-            <li class="work-grid__item">
-              <a href={`/projects/${img.caseId}/`} aria-label={`${img.caseTitle} — read the case study`}>
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  width="920"
-                  height="613"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </a>
-            </li>
-          ))}
-        </ul>
-        <p class="work-grid__more">
-          <a href="/our-work/">See more {serviceProse} projects in the gallery</a>
-        </p>
-      </div>
-    </section>
-  )}
-
-  {/* Named jobs people search for individually — and that the Google
-      Business Profile lists as separate services. Anchored so a GBP entry
-      can deep-link straight to the right block instead of needing a thin
-      page of its own. */}
+  {/* Named jobs people search for individually. Anchored so a GBP entry can
+      deep-link straight to the right block instead of needing a thin page
+      of its own. */}
   {service.subServices && (
     <section class="section" aria-labelledby="sub-services-heading">
       <div class="container">
         <header class="section-header section-header--center">
           <span class="eyebrow">Specific jobs</span>
           <h2 id="sub-services-heading">{serviceProse} we're asked for by name</h2>
-          <p class="lede">Each is part of the same service — tell us which one you need and we'll quote it on its own.</p>
+          <p class="lede">Each is part of the same service — tell us which one you need and we'll price it on its own.</p>
         </header>
         <ul class="subsvc">
           {service.subServices.map((sub) => (
@@ -297,7 +202,7 @@ const schema = [
               <h3 class="subsvc__name">{sub.name}</h3>
               <p class="subsvc__summary">{sub.summary}</p>
               <a class="subsvc__cta" href="/contact/#lead-form-heading">
-                Get a quote for this
+                Ask about this
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M5 12h14M12 5l7 7-7 7" />
@@ -317,7 +222,7 @@ const schema = [
     eyebrow="Common problems"
       problems={service.problems}
       heading={`Signs you need ${serviceProse}`}
-      lede="If any of these sound like your property, it's worth booking a free site visit."
+      lede="If any of these sound like your business, it's worth booking a free consultation."
     />
     </div>
   </section>
@@ -328,7 +233,7 @@ const schema = [
     eyebrow="Why us"
       benefits={service.benefits}
       heading={`Why Choose ${serviceTitle}`}
-      lede={`We've completed hundreds of ${serviceProse} projects across Bath. Here's what makes them last.`}
+      lede={`Here's what working with MB gives you — accuracy, timeliness and numbers you can read.`}
     />
     </div>
   </section>
@@ -339,32 +244,37 @@ const schema = [
     eyebrow="How it works"
       steps={service.processSteps}
       heading="Our Process"
-      lede={`Every ${service.shortName.toLowerCase()} project follows the same 8-12 step process. Here's what to expect from your free site visit to your 12-month aftercare check.`}
+      lede={`How ${serviceProse} runs with MB — from the free consultation to the regular rhythm of work and reporting.`}
     />
     </div>
   </section>
 
 
-  <section class="section">
-    <div class="container">
-    <MaterialGrid
-    eyebrow="Systems"
-      materials={service.materials}
-      heading={`Materials & Systems We Use for ${serviceTitle}`}
-      lede="We only use BBA-certified systems from leading UK and European manufacturers. Every installation carries a manufacturer warranty as standard."
-    />
-    </div>
-  </section>
+  {/* Pricing: generic UK guide ranges only — no area-level pricing and no
+      invented specifics for a real business (CPRs 2008). Rendered only when
+      the service data carries a guide. */}
+  {service.costGuide && service.costGuide.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <MaterialGrid
+        eyebrow="Pricing"
+          materials={service.costGuide}
+          heading={`What ${serviceTitle} Costs`}
+          lede="Indicative UK guide ranges only — your price depends on your volumes and setup, and is agreed in writing before anything starts."
+        />
+      </div>
+    </section>
+  )}
 
-    {/* Real case studies — from the /projects/ portfolio. Only rendered when
-      the service genuinely has one; no fabricated projects. */}
+  {/* Real case studies — only rendered when the service genuinely has one;
+      none are fabricated for the pitch mock. */}
   {serviceCases.length > 0 && (
     <section class="section section--alt" aria-labelledby="case-studies-heading">
       <div class="container">
         <header class="section-header section-header--center">
           <span class="eyebrow">Real projects</span>
-          <h2 id="case-studies-heading">{service.slug === 'builders-bath' ? 'Recent build work' : `Recent ${service.shortName} work`}</h2>
-          <p class="lede">A real job we've completed — the brief, the challenge, how it ran, and the photographs from site.</p>
+          <h2 id="case-studies-heading">Recent {service.shortName} work</h2>
+          <p class="lede">A real job we've completed — the brief, the challenge, how it ran.</p>
         </header>
         <div class="case-band">
           {serviceCases.map(({ id, data: c }) => (
@@ -372,7 +282,7 @@ const schema = [
               <span class="case-band__media">
                 <img
                   src={c.image}
-                  alt={`${c.title} in ${c.location} by Aspect Builds`}
+                  alt={`${c.title} in ${c.location} by MB Bookkeeping & Payroll Solutions`}
                   width="920" height="613" loading="lazy" decoding="async"
                 />
                 <span class="case-band__count">{c.gallery.length} photos</span>
@@ -400,8 +310,8 @@ const schema = [
     <ReviewCards
       eyebrow="Reviews"
       reviews={reviewsForService}
-      heading={service.slug === 'builders-bath' ? 'Builder Reviews' : `${service.shortName} Reviews`}
-      lede={`Verified customer reviews from our ${service.shortName.toLowerCase()} installations across Bath.`}
+      heading={`${service.shortName} Reviews`}
+      lede={`Words from the businesses we look after.`}
     />
   )}
 
@@ -427,28 +337,13 @@ const schema = [
 
   <RelatedServices services={relatedServices} eyebrow="What else" />
 
-  <section class="section section--alt">
-    <div class="container">
-      <AuthorityBio
-          compact={true}
-        name="James"
-        role="Founder & Lead Installer"
-        qualifications={[
-          'NVQ Level 3 in Plastering',
-          'Johnstone\'s Stormshield Registered Installer',
-          'Parex Approved Applicator',
-          'Weber EWI Certified Installer',
-          "22+ years building experience across Bath & BANES",
-        ]}
-        bio={`James Martin leads Aspect Builds, an MCIOB-chartered builder serving Bath and BANES. Based in Dunkerton, he leads every project personally and is on site for the key stages of every installation. James specifies every quote himself and oversees the team of four full-time installers. He holds NVQ Level 3 in Plastering and certified installer status with Johnstone's, Parex and Weber.`}
-      />
-    </div>
-  </section>
+  {/* Founder bio removed — MB's ownership details are not published and the
+      honest-empty rule forbids inventing a named founder bio for the mock.
+      The AuthorityBio component is intact and renders the moment real
+      verified details exist. */}
 
   {guides.length > 0 && (
     <section class="section">
-      {/* Not .container--reading — that anchors children to the left grid edge
-          at 800px, so the centred header sat 176px right of its own cards. */}
       <div class="container">
         <header class="section-header section-header--center">
           <span class="eyebrow">Before you commit</span>
@@ -474,20 +369,19 @@ const schema = [
     </section>
   )}
 
-  <section class="section">
+  <section class="section section--alt">
     <div class="container">
       <p class="svc-othercity">
-        Property in Bath? See <a href={`/bath-${service.slug}/`}>{service.shortName.replace(/\s+Services$/i, '').toLowerCase()} in Bath</a>,
-        where most of the work is Georgian and lime-compatible.
+        Covering the whole of Bristol and South Gloucestershire — every neighbourhood
+        below has its own page under this service, with local context written for it.
       </p>
 
       <AreaCoverage
-        cities={['bath']}
         serviceSlug={service.slug}
         eyebrow="Coverage"
-        heading={`${serviceTitle} Across Bath & BANES`}
-        lede={`All ${bathAreaCount} Bath & BANES areas — Bath city neighbourhoods and the wider market towns we cover.`}
-        note="Free site visits across Bath & BANES. Properties outside our standard coverage area can be quoted by arrangement. Listed building consent, conservation area consent and Building Control notification are handled on your behalf where required."
+        heading={`${serviceTitle} Across Bristol & South Gloucestershire`}
+        lede={`All ${areaCount} Bristol-area neighbourhoods — the city, North and East Bristol, and the South Gloucestershire ring.`}
+        note="Free consultation across the region. Businesses outside our standard coverage area can be quoted by arrangement. MTD-ready VAT filing and HMRC-compliant payroll come as standard."
       />
     </div>
   </section>

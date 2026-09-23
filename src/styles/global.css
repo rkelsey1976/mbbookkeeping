@@ -7,7 +7,7 @@
    Bath & BANES. Navy, bronze, and honest concrete.
 
    Palette mirrors the live aspectbuilds.co.uk: navy chalk (#1A2332),
-   deep navy (#0d1520), bronze accent (#AE8455), Bebas Neue display over
+   deep navy (#0d1520), brand light blue (#8BBBE3), Bebas Neue display over
    DM Sans body, zero border radius.
 
    ARCHITECTURE — two tiers, never skip a tier:
@@ -29,7 +29,7 @@
      TIER 1 — PRIMITIVES
      --------------------------------------------------------------- */
 
-  /* Neutrals — cool navy-greys, so the bronze stays the only warm hue */
+  /* Neutrals — cool navy-greys, sitting under the brand light blue */
   --ink-900:   #0d1520;   /* deep navy: headings, inverse surfaces      */
   --ink-800:   #1A2332;   /* chalk navy — raised surface on dark        */
   --ink-700:   #232e42;   /* card surface on dark                       */
@@ -46,12 +46,20 @@
 
   /* Brand bronze.
      500 is the brand fill (AE8455). For bronze TEXT on light, use
-     --bronze-700 (8A6840). For text ON a bronze fill, use white
-     (3.6:1 with AE8455 — large text/UI only) or --ink-900 (6.2:1). */
-  --bronze-500: #AE8455;  /* brand fill, large display accents           */
-  --bronze-600: #9a7448;  /* fill hover / pressed                        */
-  --bronze-700: #8A6840;  /* bronze TEXT on light      5.0:1  AA pass    */
-  --bronze-50:  #f5f0e9;  /* tint background                             */
+     --bronze-700. For text ON a light-blue fill, use --ink-900
+     (deep navy on #8BBBE3 is ~8.9:1) — white fails on the light blue. */
+  /* MB brand light blue — taken from the live site's Elementor kit
+     (#8BBBE3 buttons/nav/overlays, #619FCE CTA buttons, #6EC1E4 icon accents).
+     Scale built around it: 600 = hover, 700 = the only blue for TEXT on light
+     (6.2:1 on paper-50, AA), 50 = tint background. */
+  --bronze-500: #8BBBE3;  /* brand fill, large display accents           */
+  --bronze-600: #619FCE;  /* fill hover / pressed (her CTA button blue)  */
+  --bronze-700: #2E6DA8;  /* blue TEXT on light       6.0:1  AA pass     */
+  --bronze-50:  #eef5fc;  /* tint background                             */
+  /* Logo brand pair — sampled from /mb-logo.png (the client's actual file):
+     navy #002349 letters, teal #047F71 swoosh + "Payroll Solutions". */
+  --brand-navy: #002349;
+  --brand-teal: #047F71;
   /* Legacy names kept so any stale --orange-* reference still resolves
      during the transition; delete after the sweep. */
   --orange-500: var(--bronze-500);
@@ -85,13 +93,13 @@
   --text-inverse-subtle:  rgba(250, 250, 250, 0.52);
 
   /* Accent */
-  --accent:        var(--bronze-500);  /* fills, bars, rules             */
-  --accent-hover:  var(--bronze-600);
-  --accent-text:   var(--bronze-700);  /* the ONLY bronze for body text  */
-  --accent-tint:   var(--bronze-50);
-  --on-accent:     var(--ink-900);     /* text on a bronze fill   6.2:1  */
+  --accent:        var(--brand-teal);  /* fills, bars, rules — logo teal   */
+  --accent-hover:  #05957f;            /* teal hover / pressed             */
+  --accent-text:   #056b5f;            /* teal TEXT on light  5.9:1 AA     */
+  --accent-tint:   #e6f4f1;            /* teal tint background             */
+  --on-accent:     #ffffff;            /* text on a teal fill              */
   /* Bronze TEXT on a dark surface: the bright bronze reads best on navy. */
-  --accent-on-dark: var(--bronze-500);
+  --accent-on-dark: #6fd6c4;   /* light teal for text on navy  9:1 */
 
 
   /* Lines */
@@ -177,8 +185,8 @@
   --shadow-md: 0 6px 20px rgba(10, 10, 10, 0.08);
   --shadow-lg: 0 16px 40px rgba(10, 10, 10, 0.12);
   /* Accent glow — for the primary CTA only. Overuse kills it. */
-  --shadow-accent:       0 4px 14px -2px rgba(255, 107, 26, 0.45);
-  --shadow-accent-hover: 0 8px 24px -4px rgba(255, 107, 26, 0.55);
+  --shadow-accent:       0 4px 14px -2px rgba(4, 127, 113, 0.4);
+  --shadow-accent-hover: 0 8px 24px -4px rgba(4, 127, 113, 0.5);
 
   /* Motion — one duration set, one easing. Some steps below are not yet
      used anywhere; they are kept so the scale stays complete rather than
@@ -349,24 +357,24 @@ p { margin: 0 0 var(--sp-4); }
 .btn:active { transform: translateY(0); }
 
 .btn--primary {
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--brand-teal);
+  color: #ffffff;
   box-shadow: var(--shadow-accent);
   font-weight: 700;
   letter-spacing: 0.01em;
 }
 .btn--primary:hover {
-  background: var(--accent-hover);
-  color: var(--on-accent);
+  background: #05957f;
+  color: #ffffff;
   box-shadow: var(--shadow-accent-hover);
   transform: translateY(-2px);
 }
 
 .btn--secondary {
-  background: var(--surface-inverse);
-  color: var(--text-inverse);
+  background: var(--brand-navy);
+  color: #ffffff;
 }
-.btn--secondary:hover { background: var(--surface-inverse-hover); color: var(--text-inverse); }
+.btn--secondary:hover { background: #123a6d; color: #ffffff; }
 
 .btn--ghost {
   background: transparent;

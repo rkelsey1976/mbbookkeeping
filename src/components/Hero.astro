@@ -32,8 +32,9 @@ type Props = {
   primaryCta?: HeroCta;
   /** Rendered as a tel: link beside the primary CTA. */
   phone?: { label?: string; number: string; display: string };
-  /** Background photograph. Loaded eagerly — this is the LCP element. */
-  image: string;
+  /** Background photograph. Loaded eagerly — this is the LCP element.
+      Optional on the MB mock: omitted = navy gradient, no photo. */
+  image?: string;
   /** Extra photographs to crossfade through. Fetched only after the page
       has loaded, so they never compete with the LCP image. */
   rotateWith?: string[];
@@ -69,19 +70,14 @@ const {
 // /heroes/r. A single 1600px file was being served to every device — a
 // 360px phone downloading 148KB to paint a 360px-wide box, which is what
 // dominated LCP on a throttled mobile run.
-const HERO_WIDTHS = [480, 800, 1200, 1600];
-const stem = image.split('/').pop()?.replace(/\.webp$/, '');
-const heroSrcset = stem
-  ? HERO_WIDTHS.map((w) => `/heroes/r/${stem}-${w}.webp ${w}w`).join(', ')
-  : undefined;
 ---
 
 <section class:list={['hero-x', `hero-x--${size}`]}>
   <div class="hero-x__media" data-rotate-every={rotateEvery}>
+    {image ? (
     <img
       class="hero-x__img is-active"
       src={image}
-      srcset={heroSrcset ?? undefined}
       sizes="100vw"
       alt={imageAlt}
       width="1600"
@@ -91,6 +87,7 @@ const heroSrcset = stem
       decoding="async"
       aria-hidden={imageAlt === '' ? 'true' : undefined}
     />
+    ) : null}
     {/* src is deliberately absent: these are injected from data-src after
         the load event. An in-viewport <img src> — even lazy or low priority —
         would be fetched straight away and contend with the LCP image. */}
@@ -299,6 +296,15 @@ const heroSrcset = stem
     background: var(--surface-inverse);
     color: var(--text-inverse);
     overflow: hidden;
+  }
+  /* Brand gradient sits BENEATH the media layer (z-index -1) so a photo,
+     when present, paints on top of it; with no photo the gradient shows. */
+  .hero-x::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(115deg, #002349 0%, #123a6d 55%, #2E6DA8 100%);
   }
   /* svh, not vh — stops the block jumping as mobile browser chrome hides. */
   .hero-x--full    { min-height: min(92svh, 900px); }

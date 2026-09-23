@@ -10,15 +10,12 @@ import type { Area } from '../../lib/areas';
 import { REVIEWS, reviewsFor } from '../../lib/reviews';
 import { getNote } from '../../lib/serviceAreaNotes';
 
-// service × neighbourhood, Bath only: 13 services × every Bath & BANES area.
-// Matrix page budget: not every service × area pair earns a page.
-// Tier rules (from GSC demand data, Sept 2026):
-//   primary areas (Trowbridge, Radstock, Chippenham, Frome, Batheaston,
-//   Corsham) get the FULL matrix — measured demand in every service.
-//   secondary areas (Keynsham, Melksham, the Bath villages) get only the
-//   key money services — extensions, renovation, kitchens, windows — where
-//   a matrix page can realistically rank.
-//   tertiary areas get their hub page only.
+// service × neighbourhood, Bristol & South Gloucestershire: 7 services ×
+// every MB area. Matrix page budget: not every service × area pair earns a
+// page. Tier rules:
+//   primary areas get the FULL matrix;
+//   secondary areas get only the key money services where a matrix page can
+//   realistically rank.
 export function getStaticPaths() {
   const areas = getBathAreas();
   const pairs: { params: { service: string; area: string }; props: { service: Service; area: Area } }[] = [];
@@ -26,7 +23,7 @@ export function getStaticPaths() {
     for (const area of areas) {
       if (area.tier === 'primary' || (area.tier === 'secondary' && KEY_SERVICES.has(service.slug))) {
         pairs.push({
-          params: { service: `bath-${service.slug}`, area: area.slug },
+          params: { service: service.slug, area: area.slug },
           props: { service, area },
         });
       }
@@ -37,32 +34,27 @@ export function getStaticPaths() {
 
 const { service, area } = Astro.props;
 
-// Prose form: "Plastering Services" reads wrong mid-sentence.
-const prose = service.slug === 'builders-bath'
-  ? 'Builders'
-  : service.shortName.replace(/\s+Services$/i, '');
+// Prose form: "Payroll Services" reads wrong mid-sentence.
+const prose = service.shortName.replace(/\s+Services$/i, '');
 const proseLower = prose.toLowerCase();
 
 // Projects in this area that match this service. This is the one block that
 // varies by BOTH axes, so it carries most of the per-page differentiation.
+// On the MB mock there is no project gallery (honest-empty rule), so the
+// keywords map stays slim and the block no-ops.
 const KEYWORDS: Record<string, string[]> = {
-  'kitchen-fitters':           ['kitchen'],
-  'extension-builders':        ['extension', 'garden extension'],
-  'loft-conversion':           ['loft'],
-  'renovation':                ['refurb', 'renovation', 'renovate'],
-  'heritage-restoration':      ['heritage', 'listed', 'lime', 'stone'],
-  'new-build':                 ['garage', 'new build', 'base'],
-  'stone-walling':             ['wall', 'stone'],
-  'landscaping':               ['landscap', 'patio', 'garden'],
-  'plastering-rendering':      ['render', 'plaster', 'skimm', 'lime'],
-  'painting-decorating':       ['paint', 'decoration', 'decorat'],
-  'property-maintenance':      ['maintenance', 'repair', 'gutter', 'fascia'],
-  'windows-doors':             ['window', 'door'],
-  'bathroom-installers':       ['bathroom', 'wetroom'],
-  'builders-bath':             [],
+  'bookkeeping':           ['ledger', 'reconciliation', 'books'],
+  'payroll':               ['payroll', 'paye'],
+  'vat-returns':           ['vat', 'mtd', 'making tax'],
+  'self-assessment':       ['self assessment', 'tax return'],
+  'bank-reconciliation':   ['reconciliation'],
+  'management-accounts':   ['report', 'management accounts'],
+  'cloud-accounting':      ['xero', 'quickbooks', 'sage', 'software'],
 };
 const keys = KEYWORDS[service.slug] ?? [];
-const matched = area.nearbyProjects.filter((p: string) =>
+// MB areas carry no nearbyProjects (no fabricated project gallery for a
+// pitch mock) — the block below must no-op rather than crash.
+const matched = (area.nearbyProjects ?? []).filter((p: string) =>
   keys.some((k) => p.toLowerCase().includes(k))
 );
 
@@ -70,47 +62,36 @@ const matched = area.nearbyProjects.filter((p: string) =>
 const areaReviews = REVIEWS.filter((r) => r.area === area.name);
 const exact = areaReviews.filter((r) => r.service.toLowerCase().includes(proseLower));
 const reviews = exact.length ? exact : areaReviews.length ? areaReviews : reviewsFor(`${service.slug}-${area.slug}`);
-const reviewScope = exact.length ? `${prose} in ${area.name}` : areaReviews.length ? area.name : 'Bath & BANES';
+const reviewScope = exact.length ? `${prose} in ${area.name}` : areaReviews.length ? area.name : 'Bristol & South Gloucestershire';
 
 // The one block that is true of this service in this area and nowhere
 // else. Written by hand in src/lib/serviceAreaNotes.ts; the block is
 // omitted until it exists rather than padded with something generic.
 const note = getNote(service.slug, area.slug);
 
-// This service's prices against this area's actual housing stock — one of
-// the few blocks that varies on both axes without anything being invented.
-// Plastering is quoted by room rather than house shape, so it falls back to
-// its own job-type guide.
-
-// Six of the ninety pages are the home of a real case study. Shown only
-// where it actually happened.
-
 const otherServices = SERVICES.filter((s) => s.slug !== service.slug);
-// Capped at two. These ninety pages were sending 70% of their links
-// sideways to each other, which recirculated authority inside the weakest
-// tier of the site instead of passing it back up. Two is enough for a
-// reader; the rest of the budget goes to the hubs below.
+// Capped at two. Cross-links to neighbouring areas.
 const nearby = area.nearbyAreas
   .map((s: string) => getArea(s))
-  .filter((a): a is NonNullable<typeof a> => Boolean(a) && a!.city === 'bath')
+  .filter((a): a is NonNullable<typeof a> => Boolean(a))
   .slice(0, 2);
 
-const bathAreaCount = getBathAreas().length;
+const areaCount = getBathAreas().length;
 
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: `${prose} in ${area.name}, Bath`,
+  name: `${prose} in ${area.name}, ${area.postcode}`,
   serviceType: prose,
   provider: {
     '@type': 'LocalBusiness',
-    '@id': 'https://www.aspectbuilds.co.uk/#organization',
-    name: 'Aspect Builds & Maintenance Ltd',
-    telephone: '+441174094116',
+    '@id': 'https://www.mbbookkeepingandpayrollsolutions.co.uk/#organization',
+    name: 'MB Bookkeeping & Payroll Solutions',
+    telephone: '+447828742991',
   },
   areaServed: {
     '@type': 'Place',
-    name: `${area.name}, Bath`,
+    name: `${area.name}, ${area.postcode}`,
     address: { '@type': 'PostalAddress', addressLocality: area.name, postalCode: area.postcode, addressCountry: 'GB' },
   },
 };
@@ -118,18 +99,17 @@ const schema = {
 
 <PageLayout
   title={`${prose} in ${area.name} ${area.postcode} | ${serviceHook(service)}`}
-  description={`${prose} in ${area.name}, Bath ${area.postcode}. Free site visit, fixed written quote within 48 hours, ${warrantyBadge(service)}.`}
-  preloadImage={`/heroes/${service.slug}.webp`}
-  canonical={`/bath-${service.slug}/${area.slug}/`}
+  description={`${prose} in ${area.name}, ${area.postcode}. Free first consultation, clear pricing, ${warrantyBadge(service)}.`}
+  canonical={`/${service.slug}/${area.slug}/`}
   ogImage={`/og/${service.slug}.jpg`}
   schema={schema}
   breadcrumbs={[
     { name: 'Our Services', href: '/our-services/' },
-    { name: service.shortName, href: `/bath-${service.slug}/` },
-    { name: area.name, href: `/bath-${service.slug}/${area.slug}/` },
+    { name: service.shortName, href: `/${service.slug}/` },
+    { name: area.name, href: `/${service.slug}/${area.slug}/` },
   ]}
   ctaHeading={`${prose} in ${area.name}?`}
-  ctaText={`Free site visit across ${area.name} ${area.postcode}, a fixed written quote within 48 hours, and no pressure either way.`}
+  ctaText={`Book a free consultation — we cover ${area.name} ${area.postcode} and the rest of Bristol and South Gloucestershire, with no pressure either way.`}
 >
   <Hero
     size="compact"
@@ -137,66 +117,24 @@ const schema = {
     title={`${prose} in`}
     titleAccent={area.name}
     lede={area.intro}
-    primaryCta={{ label: 'Get a Free Quote', href: '/contact/#lead-form-heading' }}
-    phone={{ number: '+441174094116', display: '07498 158747' }}
-    image={{
-    'builders-bath':         '/images/hero-james-bath-property-1.webp',
-    'kitchen-fitters':       '/projects/custom-kitchen-refit-1.webp',
-    'extension-builders':    '/projects/midford-garden-extension-1.webp',
-    'loft-conversion':       '/projects/bath-loft-extension-1.webp',
-    'renovation':            '/images/hero-home-loft.webp',
-    'heritage-restoration':  '/images/hero-james-bath-property-8.webp',
-    'new-build':             '/projects/frome-garage-conversion-1.webp',
-    'stone-walling':         '/projects/garden-wall-landscaping-1.webp',
-    'landscaping':           '/projects/bath-landscaping-1.webp',
-    'plastering-rendering':  '/projects/chilcompton-rendering-1.webp',
-    'painting-decorating':   '/images/hero-james-bath-property-3.webp',
-    'property-maintenance':  '/projects/greenhouse-base-build-1.webp',
-    'windows-doors':         '/images/hero-james-bath-property-6.webp',
-    'bathroom-installers':   '/projects/luxury-bathroom-refit-1.webp',
-  }[service.slug] ?? '/images/hero-james-bath-property-1.webp'}
-    imageAlt=""
-    trust={['Free site visit', 'Fixed written quote', warrantyBadge(service)]}
+    primaryCta={{ label: 'Book a Free Consultation', href: '/contact/#lead-form-heading' }}
+    phone={{ number: '+447828742991', display: '07828 742991' }}
+    trust={['Free consultation', 'MTD-ready', warrantyBadge(service)]}
   />
 
   <!-- Area context, framed for this service -->
   <section class="section">
-    <div class="container">
-      <div class="media-split">
-        <div class="media-split__copy">
-          {note && (
-            <p class="sxa-note">{note}</p>
-          )}
-          <p class="sxa-lead">{service.longIntro}</p>
-          <p class="sxa-lead">{area.longIntro}</p>
-        </div>
-        <figure class="media-split__media">
-          <img
-            src={{
-              'builders-bath':         '/images/hero-james-bath-property-1.webp',
-              'kitchen-fitters':       '/projects/custom-kitchen-refit-2.webp',
-              'extension-builders':    '/projects/midford-garden-extension-2.webp',
-              'loft-conversion':       '/projects/bath-loft-extension-2.webp',
-              'renovation':            '/images/hero-home-loft.webp',
-              'heritage-restoration':  '/images/hero-james-bath-property-9.webp',
-              'new-build':             '/projects/frome-garage-conversion-2.webp',
-              'stone-walling':         '/projects/garden-wall-landscaping-2.webp',
-              'landscaping':           '/projects/bath-landscaping-2.webp',
-              'plastering-rendering':  '/projects/chilcompton-rendering-2.webp',
-              'painting-decorating':   '/images/hero-james-bath-property-4.webp',
-              'property-maintenance':  '/projects/greenhouse-base-build-2.webp',
-              'windows-doors':         '/images/hero-james-bath-property-7.webp',
-              'bathroom-installers':   '/projects/luxury-bathroom-refit-2.webp',
-            }[service.slug] ?? '/images/hero-james-bath-property-1.webp'}
-            alt={`${service.shortName} work by Aspect Builds in Bath & BANES`}
-            width="760" height="475" loading="lazy" decoding="async"
-          />
-        </figure>
-      </div>
+    <div class="container container--reading">
+      {note && (
+        <p class="sxa-note">{note}</p>
+      )}
+      <p class="sxa-lead">{service.longIntro}</p>
+      <p class="sxa-lead">{area.longIntro}</p>
     </div>
   </section>
 
-  <!-- Projects matching this service in this area -->
+  <!-- Projects matching this service in this area (no-op on the mock — no
+       fabricated project gallery) -->
   {matched.length > 0 && (
     <section class="section section--alt">
       <div class="container">
@@ -214,80 +152,76 @@ const schema = {
   <!-- What this service actually solves -->
   <section class="section section--alt">
     <div class="container">
-      {/* variant was "dont", which is not one of the component's variants
-          ('do' | 'problem' | 'benefit'). No icon set matched it and the variant
-          styling never applied. This block lists service.problems under
-          "Problems we fix", so 'problem' is the intended one. */}
       <ServiceBullets
         items={service.problems}
         variant="problem"
         columns={2}
         eyebrow="Problems we fix"
-        heading={`When ${area.name} homeowners call us about ${proseLower}`}
-        lede="If any of these sound like your property, this is the service you want."
+        heading={`When ${area.name} businesses call us about ${proseLower}`}
+        lede="If any of these sound like your business, this is the service you want."
       />
     </div>
   </section>
 
-  <!-- Housing stock for this area -->
+  <!-- Local business stock for this area -->
   <section class="section">
     <div class="container">
       <ServiceBullets
         items={area.propertyTypes}
         variant="do"
         columns={3}
-        eyebrow="Housing stock"
-        heading={`${area.name} properties we ${proseLower.includes("plaster") ? "plaster" : "render"}`}
-        lede={`What ${proseLower} typically involves on the housing stock here.`}
+        eyebrow="Local business stock"
+        heading={`The ${area.name} businesses we help`}
+        lede={`What ${proseLower} typically involves for the businesses here.`}
       />
     </div>
   </section>
 
-  {/* Cost section removed 2026-09-02 — the figures were not confirmed.
-      service.costGuide and lib/areaCosts.ts are untouched, so this is a
-      render call away from returning once the bands are signed off. */}
+  {/* Cost section removed — area-level pricing must not be invented for a
+      real business (CPRs 2008 concern). service.costGuide (generic UK
+      guide ranges) is untouched and renders on the service hub instead. */}
 
-  {/* "Real Project" case study removed 2026-09-02, pre-launch. The
-      CaseStudy component and the `caseStudy` entries in services.ts are
-      untouched — this is only the render call. The copy makes very
-      specific claims (a rival's £8,500 quote, 105m², 8 working days,
-      "25-year maintenance-free") that want evidencing before they go back
-      up, ideally alongside photographs of the job. */}
+  {/* "Real Project" case study removed — nothing invented for the mock.
+      The CaseStudy component and the `caseStudy` entries in services.ts
+      are untouched — this is only the render call, ready for real client
+      stories with permission after signature. */}
 
   <!-- Local knowledge -->
   <section class="section section--alt">
     <div class="container">
       <header class="section-header section-header--center">
         <span class="eyebrow">Local knowledge</span>
-        <h2>Working in {area.name}</h2>
+        <h2>Working with {area.name} businesses</h2>
       </header>
       <div class="sxa-facts">
         <div class="sxa-fact">
-          <h3>Access &amp; parking</h3>
-          <p>{area.transport}</p>
+          <h3>Where we are</h3>
+          <p>We cover all of Bristol — {area.name} included. Our office is on Reed Road in Yate, minutes up the road.</p>
         </div>
         <div class="sxa-fact">
-          <h3>Who lives here</h3>
-          <p>{area.demographics}</p>
-        </div>
-        <div class="sxa-fact">
-          <h3>Landmarks we work around</h3>
+          <h3>Landmarks we know</h3>
           <ul class="sxa-chips">{area.landmarks.map((l: string) => <li>{l}</li>)}</ul>
         </div>
         <div class="sxa-fact">
-          <h3>Pricing notes</h3>
-          <p>{area.costVariation}</p>
+          <h3>Software</h3>
+          <p>We work in Xero, QuickBooks, Sage and FreeAgent — whichever you already use.</p>
+        </div>
+        <div class="sxa-fact">
+          <h3>MTD-ready</h3>
+          <p>VAT returns are filed under Making Tax Digital from day one.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <ReviewCards
-    reviews={reviews}
-    eyebrow="Reviews"
-    heading={`What ${reviewScope} customers say`}
-    lede="Verified reviews from recent work."
-  />
+  {reviews.length > 0 && (
+    <ReviewCards
+      reviews={reviews}
+      eyebrow="Reviews"
+      heading={`What ${reviewScope} customers say`}
+      lede="Words from the businesses we look after."
+    />
+  )}
 
   <!-- Cross-links: other services here, and this service nearby -->
   <section class="section section--alt">
@@ -300,7 +234,7 @@ const schema = {
               .filter((s) => area.tier === 'primary' || (area.tier === 'secondary' && KEY_SERVICES.has(s.slug)))
               .map((s) => (
               <li>
-                <a href={`/bath-${s.slug}/${area.slug}/`}>
+                <a href={`/${s.slug}/${area.slug}/`}>
                   {s.shortName.replace(/\s+Services$/i, '')} in {area.name}
                 </a>
               </li>
@@ -314,7 +248,7 @@ const schema = {
               .filter((a) => a.tier === 'primary' || (a.tier === 'secondary' && KEY_SERVICES.has(service.slug)))
               .map((a) => (
               <li>
-                <a href={`/bath-${service.slug}/${a.slug}/`}>
+                <a href={`/${service.slug}/${a.slug}/`}>
                   {prose} in {a.name} <span>{a.postcode}</span>
                 </a>
               </li>
@@ -325,25 +259,25 @@ const schema = {
       <p class="sxa-faq">Questions about {proseLower}? See the <a href="/faqs/">FAQs</a>.</p>
 
       {/* Upward links. This page pointed at its service landing page and nothing
-          else — no route back to the neighbourhood hub or the city, so the tail
-          held authority it had no way to pass on. */}
+          else — no route back to the service hub, so the tail held authority it
+          had no way to pass on. */}
       <ul class="sxa-up">
         <li>
-          <a href={`/bath-${service.slug}/`}>
+          <a href={`/${service.slug}/`}>
             <span class="sxa-up__label">All {proseLower}</span>
-            <span class="sxa-up__sub">All {bathAreaCount} Bath & BANES areas</span>
+            <span class="sxa-up__sub">All {areaCount} Bristol-area areas</span>
           </a>
         </li>
         <li>
-          <a href={`/bath/${area.slug}/`}>
-            <span class="sxa-up__label">Plastering &amp; rendering in {area.name}</span>
-            <span class="sxa-up__sub">All services, {area.postcode}</span>
+          <a href="/our-services/">
+            <span class="sxa-up__label">All services in {area.name}</span>
+            <span class="sxa-up__sub">Seven services, {area.postcode}</span>
           </a>
         </li>
         <li>
-          <a href="/bath/">
-            <span class="sxa-up__label">Bath coverage</span>
-            <span class="sxa-up__sub">18 neighbourhoods</span>
+          <a href="/contact/">
+            <span class="sxa-up__label">Free consultation</span>
+            <span class="sxa-up__sub">Bristol &amp; South Gloucestershire</span>
           </a>
         </li>
       </ul>

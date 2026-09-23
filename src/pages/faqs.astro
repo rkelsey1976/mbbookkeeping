@@ -1,25 +1,25 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
 import Hero from '../components/Hero.astro';
+import { PHONE, WHATSAPP_NUMBER } from '../lib/contact';
 
-// General questions about hiring Aspect Builds. Service-specific questions
-// (costs, timescales, materials per trade) live on the 14 service pages —
-// 111 of them across the site — so this page covers the engagement itself.
+// General questions about hiring MB Bookkeeping & Payroll Solutions.
+// Service-specific questions (pricing detail, process per service) live on
+// the seven service pages, so this page covers the engagement itself.
+// No invented prices, accreditations or claims — honest-empty rule.
 const faqs = [
-  { q: 'What does Aspect Builds actually do?', a: 'Extensions, loft conversions, whole-house renovations, kitchens and bathrooms, heritage and listed-building work, plastering and decorating, landscaping and stonework, and planned property maintenance — fourteen services, all run by the same core team from our base just outside Bath.' },
-  { q: 'Are you a proper company or a man with a van?', a: 'Aspect Builds & Maintenance Ltd, registered in England and Wales, company no. 16033975. James is an MCIOB Chartered Builder through the Chartered Institute of Building, every operative holds a CSCS card, and we carry £10M+ public liability insurance. Companies House listing and insurance documents available on request.' },
-  { q: 'How does quoting work?', a: 'Free site visit, then a fixed written quote within 48 hours — itemised for labour, materials and any statutory fees. What we quote is what you pay. We never price jobs over the phone or give ballpark figures we later move; if something genuinely unforeseeable turns up mid-job, you approve the change in writing before it happens.' },
-  { q: 'How much will my project cost?', a: 'Honestly: it depends on the property and the scope. As a rough guide, like-for-like kitchen refits start around £8,000–£15,000, loft conversions £18,000–£35,000, extensions £30,000–£80,000+. Every service page has a proper cost guide with real Bath ranges. The only number that matters is the fixed quote after the site visit.' },
-  { q: 'How long will my project take?', a: 'Typical guides: a kitchen refit 1–2 weeks, a loft conversion 6–8 weeks, a single extension 8–12 weeks, a whole-house renovation 3–4 months. Dates are fixed at quote stage and we stick to them — if we are ever running late you will know why and when we will recover, not be told to be patient.' },
-  { q: 'Do you work on listed buildings and in conservation areas?', a: 'Yes — it is a specialism, not an exception. Much of Bath is Georgian, so lime mortars, breathable systems and conservation-officer liaison are routine for us. We handle listed building consent and conservation area paperwork as part of the job, not as an extra.' },
-  { q: 'Can I live at home during the work?', a: 'Mostly, yes. We work in phases, seal off the work area with dust barriers, and protect routes through the house. Kitchens and bathrooms are the exception worth planning for — we will tell you honestly at quote stage which days you will be without water or cooking facilities and for how long.' },
-  { q: 'Which areas do you cover?', a: 'Bath and the surrounding villages from our base in Dunkerton — out to Keynsham, Bradford on Avon, Trowbridge, Melksham, Chippenham, Corsham, Frome and the Somer Valley. Free site visits across the whole patch. Every neighbourhood has its own page under Areas We Cover.' },
-  { q: 'What warranty do I get?', a: 'A straightforward one: defects on our workmanship are put right at no cost, and manufacturer warranties on supplied products (windows, boilers, appliances, fit-out systems) are passed to you in full at handover. We will not attach a big number to the side of a building and call it a warranty — the fixed quote, the written spec and the documents at handover are the guarantee.' },
-  { q: 'How do payments work?', a: 'No deposit for most projects. Payments are staged against completed, agreed milestones — not calendar dates — so you never pay ahead of work done. The schedule is in the quote before you commit, and final payment is on completion once you have walked the job with James.' },
-  { q: 'Who will actually be in my house?', a: 'Our own core team plus long-standing regular subcontractors — electricians and plumbers we have used for years. Everyone holds a CSCS card. The same project manager runs your job start to finish, and James is on site regularly — you will know the people working in your home.' },
-  { q: 'How messy will it be?', a: 'Some mess is inevitable during demolition and stripping out — we will not pretend otherwise. What we do promise: dust sheets and floor protection every day, sealed doorways, a tidy-up before we leave each evening, waste removed as we go, and a full professional clean at handover.' },
-  { q: 'What if I change my mind about something mid-project?', a: 'Happens all the time and it is fine. Changes are priced in writing, agreed, and scheduled before they happen — you always know the effect on cost and dates before approving. What we will not do is surprise you with a bigger invoice at the end.' },
-  { q: 'Your question is not here', a: 'It probably is — the fourteen service pages carry 111 more specific questions on costs, timescales, materials and process per trade. Or ask us directly: call 07498 158747 (or WhatsApp the same number), or send the form and we will come back the same day.' },
+  { q: 'What does MB Bookkeeping & Payroll Solutions actually do?', a: 'Bookkeeping — purchase and sales ledgers, data entry and bank reconciliations kept up to date; payroll management run on time and HMRC-compliant; VAT returns filed under Making Tax Digital; self assessment; regular financial reports; and cloud accounting setup and support. Seven services for small businesses across Bristol and South Gloucestershire.' },
+  { q: 'Do I need a bookkeeper if I have an accountant?', a: 'Yes, usually — they do different jobs. Your accountant handles year-end accounts, tax planning and filings; we keep the day-to-day books accurate all year so your accountant gets clean figures and their bill stays lower. Most accountants are glad of a bookkeeper who keeps the records tidy.' },
+  { q: 'How does pricing work?', a: 'It depends on what you need and how busy your books are — monthly transaction volume, payroll headcount, VAT scheme. We agree a fixed monthly price in writing after a free consultation, so you always know what you are paying before anything starts. No hourly surprises.' },
+  { q: 'How do we start?', a: 'With a free consultation — a conversation about your business, your software and what needs doing. If we are a fit, we agree the scope and price in writing, then get set up. Nothing starts until you have seen it all in writing.' },
+  { q: 'What software do you work with?', a: 'Xero, QuickBooks, Sage and FreeAgent. If you already use one, we work in it — no forced migrations. If you are still on spreadsheets, we can set you up properly in a cloud package and show you around it.' },
+  { q: 'Do you handle Making Tax Digital?', a: 'Yes. VAT returns are filed digitally under MTD from day one, and we keep records in a digital format that meets the rules as they tighten. If MTD for income tax applies to you, self assessment is part of what we do.' },
+  { q: 'Do you do payroll?', a: 'Yes — full payroll management: payslips, PAYE filings to HMRC, pensions enrolment handling, starters and leavers, and year-end forms. Payroll runs on your schedule, on time, every time.' },
+  { q: 'Which areas do you cover?', a: 'The whole of Bristol and South Gloucestershire — the city and its suburbs, Yate, Chipping Sodbury, Bradley Stoke, Thornbury, Kingswood, down to Portishead, Nailsea, Clevedon and Keynsham. Every neighbourhood has its own page under each service. Our office is on Reed Road in Yate.' },
+  { q: 'Can we meet face to face?', a: 'Yes — around Yate and North-East Bristol we are minutes away. Further out, phone, video and email work just as well; most of the work happens in your software either way, where you can see it.' },
+  { q: 'Will my accountant be happy about this?', a: 'Almost certainly. We hand over reconciled books and clear reports, in the format your accountant asks for. Ask them — most will tell you a good bookkeeper saves them (and you) money at year end.' },
+  { q: 'How do payments work?', a: 'A fixed monthly fee, agreed in writing, invoiced monthly. No deposit, no lock-in contract — you stay because the books are good, not because you are tied in.' },
+  { q: 'Your question is not here', a: `The seven service pages carry more specific questions on pricing, process and scope per service. Or ask us directly: call ${PHONE.display}${WHATSAPP_NUMBER ? ' (or WhatsApp the same number)' : ''}, or send the form and we will come back the same working day.` },
 ];
 
 const faqSchema = {
@@ -30,14 +30,13 @@ const faqSchema = {
 ---
 
 <PageLayout
-  title="FAQs | Hiring a Builder in Bath | Aspect Builds"
-  description="Straight answers on hiring Aspect Builds: quoting, pricing, timescales, listed buildings, warranties, payments and how the work runs."
-  preloadImage="/projects/custom-kitchen-refit-1.webp"
+  title="FAQs | Bookkeeping & Payroll in Bristol | MB Bookkeeping"
+  description="Straight answers on hiring a bookkeeper: what we do, pricing, software, MTD, payroll, coverage and how working with MB Bookkeeping & Payroll Solutions runs."
   canonical="/faqs/"
   schema={faqSchema}
   breadcrumbs={[{ name: 'FAQs', href: '/faqs/' }]}
   ctaHeading="Got a question we haven't answered?"
-  ctaText="Call 07498 158747 or send a message and we'll get back to you the same day."
+  ctaText={`Call ${PHONE.display} or send a message and we'll get back to you the same working day.`}
   ctaLabel="Get in touch"
 >
   <Hero
@@ -45,11 +44,11 @@ const faqSchema = {
     eyebrow={['FAQs']}
     title="Frequently asked"
     titleAccent="questions."
-    lede="Straight answers about hiring Aspect Builds — quoting, pricing, timescales, listed buildings and how the work actually runs. Service-specific costs live on each service page."
+    lede="Straight answers about hiring a bookkeeper — what we do, pricing, software, Making Tax Digital and how the work runs. Service-specific questions live on each service page."
     primaryCta={{ label: 'Ask us directly', href: '/contact/#lead-form-heading' }}
-    phone={{ number: '+447498158747', display: '07498 158747' }}
-    image="/projects/custom-kitchen-refit-1.webp"
-    imageAlt="Custom kitchen refit in Bath by Aspect Builds — shaker units with timber worktop"
+    phone={{ number: PHONE.tel, display: PHONE.display }}
+    image="/hero/hero-contact.webp"
+    imageAlt="Organised desk with notebook, calculator and financial charts"
   />
 
   <section class="section">

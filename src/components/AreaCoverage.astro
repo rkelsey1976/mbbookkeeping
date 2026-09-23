@@ -39,15 +39,15 @@ const groups = getAreasByRegion();
         {g.areas.map((a) => (
           <li>
             {/* On a service page, primary/secondary areas have their own
-                service × area page under the /bath-{service}/{area}/ matrix;
-                all areas have a neighbourhood hub at /bath/{area}/. */}
+                service × area page under the /{service}/{area}/ matrix;
+                secondary areas without a matrix page link to the hub. */}
             <a
               class="area-coverage__area area-coverage__area--link"
               href={serviceSlug
                 ? (a.tier === 'primary' || (a.tier === 'secondary' && KEY_SERVICES.has(serviceSlug))
-                    ? `/bath-${serviceSlug}/${a.slug}/`
-                    : `/bath/${a.slug}/`)
-                : `/bath/${a.slug}/`}
+                    ? `/${serviceSlug}/${a.slug}/`
+                    : `/${serviceSlug}/`)
+                : `/${serviceSlug ?? ''}`}
             >
               {a.name}
               <span class="area-coverage__pcode">{a.postcode}</span>

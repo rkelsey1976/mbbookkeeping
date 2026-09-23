@@ -1,11 +1,11 @@
 {
-  "name": "Aspect Builds & Maintenance Ltd",
-  "short_name": "Aspect Builds",
-  "description": "Quality building and property maintenance across Bath and the surrounding areas.",
+  "name": "MB Bookkeeping & Payroll Solutions",
+  "short_name": "MB Bookkeeping",
+  "description": "Bookkeeping and payroll for small businesses across Bristol and South Gloucestershire.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0d1520",
-  "theme_color": "#0d1520",
+  "background_color": "#eef5fc",
+  "theme_color": "#8BBBE3",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

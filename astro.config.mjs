@@ -125,7 +125,7 @@ const changefreqFor = (path) => (path === '/' ? 'weekly' : 'monthly');
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://www.aspectbuilds.co.uk',
+  site: 'https://www.mbbookkeepingandpayrollsolutions.co.uk',
 
   // Every canonical, internal link and sitemap entry carries a trailing slash,
   // and the build is directory-style (/page/index.html). Declared rather than

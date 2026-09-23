@@ -1,19 +1,14 @@
 ---
-// ASPECT BUILDS — brand lockup.
+// MB Bookkeeping & Payroll Solutions — brand lockup.
 //
-// This is the real artwork from the live aspectbuilds.co.uk (Base.astro):
-// a roofline chevron (two strokes meeting at a peak), "Aspect" set in
-// Bebas Neue, and "BUILDS & MAINTENANCE LTD" as a letter-spaced micro
-// line beneath. The chevron takes --accent (bronze); the wordmark takes
-// currentColor so the lockup inverts cleanly on dark surfaces.
-//
-// The chevron is drawn inline rather than loading aspect-logo.svg because
-// it needs to inherit colour from its surroundings — an <img> can't do
-// that, and the mark is three strokes, not worth an extra request.
+// Uses the client's actual logo file (/mb-logo.png, 2103×748, transparent
+// background). Displayed at a fixed image height so the lockup keeps its
+// designed proportions; `size` sets the cap height of the wordmark and the
+// image scales from it (image height ≈ 1.9× cap height).
 
 type Props = {
   variant?: 'inline' | 'mark' | 'stacked';
-  /** Cap height of the wordmark in px. Everything else scales from it. */
+  /** Cap height of the wordmark in px. Image height ≈ 1.9× this. */
   size?: number;
   showTagline?: boolean;
   class?: string;
@@ -21,95 +16,56 @@ type Props = {
 
 const {
   variant = 'inline',
-  size = 32,
+  size = 26,
   showTagline = true,
   class: className = '',
 } = Astro.props as Props;
 
 const isMark = variant === 'mark';
+const imgH = Math.round(size * 1.9);
 ---
 
 <span
-  class:list={['ab', `ab--${variant}`, className]}
-  style={`--cap: ${size}px`}
+  class:list={['mb', `mb--${variant}`, className]}
+  style={`--cap: ${size}px; --img-h: ${imgH}px`}
   role="img"
-  aria-label="Aspect Builds & Maintenance Ltd"
+  aria-label="MB Bookkeeping & Payroll Solutions"
 >
-  <svg
-    class="ab__mark"
-    viewBox="-2 -2 26 18"
-    fill="none"
-    width={Math.round(size * 1.571)}
-    height={Math.round(size * 1.0)}
-    aria-hidden="true"
-  >
-    <polyline
-      points="0,14 11,0 22,14"
-      stroke="currentColor"
-      stroke-width="3.5"
-      stroke-linejoin="round"
-      stroke-linecap="round"
-    ></polyline>
-  </svg>
-
-  {!isMark && (
-    <span class="ab__words">
-      <span class="ab__name">Aspect</span>
-      {showTagline && (
-        <span class="ab__sub">Builds &amp; Maintenance Ltd</span>
-      )}
-    </span>
-  )}
+  <img
+    class="mb__img"
+    src="/mb-logo.png"
+    alt="MB Bookkeeping & Payroll Solutions"
+    width={2103}
+    height={748}
+  />
 </span>
 
 <style>
-  .ab {
+  .mb {
     display: inline-flex;
     align-items: center;
     line-height: 1;
-    color: inherit;
   }
-  .ab__mark {
+  .mb__img {
+    display: block;
+    height: var(--img-h, 48px);
+    width: auto;
     flex-shrink: 0;
-    /* The chevron is the accent element — bronze, matching the live nav. */
-    color: var(--accent);
-    margin-right: calc(var(--cap) * 0.38);
-  }
-
-  .ab__words {
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--cap) * 0.12);
-  }
-
-  .ab__name {
-    font-family: var(--font-display);
-    font-size: var(--cap);
-    line-height: 1;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .ab__sub {
-    font-family: var(--font-body);
-    font-size: calc(var(--cap) * 0.28);
-    letter-spacing: 0.34em;
-    font-weight: 500;
-    text-transform: uppercase;
-    line-height: 1;
-    opacity: 0.7;
-    white-space: nowrap;
   }
 
   /* Stacked — centred, for footer / dark bands */
-  .ab--stacked {
+  .mb--stacked {
     flex-direction: column;
     align-items: center;
-    gap: calc(var(--cap) * 0.3);
   }
-  .ab--stacked .ab__words { align-items: center; }
 
-  /* Mark-only still gets a touch more breathing room */
-  .ab--mark { gap: 0; }
+  /* Dark-band variant: the logo's navy text vanishes on the dark footer,
+     so sit it on a white chip — the original file shows untouched. */
+  .mb--stacked .mb__img {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+
+  .mb--mark { gap: 0; }
 </style>
