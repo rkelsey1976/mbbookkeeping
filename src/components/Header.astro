@@ -3,6 +3,17 @@ import Logo from './Logo.astro';
 import { SERVICES, getTagline } from '../lib/services';
 import { PHONE } from '../lib/contact';
 
+// Menu thumbnails — 300×200 WebP crops of the hero photography, 3-6KB each.
+const menuShots: Record<string, string> = {
+  'bookkeeping':           '/hero/menu-bookkeeping.webp',
+  'payroll':               '/hero/menu-payroll.webp',
+  'vat-returns':           '/hero/menu-vat-returns.webp',
+  'self-assessment':       '/hero/menu-self-assessment.webp',
+  'bank-reconciliation':   '/hero/menu-bank-reconciliation.webp',
+  'management-accounts':   '/hero/menu-management-accounts.webp',
+  'cloud-accounting':      '/hero/menu-cloud-accounting.webp',
+};
+
 const pathname = Astro.url.pathname;
 const isActive = (path: string) => {
   if (path === '/') return pathname === '/';
@@ -56,6 +67,16 @@ const isActive = (path: string) => {
               <div class="mega-menu__grid">
                 {SERVICES.map((s) => (
                   <a href={`/${s.slug}/`} class="mega-menu__item">
+                    <span class="mega-menu__shot" aria-hidden="true">
+                      <img
+                        src={menuShots[s.slug]}
+                        alt=""
+                        width="300"
+                        height="200"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
                     <span class="mega-menu__copy">
                       <span class="mega-menu__name">{s.name}</span>
                       <span class="mega-menu__tagline">{getTagline(s, 'bristol')}</span>
@@ -466,6 +487,23 @@ const isActive = (path: string) => {
     gap: var(--sp-3);
   }
 
+  .mega-menu__shot {
+    flex: none;
+    width: 92px;
+    aspect-ratio: 3 / 2;
+    border-radius: calc(var(--radius-md) - 2px);
+    overflow: hidden;
+    background: var(--surface-alt);
+  }
+  .mega-menu__shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur-mid) var(--ease);
+  }
+  .mega-menu__item:hover .mega-menu__shot img { transform: scale(1.06); }
+
   .mega-menu__item {
     display: flex;
     align-items: center;
@@ -639,6 +677,9 @@ const isActive = (path: string) => {
       border-radius: var(--radius-sm);
       color: var(--brand-navy);
     }
+    /* Thumbnails off in the drawer — rows stay tight, nothing competes
+       with the nav text at thumb size. */
+    .mega-menu__shot { display: none; }
     .mega-menu__item:hover {
       background: rgba(4, 127, 113, 0.06);
       border-color: transparent;

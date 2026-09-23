@@ -74,6 +74,8 @@ const localBusiness = {
             slug={service.slug}
             shortName={service.shortName}
             tagline={service.tagline}
+            imageSrc={`/hero/card-${service.slug}.webp`}
+            imageAlt={`${service.shortName} — MB Bookkeeping & Payroll Solutions`}
             number={String(i + 1).padStart(2, '0')}
             variant="default"
           />

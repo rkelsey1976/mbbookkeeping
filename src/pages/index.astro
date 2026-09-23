@@ -12,6 +12,26 @@ import { REVIEWS } from '../lib/reviews';
 const featuredServices = SERVICES;
 const featuredReviews = REVIEWS.slice(0, 3);
 
+// Card thumbnails — 560px WebP crops of the hero photography (~8-15KB each).
+const cardImages: Record<string, string> = {
+  'bookkeeping':           '/hero/card-bookkeeping.webp',
+  'payroll':               '/hero/card-payroll.webp',
+  'vat-returns':           '/hero/card-vat-returns.webp',
+  'self-assessment':       '/hero/card-self-assessment.webp',
+  'bank-reconciliation':   '/hero/card-bank-reconciliation.webp',
+  'management-accounts':   '/hero/card-management-accounts.webp',
+  'cloud-accounting':      '/hero/card-cloud-accounting.webp',
+};
+const cardAlts: Record<string, string> = {
+  'bookkeeping':           'Calculator on printed financial reports and charts',
+  'payroll':               'Laptop showing a finance dashboard with charts and KPIs',
+  'vat-returns':           'Tax paperwork and folders being reviewed at a desk',
+  'self-assessment':       'Tax paperwork and folders being reviewed at a desk',
+  'bank-reconciliation':   'Calculator on printed financial reports and charts',
+  'management-accounts':   'Laptop showing a finance dashboard with charts and KPIs',
+  'cloud-accounting':      'Laptop showing cloud accounting software',
+};
+
 // Stats must be structural truths only — no invented ratings, years or cover.
 const heroStats = [
   { value: '7', suffix: '', label: 'bookkeeping & payroll services' },
@@ -122,6 +142,8 @@ for (const a of AREAS) {
             slug={service.slug}
             shortName={service.shortName}
             tagline={service.tagline}
+            imageSrc={cardImages[service.slug]}
+            imageAlt={cardAlts[service.slug]}
             number={String(i + 1).padStart(2, '0')}
             variant="default"
           />
@@ -196,7 +218,11 @@ for (const a of AREAS) {
             <h3 class="coverage-group__region">{g.region}</h3>
             <ul class="coverage-group__list">
               {g.areas.map((a) => (
-                <li><a href={`/bookkeeping/${a.slug}/`}>{a.name}</a></li>
+                <li>
+                  <a class="coverage-pill" href={`/bookkeeping/${a.slug}/`}>
+                    {a.name} <span class="coverage-pill__pcode">{a.postcode}</span>
+                  </a>
+                </li>
               ))}
             </ul>
           </div>
@@ -344,14 +370,38 @@ for (const a of AREAS) {
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-2) var(--sp-4);
+    gap: var(--sp-2);
   }
-  .coverage-group__list a {
-    color: var(--accent-text);
+  .coverage-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    padding: 0.45rem 0.9rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    color: var(--text);
     text-decoration: none;
+    font-size: var(--fs-sm);
     font-weight: var(--weight-medium);
+    line-height: 1.2;
+    transition: border-color var(--dur-fast) var(--ease),
+                background var(--dur-fast) var(--ease),
+                transform var(--dur-fast) var(--ease);
   }
-  .coverage-group__list a:hover { text-decoration: underline; }
+  .coverage-pill__pcode {
+    font-size: var(--fs-xs);
+    font-weight: var(--weight-bold);
+    color: var(--accent-text);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+  .coverage-pill:hover {
+    border-color: var(--accent);
+    background: var(--accent-tint);
+    transform: translateY(-1px);
+  }
+  .coverage-pill:hover .coverage-pill__pcode { color: var(--accent-hover); }
 
   /* ==== ABOUT TILE — typographic brand block, no stock photo ==== */
   .about-tile {
