@@ -6,7 +6,7 @@
 // serviceSlug (when present) points each chip at the tiered service × area
 // page where one exists; without it chips go to the area hubs.
 
-import { getAreasByRegion, KEY_SERVICES } from '../lib/areas';
+import { AREAS, KEY_SERVICES, type Area } from '../lib/areas';
 
 type Props = {
   serviceSlug?: string;
@@ -17,7 +17,13 @@ type Props = {
 };
 
 const { serviceSlug, eyebrow, heading, lede, note } = Astro.props as Props;
-const groups = getAreasByRegion();
+// Group the 20 areas by region, preserving AREAS order (Bristol City first).
+const groups: { region: string; areas: Area[] }[] = [];
+for (const a of AREAS) {
+  const g = groups.find((x) => x.region === a.region);
+  if (g) g.areas.push(a);
+  else groups.push({ region: a.region, areas: [a] });
+}
 ---
 
 {(heading || lede) && (

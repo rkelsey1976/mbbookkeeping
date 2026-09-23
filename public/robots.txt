@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /__forms.html
 
-Sitemap: https://www.aspectbuilds.co.uk/sitemap-index.xml
+Sitemap: https://www.mbbookkeepingandpayrollsolutions.co.uk/sitemap-index.xml
