@@ -59,7 +59,7 @@ export const SERVICES: Service[] = [
   {
     slug: 'bookkeeping',
     name: 'Bookkeeping Yate & Bristol',
-    shortName: 'bookkeeping',
+    shortName: 'Bookkeeping',
     city: 'bristol',
     tagline: 'Accurate books, every month, without you lifting a finger.',
     intro: 'Purchase and sales ledger management, data entry and bank reconciliations — handled with precision so your accounts are always ready.',
@@ -143,7 +143,7 @@ export const SERVICES: Service[] = [
   {
     slug: 'payroll',
     name: 'Payroll Management',
-    shortName: 'payroll run',
+    shortName: 'Payroll run',
     city: 'bristol',
     tagline: 'Your staff paid correctly and on time, every time.',
     intro: 'Salaries, deductions, pensions and HMRC compliance — handled end to end so payroll is one less thing to worry about.',
@@ -301,7 +301,7 @@ export const SERVICES: Service[] = [
   {
     slug: 'self-assessment',
     name: 'Self Assessment Tax Returns',
-    shortName: 'self assessment',
+    shortName: 'Self assessment',
     city: 'bristol',
     tagline: 'Your tax return done properly, long before the January deadline.',
     intro: 'For sole traders, directors and landlords — accurate returns, every allowance claimed, filed well before the deadline.',
@@ -378,7 +378,7 @@ export const SERVICES: Service[] = [
   {
     slug: 'bank-reconciliation',
     name: 'Bank Reconciliation',
-    shortName: 'bank recs',
+    shortName: 'Bank recs',
     city: 'bristol',
     tagline: 'Your books and your bank, agreeing, every single month.',
     intro: 'Regular reconciliations that align your records with your statements — catching errors and discrepancies before they cost you.',
@@ -449,7 +449,7 @@ export const SERVICES: Service[] = [
   {
     slug: 'management-accounts',
     name: 'Regular Financial Reports',
-    shortName: 'management accounts',
+    shortName: 'Management accounts',
     city: 'bristol',
     tagline: 'Know your numbers monthly — profit, cash flow, and what to do next.',
     intro: 'Clear, accurate monthly reports — profit and loss, cash flow and the numbers that drive confident decisions.',
@@ -520,7 +520,7 @@ export const SERVICES: Service[] = [
   {
     slug: 'cloud-accounting',
     name: 'Cloud Accounting Setup',
-    shortName: 'cloud setup',
+    shortName: 'Cloud setup',
     city: 'bristol',
     tagline: 'Xero, QuickBooks or Sage — set up properly, from day one.',
     intro: 'Migration to modern cloud software with clean opening balances, bank feeds and rules that keep the books half-done automatically.',
