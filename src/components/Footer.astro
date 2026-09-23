@@ -171,11 +171,13 @@ const primaryAreas = AREAS.filter(a => a.tier === 'primary').map(a => a.name);
      Desktop expands the same elements into the five-column grid. */
 
   .site-footer {
+    /* Deep brand-teal footer — keeps the green from the logo while staying
+       dark enough for AAA white text. */
     background:
-      linear-gradient(180deg, var(--ink-900) 0%, #0a111b 100%);
-    color: var(--text-inverse-muted);
+      linear-gradient(180deg, #03352f 0%, #022622 100%);
+    color: rgba(255, 255, 255, 0.72);
     padding: var(--sp-8) 0 calc(var(--sp-6) + env(safe-area-inset-bottom));
-    border-top: 3px solid var(--accent);
+    border-top: 3px solid var(--brand-navy);
   }
 
   .footer-top {
