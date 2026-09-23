@@ -1,6 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import { SERVICES, getTagline } from '../lib/services';
+import { AREAS } from '../lib/areas';
 import { PHONE } from '../lib/contact';
 
 // Menu thumbnails — 300×200 WebP crops of the hero photography, 3-6KB each.
@@ -53,7 +54,7 @@ const isActive = (path: string) => {
             <div class="container mega-menu__container">
               <div class="mega-menu__header">
                 <p class="eyebrow eyebrow--clay">Our Services</p>
-                <h2 class="mega-menu__title">Seven services. {SERVICES.length} neighbourhoods.</h2>
+                <h2 class="mega-menu__title">Seven services. {AREAS.length} neighbourhoods.</h2>
                 {/* The category page had no sitewide link — keep one here so
                     the menu always has a route to the services index. */}
                 <a href="/our-services/" class="mega-menu__all">
